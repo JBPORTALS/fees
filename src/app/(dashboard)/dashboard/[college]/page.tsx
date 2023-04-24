@@ -4,28 +4,48 @@ import { OverallColumn } from "@/components/mock-data/admission-meta";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchOverallMatrix } from "@/store/admissions.slice";
-import { Progress, Stack, Table, Tbody, Td, Th, Tr } from "@chakra-ui/react";
+import {
+  Heading,
+  Progress,
+  Stack,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Tr,
+} from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import { Link } from "@chakra-ui/next-js";
+import { useRouter } from "next/router";
+import { useSearchParams, useParams } from "next/navigation";
+import axios from "axios";
 
 export default function Home() {
   const dispatch = useAppDispatch();
-  const overAllMatrix = useAppSelector(
-    (state) => state.admissions.overall_matrix.data
-  ) as {
-    allotted_seats: string;
-    college: string;
-    filled_percentage: number;
-    remaining_seats: string;
-    total: number;
-  }[];
+  const router = useParams();
+  const [data, setData] = useState({ data: [], error: null });
 
   useEffect(() => {
-    dispatch(fetchOverallMatrix());
-  }, [dispatch]);
+    async function fetchData() {
+      const formData = new FormData();
+      formData.append("college", router.college);
+      const response = await axios(
+        process.env.NEXT_PUBLIC_ADMISSIONS_URL + "retrievebranchmatrix.php",
+        {
+          method: "POST",
+          data: formData,
+        }
+      );
+      if (response.status == 402)
+        setData({ data: [], error: response.data?.msg });
+      else setData({ data: response.data, error: null });
+    }
+
+    fetchData()
+  }, [router.college]);
 
   return (
     <Stack h={"full"} w={"full"} justifyContent={"start"}>
@@ -34,19 +54,19 @@ export default function Home() {
           <Table colorScheme="gray" size={"lg"}>
             <Tbody>
               <Tr>
-                <Th>College</Th>
+                <Th>Branch</Th>
                 <Th>Total Seats</Th>
                 <Th>Allotted Seats</Th>
                 <Th>Remaining Seats</Th>
                 <Th>Filled Percentage</Th>
               </Tr>
-              {overAllMatrix.map((value, index) => {
+              {data.data.map((value: any) => {
                 return (
                   <Tr>
                     <Td>
-                      <Link href={"/dashboard/" + value.college}>
+                      <Link href={"/dashboard/" + router.college+`/${value.branch}`}>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">
-                          {value.college}
+                          {value.branch}
                         </div>
                       </Link>
                     </Td>

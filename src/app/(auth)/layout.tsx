@@ -1,7 +1,7 @@
 "use client";
 import { Flex } from "@chakra-ui/react";
 
-export default function RootLayout({
+export default function SignInLayout({
   children,
 }: {
   children: React.ReactNode;
