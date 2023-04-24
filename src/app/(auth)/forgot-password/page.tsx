@@ -28,7 +28,7 @@ export default function Home() {
       setIsLoading(false);
     } else {
       toast.success("Sent a password reset request to your mail");
-      redirect("/signin");
+      router.push("/signin")
     }
   };
 
