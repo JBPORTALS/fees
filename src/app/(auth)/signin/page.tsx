@@ -11,9 +11,9 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { useState } from "react";
-import {} from "@supabase/auth-helpers-nextjs";
 import { toast } from "react-hot-toast";
 import { SC } from "@/utils/supabase";
+import Head from "next/head";
 
 export default function Home() {
   const [state, setState] = useState({
@@ -24,17 +24,19 @@ export default function Home() {
 
   const onSignin = async () => {
     setIsLoading(true);
-    const { error,data} = await SC().auth.signInWithPassword({
+    const { error} = await SC().auth.signInWithPassword({
       email: state.email,
       password: state.password,
     });
-    console.log(error,data)
-    if (error) toast.error("Invalid credentials !");
-    setIsLoading(false);
+    if (error) {
+      toast.error("Invalid credentials !")
+      setIsLoading(false);
+    };
   };
 
   return (
     <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+      
       <Stack align={"center"}>
         <Heading fontSize={"3xl"}>Sign in to Admission Matrix</Heading>
         <Text fontSize={"lg"} color={"gray.600"}>
@@ -79,6 +81,7 @@ export default function Home() {
               isDisabled={!state.email || !state.password}
               colorScheme="blue"
               color={"white"}
+              loadingText={"Signing in..."}
             >
               Sign in
             </Button>

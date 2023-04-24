@@ -2,6 +2,10 @@ import { redirect } from "next/navigation";
 import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { headers, cookies } from "next/headers";
 
+export const metadata = {
+  title:"Admission Matrix | Signin"
+}
+
 export default async function RootLayout({
   children,
 }: {
@@ -13,5 +17,7 @@ export default async function RootLayout({
   });
   const { data } = await auth.getSession();
   if (data.session !== null) redirect("/dashboard");
-  return <>{children}</>;
+  return <>
+  
+  {children}</>;
 }

@@ -21,6 +21,10 @@ import {
   AiOutlineCheckCircle,
   AiOutlineClockCircle,
   AiOutlineCloudDownload,
+  AiOutlineLogout,
+  AiOutlinePlusCircle,
+  AiOutlinePlusSquare,
+  AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 import ISelect from "../ui/utils/ISelect";
 import { InfoCard } from "../ui/utils/InfoCard";
@@ -81,7 +85,7 @@ export default function AdmissionLayout({
       );
   }, [ucollege, ubranch, dispatch]);
 
-  const {user} = useSupabase();
+  const { user } = useSupabase();
 
   return (
     <div className="bg-primary overflow-hidden w-full  h-full flex flex-col">
@@ -90,17 +94,21 @@ export default function AdmissionLayout({
         px={"5"}
         justifyContent={"space-between"}
         h={"14"}
-        bg={"white"}
+        className="bg-secondary border-b border-b-lightgray"
       >
-        <Heading size={"md"} color={"blue"}>
-          Admissions Matrix
-        </Heading>
+        <HStack color={"blue.600"}>
+          <AiOutlineUsergroupAdd className="text-3xl" />
+          <Heading size={"md"}>Admissions Matrix</Heading>
+        </HStack>
         <HStack>
           <Heading size={"sm"}>{user?.username}</Heading>
-          <Tag colorScheme="gray" variant={"outline"}>{user?.email}</Tag>
+          <Tag colorScheme="gray" variant={"outline"}>
+            {user?.email}
+          </Tag>
           <Button
             variant={"ghost"}
             colorScheme="blue"
+            rightIcon={<AiOutlineLogout className="text-md" />}
             onClick={async () => await SC().auth.signOut()}
           >
             Sign Out
@@ -108,33 +116,43 @@ export default function AdmissionLayout({
         </HStack>
       </HStack>
       <Tabs
-        colorScheme={"purple"}
         size={"sm"}
-        variant={"enclosed"}
+        variant={"line"}
         h={"92vh"}
         w={"full"}
         px={"0"}
       >
         <TabList className="px-5">
-          <HStack justifyContent={"space-between"} w={"full"} py={"2"}>
+          <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
               <Tab
                 as={Button}
-                size={"sm"}
-                style={{ outlineWidth: 1 }}
-                _selected={{ bg: "#3d8d13", color: "#ffff" }}
+                rounded={"none"}
+                colorScheme="green"
+                variant={"ghost"}
+                size={"lg"}
+                py={"2"}
+                _selected={{
+                  color: "green.400",
+                  borderBottom: "2px",
+                  borderBottomColor: "green.400",
+                }}
                 leftIcon={<AiOutlineCheckCircle className="text-lg" />}
               >
                 Approved
               </Tab>
               <Tab
                 as={Button}
-                style={{
-                  outlineWidth: 1,
-                  marginLeft: "15px",
+                py={"2"}
+                colorScheme="orange"
+                variant={"ghost"}
+                rounded={"none"}
+                size={"lg"}
+                _selected={{
+                  color: "orange.400",
+                  borderBottom: "2px",
+                  borderBottomColor: "orange.400",
                 }}
-                size={"sm"}
-                _selected={{ bg: "#f43717", color: "#ffff" }}
                 leftIcon={<AiOutlineClockCircle className="text-lg" />}
               >
                 Un-Approved
@@ -143,7 +161,7 @@ export default function AdmissionLayout({
             <HStack>
               <AddCouncelAddmissionModel>
                 {({ onOpen }) => (
-                  <Button onClick={onOpen} size={"sm"} colorScheme="blue">
+                  <Button leftIcon={<AiOutlinePlusCircle className="text-lg"/>} onClick={onOpen} size={"sm"} colorScheme="facebook">
                     Add Enquiry
                   </Button>
                 )}
@@ -152,23 +170,35 @@ export default function AdmissionLayout({
           </HStack>
         </TabList>
         <TabPanels px={"0"} h={"full"}>
-          <TabPanel px={"0"} h={"100vh"}>
+          <TabPanel p={"0"} h={"100vh"}>
             <HStack
+              className="bg-secondary"
               px={"5"}
               py={"3"}
               borderBottom={"1px"}
-              borderTop={"1px"}
               borderColor={"gray.200"}
             >
               <HStack w={"full"}>
                 <Link href={"/dashboard"}>
-                  <Box _hover={{ textDecoration: "underline" }}>Overall</Box>
+                  <Box
+                    as={Tag}
+                    colorScheme="gray"
+                    size={"lg"}
+                    _hover={{ textDecoration: "underline" }}
+                  >
+                    Overall
+                  </Box>
                 </Link>
                 {college && (
                   <>
                     <AiOutlineArrowRight />
                     <Link href={"/dashboard/" + college}>
-                      <Box _hover={{ textDecoration: "underline" }}>
+                      <Box
+                        as={Tag}
+                        colorScheme="gray"
+                        size={"lg"}
+                        _hover={{ textDecoration: "underline" }}
+                      >
                         {college}
                       </Box>
                     </Link>
@@ -177,7 +207,14 @@ export default function AdmissionLayout({
                 {college && branch && (
                   <>
                     <AiOutlineArrowRight />
-                    <Box _hover={{ textDecoration: "underline" }}>{branch}</Box>
+                    <Box
+                      as={Tag}
+                      colorScheme="gray"
+                      size={"lg"}
+                      _hover={{ textDecoration: "underline" }}
+                    >
+                      {branch}
+                    </Box>
                   </>
                 )}
               </HStack>
@@ -222,7 +259,7 @@ export default function AdmissionLayout({
               {children}
             </VStack>
           </TabPanel>
-          <TabPanel px={"0"} h={"full"}>
+          <TabPanel p={"0"} h={"full"}>
             <div className="w-full flex border-b py-2 space-x-3 px-5">
               <ISelect
                 placeHolder="Select College"

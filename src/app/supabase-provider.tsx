@@ -5,12 +5,14 @@ import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 
 import type { SupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { AuthSession } from "@supabase/supabase-js";
 
 type SupabaseContext = {
   supabase: SupabaseClient<any>;
   user: {
     email: string | undefined;
     username: string | undefined;
+    session: AuthSession | null;
   } | null;
 };
 
@@ -25,6 +27,7 @@ export default function SupabaseProvider({
   const [user, setUser] = useState<{
     username: undefined | string;
     email: string | undefined;
+    session: AuthSession | null;
   } | null>(null);
   const router = useRouter();
 
@@ -35,7 +38,11 @@ export default function SupabaseProvider({
       .select("username")
       .eq("id", data.session?.user.id)
       .single();
-    setUser({ username: User?.username, email: data.session?.user.email });
+    setUser({
+      username: User?.username,
+      email: data.session?.user.email,
+      session: data.session,
+    });
   }
 
   useEffect(() => {
@@ -43,7 +50,7 @@ export default function SupabaseProvider({
       data: { subscription },
     } = supabase.auth.onAuthStateChange(() => {
       router.refresh();
-      getUserData()
+      getUserData();
     });
 
     return () => {
@@ -55,7 +62,6 @@ export default function SupabaseProvider({
     getUserData();
   }, [router, supabase]);
 
-  
   return (
     <Context.Provider value={{ supabase, user }}>
       <>{children}</>
