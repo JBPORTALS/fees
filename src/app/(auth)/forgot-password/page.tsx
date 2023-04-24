@@ -8,7 +8,7 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -28,7 +28,7 @@ export default function Home() {
       setIsLoading(false);
     } else {
       toast.success("Sent a password reset request to your mail");
-      router.push("/signin");
+      redirect("/signin");
     }
   };
 

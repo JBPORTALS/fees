@@ -25,7 +25,10 @@ export default function Home() {
     if (error) {
       toast.error(error.message);
       setisLoading(false);
-    } else router.replace("/signin");
+    } else {
+      toast.success("Password reset successfully");
+      router.replace("/signin");
+    }
   };
 
   return (

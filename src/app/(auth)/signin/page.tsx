@@ -35,8 +35,7 @@ export default function Home() {
   };
 
   return (
-    <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-      
+    <Stack spacing={8} mx={"auto"} maxW={"md"} py={12} px={6}>
       <Stack align={"center"}>
         <Heading fontSize={"3xl"}>Sign in to Admission Matrix</Heading>
         <Text fontSize={"lg"} color={"gray.600"}>
@@ -65,7 +64,7 @@ export default function Home() {
               type="password"
             />
           </FormControl>
-          <Stack spacing={10}>
+          <Stack spacing={2}>
             <Stack
               direction={{ base: "column", sm: "row" }}
               align={"start"}
