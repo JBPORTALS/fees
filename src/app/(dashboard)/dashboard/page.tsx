@@ -42,7 +42,7 @@ export default function Home() {
               </Tr>
               {overAllMatrix.map((value, index) => {
                 return (
-                  <Tr>
+                  <Tr  key={index}>
                     <Td>
                       <Link href={"/dashboard/" + value.college}>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">

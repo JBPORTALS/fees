@@ -60,9 +60,9 @@ export default function Home() {
                 <Th>Remaining Seats</Th>
                 <Th>Filled Percentage</Th>
               </Tr>
-              {data.data.map((value: any) => {
+              {data.data.map((value: any,index) => {
                 return (
-                  <Tr>
+                  <Tr key={index}>
                     <Td>
                       <Link href={"/dashboard/" + router.college+`/${value.branch}`}>
                         <div className="flex justify-center items-center text-md hover:underline h-full w-full">
