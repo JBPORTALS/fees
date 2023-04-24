@@ -40,14 +40,13 @@ interface AttendanceLayoutProps {
   showDownloadFile?: boolean;
 }
 
-
 export default function AdmissionLayout({
   children,
   showDownloadFile,
 }: AttendanceLayoutProps) {
   const router = useParams();
 
-  const { college, branch } = router
+  const { college, branch } = router;
 
   const [ubranch, setBranch] = useState<string | undefined>("");
   const [ucollege, setCollege] = useState<string | undefined>("");
@@ -63,11 +62,11 @@ export default function AdmissionLayout({
 
   useEffect(() => {
     if (ucollege !== undefined)
-      dispatch(fetchBranchList({ college: ucollege })).then((value:any)=>{
-        setBranchList(value.payload)
+      dispatch(fetchBranchList({ college: ucollege })).then((value: any) => {
+        setBranchList(value.payload);
       });
     setBranch("");
-  }, [ucollege,dispatch]);
+  }, [ucollege, dispatch]);
 
   useEffect(() => {
     ucollege &&
@@ -78,13 +77,30 @@ export default function AdmissionLayout({
           branch: ubranch,
         })
       );
-  }, [ucollege, ubranch,dispatch]);
+  }, [ucollege, ubranch, dispatch]);
 
   return (
     <div className="bg-primary overflow-hidden w-full  h-full flex flex-col">
-      <HStack w={"full"} px={"5"} justifyContent={"space-between"} h={"14"} bg={"white"}>
-        <Heading size={"md"} color={"blue"}>Admissions Matrix</Heading>
-        <Heading size={"sm"}>manu48617@gmail.com</Heading>
+      <HStack
+        w={"full"}
+        px={"5"}
+        justifyContent={"space-between"}
+        h={"14"}
+        bg={"white"}
+      >
+        <Heading size={"md"} color={"blue"}>
+          Admissions Matrix
+        </Heading>
+        <HStack>
+          <Heading size={"sm"}>manu48617@gmail.com</Heading>
+          <Button
+            variant={"ghost"}
+            colorScheme="blue"
+            onClick={async () => await SC().auth.signOut()}
+          >
+            Sign Out
+          </Button>
+        </HStack>
       </HStack>
       <Tabs
         colorScheme={"purple"}
@@ -121,11 +137,11 @@ export default function AdmissionLayout({
             </HStack>
             <HStack>
               <AddCouncelAddmissionModel>
-                {
-                  ({onOpen})=>(
-                    <Button onClick={onOpen} size={"sm"} colorScheme="blue">Add Enquiry</Button>
-                  )
-                }
+                {({ onOpen }) => (
+                  <Button onClick={onOpen} size={"sm"} colorScheme="blue">
+                    Add Enquiry
+                  </Button>
+                )}
               </AddCouncelAddmissionModel>
             </HStack>
           </HStack>

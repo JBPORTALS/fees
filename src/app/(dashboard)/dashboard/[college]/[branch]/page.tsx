@@ -36,7 +36,7 @@ export default function Home() {
 
   return (
     <Stack h={"full"} w={"full"} justifyContent={"start"}>
-      <AdmissionLayout>
+      <AdmissionLayout showDownloadFile>
         <VStack h={"90vh"}>
         <ClassDataGrid/>
         </VStack>
