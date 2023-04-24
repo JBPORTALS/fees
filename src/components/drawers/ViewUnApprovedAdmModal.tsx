@@ -22,6 +22,7 @@ import {
 import React, { useEffect } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
+import { useSupabase } from "@/app/supabase-provider";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -50,6 +51,7 @@ export default function ViewUnApprovedAdmModal({
     (state) => state.admissions.branchlist.data
   ) as [];
   const dispatch = useAppDispatch();
+  const {user} = useSupabase()
 
   const onOpen = () => {
     onModalOpen();
@@ -83,7 +85,7 @@ export default function ViewUnApprovedAdmModal({
   ]); // eslint-disable-line
 
   const onsubmit = async () => {
-    await dispatch(updateToApprove());
+    await dispatch(updateToApprove({username:user?.username!}));
     if (!isError) onClose();
   };
 

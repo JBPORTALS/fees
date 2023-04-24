@@ -10,9 +10,10 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Tag,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import {
@@ -34,6 +35,7 @@ import {
 import { useParams } from "next/navigation";
 import AddCouncelAddmissionModel from "../modals/AddCouncelAdmissionModal";
 import { SC } from "@/utils/supabase";
+import { useSupabase } from "@/app/supabase-provider";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -79,6 +81,8 @@ export default function AdmissionLayout({
       );
   }, [ucollege, ubranch, dispatch]);
 
+  const {user} = useSupabase();
+
   return (
     <div className="bg-primary overflow-hidden w-full  h-full flex flex-col">
       <HStack
@@ -92,7 +96,8 @@ export default function AdmissionLayout({
           Admissions Matrix
         </Heading>
         <HStack>
-          <Heading size={"sm"}>manu48617@gmail.com</Heading>
+          <Heading size={"sm"}>{user?.username}</Heading>
+          <Tag colorScheme="gray" variant={"outline"}>{user?.email}</Tag>
           <Button
             variant={"ghost"}
             colorScheme="blue"

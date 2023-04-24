@@ -193,6 +193,12 @@ export const updateMatrix = createAsyncThunk<
         data: formData,
       });
       data = response.data;
+      dispatch(
+        fetchSearchClass({
+          college: selected_Matrix[0].college,
+          branch: selected_Matrix[0].branch,
+        })
+      );
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
@@ -256,54 +262,9 @@ export const updateEnquiry = createAsyncThunk<
   }
 );
 
-export const addAdmission = createAsyncThunk<
-  { msg: string },
-  AddStudent,
-  {
-    rejectValue: {
-      msg: string;
-    };
-  }
->(
-  "/admissions/addAdmission",
-  async (
-    payload,
-    { fulfillWithValue, rejectWithValue, getState, dispatch }
-  ) => {
-    var data;
-    try {
-      const formData = new FormData();
-      const state = getState() as RootState;
-      const username = "Bot";
-      formData.append("name", payload.name);
-      formData.append("college", payload.college);
-      formData.append("branch", payload.branch);
-      formData.append("fname", payload.father_name);
-      formData.append("phone", payload.phone_no);
-      formData.append("email", payload.email);
-      formData.append("fee_fixed", payload.fee_fixed);
-      formData.append("fee_paid", payload.fee_paid);
-      formData.append("paid_date", payload.paid_date);
-      formData.append("remaining", payload.remaining_amount);
-      formData.append("due_date", payload.due_date);
-      formData.append("approved_by", username);
-      formData.append("remarks", payload.remarks);
-      const response = await axios({
-        url: process.env.NEXT_PUBLIC_ADMISSIONS_URL + "addstudent.php",
-        method: "POST",
-        data: formData,
-      });
-      data = response.data;
-      return fulfillWithValue(data);
-    } catch (error: any) {
-      return rejectWithValue({ msg: error.response.data.msg });
-    }
-  }
-);
-
 export const updateToApprove = createAsyncThunk<
   { msg: string },
-  void,
+  {username:string},
   {
     rejectValue: {
       msg: string;
@@ -321,7 +282,7 @@ export const updateToApprove = createAsyncThunk<
       const state = getState() as RootState;
       const selected_data = state.admissions.selectedMatrix
         .data[0] as SelectedMatrix;
-      const name = "Bot";
+      const name = payload.username;
       formData.append("name", selected_data.name);
       formData.append("admissionno", selected_data.admission_id);
       formData.append("college", selected_data.college);
@@ -374,6 +335,7 @@ export interface BranchAdmission {
 export interface AddStudent
   extends Omit<BranchAdmission, "admission_id" | "approved_by"> {
   remarks: string;
+  username: string;
 }
 
 export interface SelectedMatrix extends BranchAdmission {
@@ -586,19 +548,6 @@ export const AdmissionsSlice = createSlice({
     [updateEnquiry.rejected.toString()]: (state, action) => {
       toast.error(action.payload?.msg, { position: "top-right" });
       state.selectedMatrix.pending = false;
-    },
-    [addAdmission.pending.toString()]: (state, action) => {
-      state.add_admission.pending = true;
-    },
-    [addAdmission.fulfilled.toString()]: (state, action) => {
-      state.add_admission.pending = false;
-      state.add_admission.error = null;
-      toast.success(action.payload?.msg, { position: "top-right" });
-    },
-    [addAdmission.rejected.toString()]: (state, action) => {
-      state.add_admission.error = action.payload?.msg;
-      state.add_admission.pending = false;
-      toast.error(action.payload?.msg, { position: "top-right" });
     },
     [updateToApprove.pending.toString()]: (state, action) => {
       state.update_approve.pending = true;
