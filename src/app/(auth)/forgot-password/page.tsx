@@ -8,7 +8,7 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-import { redirect, useRouter } from "next/navigation";
+import {useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 

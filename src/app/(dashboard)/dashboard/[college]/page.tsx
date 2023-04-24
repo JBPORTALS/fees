@@ -1,11 +1,7 @@
 "use client";
 import AdmissionLayout from "@/components/layouts/AdmissionLayout";
-import { OverallColumn } from "@/components/mock-data/admission-meta";
 import { useAppDispatch } from "@/hooks";
-import { useAppSelector } from "@/store";
-import { fetchOverallMatrix } from "@/store/admissions.slice";
 import {
-  Heading,
   Progress,
   Stack,
   Table,
@@ -14,13 +10,11 @@ import {
   Th,
   Tr,
 } from "@chakra-ui/react";
-import { AgGridReact } from "ag-grid-react";
 import { useEffect, useState } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import { Link } from "@chakra-ui/next-js";
-import { useRouter } from "next/router";
-import { useSearchParams, useParams } from "next/navigation";
+import {useParams } from "next/navigation";
 import axios from "axios";
 
 export default function Home() {

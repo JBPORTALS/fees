@@ -1,11 +1,9 @@
 "use client";
 import AdmissionLayout from "@/components/layouts/AdmissionLayout";
-import { OverallColumn } from "@/components/mock-data/admission-meta";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchOverallMatrix } from "@/store/admissions.slice";
 import { Progress, Stack, Table, Tbody, Td, Th, Tr } from "@chakra-ui/react";
-import { AgGridReact } from "ag-grid-react";
 import { useEffect } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
