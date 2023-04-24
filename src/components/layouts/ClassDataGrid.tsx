@@ -1,0 +1,30 @@
+"use client";
+
+import { useAppSelector } from "@/store";
+import { AgGridReact } from "ag-grid-react";
+import { columns } from "../mock-data/admission-meta";
+import { Center, Heading, VStack } from "@chakra-ui/react";
+
+function ClassDataGrid() {
+    const data = useAppSelector(state=>state.admissions.search_class.data) as [];
+    const Error = useAppSelector(state=>state.admissions.search_class.error) as null |string;
+  return (
+    <VStack h={"90vh"} w={"100vw"}>
+      { data.length > 0 ? (
+        <AgGridReact
+          alwaysShowHorizontalScroll
+          animateRows={true}
+          className="w-full h-full  pb-6 ag-theme-material"
+          rowData={data as any}
+          columnDefs={columns as any}
+        />
+      ) : data.length == 0 && Error ? (
+        <Center h={"80%"}>
+          <Heading size={"lg"}>{Error}</Heading>
+        </Center>
+      ) : null}
+    </VStack>
+  );
+}
+
+export default ClassDataGrid;

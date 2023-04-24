@@ -14,6 +14,7 @@ import {
   Td,
   Th,
   Tr,
+  VStack,
 } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import { useEffect, useState } from "react";
@@ -23,12 +24,11 @@ import { Link } from "@chakra-ui/next-js";
 import { useRouter } from "next/router";
 import { useSearchParams, useParams } from "next/navigation";
 import axios from "axios";
+import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 
 export default function Home() {
   const dispatch = useAppDispatch();
   const router = useParams();
-  const data = useAppSelector(state=>state.admissions.search_class.data) as any;
-  const error = useAppSelector(state=>state.admissions.search_class.error) as string | null;
 
   useEffect(() => {
     dispatch(fetchSearchClass({college:router.college,branch:router.branch}));
@@ -37,21 +37,9 @@ export default function Home() {
   return (
     <Stack h={"full"} w={"full"} justifyContent={"start"}>
       <AdmissionLayout>
-        <div className="ag-theme-material">
-        {error ? (
-            <Center pb={"28"} w={"full"} h={"full"}>
-              <Heading>{error}</Heading>
-            </Center>
-          ) : (
-            <AgGridReact
-              alwaysShowHorizontalScroll
-              animateRows={true}
-              className="w-full h-full  pb-6 ag-theme-material"
-              rowData={data as any}
-              columnDefs={columns as any}
-            />
-          )}
-        </div>
+        <VStack h={"90vh"}>
+        <ClassDataGrid/>
+        </VStack>
       </AdmissionLayout>
     </Stack>
   );

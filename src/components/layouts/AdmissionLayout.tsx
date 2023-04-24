@@ -131,7 +131,7 @@ export default function AdmissionLayout({
           </HStack>
         </TabList>
         <TabPanels px={"0"} h={"full"}>
-          <TabPanel px={"0"} h={"full"}>
+          <TabPanel px={"0"} h={"100vh"}>
             <HStack
               px={"5"}
               py={"3"}
@@ -197,7 +197,7 @@ export default function AdmissionLayout({
                 )}
               </HStack>
             </HStack>
-            <VStack h={"full"} w={"full"}>
+            <VStack h={"100vh"} w={"full"}>
               {children}
             </VStack>
           </TabPanel>

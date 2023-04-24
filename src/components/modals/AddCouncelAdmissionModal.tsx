@@ -461,8 +461,14 @@ export default function AddCouncelAddmissionModel({ children }: props) {
                                 [field.name]: value.toString(),
                               }))
                           }
-                        } else if (field.type == "number") {
+                        } else if (field.type == "number" && field.name=="percentage") {
                           const value = Math.max(0, Math.min(100.00, Number(e.target.value)));
+                              setState((prev) => ({
+                                ...prev,
+                                [field.name]: value.toString(),
+                              }))
+                        }else if (field.type == "number" && field.name=="rank") {
+                          const value = Math.round(Math.max(0, Math.min(999999999, Number(e.target.value))));
                               setState((prev) => ({
                                 ...prev,
                                 [field.name]: value.toString(),
