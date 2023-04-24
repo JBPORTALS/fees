@@ -8,6 +8,7 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -15,15 +16,20 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const { supabase } = useSupabase();
+  const router = useRouter();
 
   const onReset = async () => {
     setIsLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: "http://localhost:3000/reset-password",
     });
-    if (error) toast.error(error.message);
-    else toast.success("Sent a password reset request");
-    setIsLoading(false);
+    if (error) {
+      toast.error(error.message);
+      setIsLoading(false);
+    } else {
+      toast.success("Sent a password reset request to your mail");
+      router.push("/signin");
+    }
   };
 
   return (
