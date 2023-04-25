@@ -2,23 +2,27 @@
 
 import { useAppSelector } from "@/store";
 import { AgGridReact } from "ag-grid-react";
-import { columns } from "../mock-data/admission-meta";
+import { columns } from "../mock-data/fee-meta";
 import { Center, Heading, VStack } from "@chakra-ui/react";
 
 function ClassDataGrid() {
-    const data = useAppSelector(state=>state.admissions.search_class.data) as [];
-    const Error = useAppSelector(state=>state.admissions.search_class.error) as null |string;
+  const FeeDetails = useAppSelector(state=>state.fees.all_fee.data) as any;
+  const Error = useAppSelector(
+    (state) => state.fees.all_fee.error
+  ) as null | string;
+
   return (
     <VStack h={"78vh"} w={"100vw"}>
-      { data.length > 0 ? (
+      {FeeDetails.length > 0 ? (
         <AgGridReact
-          alwaysShowHorizontalScroll
-          animateRows={true}
           className="w-full h-full  pb-6 ag-theme-material"
-          rowData={data as any}
+          animateRows={true}
+          rowData={FeeDetails}
           columnDefs={columns as any}
+          alwaysShowHorizontalScroll
+          onRowEditingStarted={(e) => {}}
         />
-      ) : data.length == 0 && Error ? (
+      ) : FeeDetails.length == 0 && Error ? (
         <Center h={"80%"}>
           <Heading size={"lg"}>{Error}</Heading>
         </Center>

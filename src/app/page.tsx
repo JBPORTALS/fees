@@ -22,18 +22,6 @@ export default function Home() {
           height={70}
         />
         <HStack>
-          <AddCouncelAddmissionModel>
-            {({ onOpen }) => (
-              <Button
-                size={"sm"}
-                variant={"outline"}
-                colorScheme="blue"
-                onClick={onOpen}
-              >
-                Add Enquery
-              </Button>
-            )}
-          </AddCouncelAddmissionModel>
           <Button
             size={"sm"}
             variant={"ghost"}
@@ -47,8 +35,8 @@ export default function Home() {
       </HStack>
       <Center h={"full"}>
         <Card border={"1px"} shadow={"md"} p={"10"}>
-        <Heading color={"blue.600"}>Admission Matrix</Heading>
-        <p className="mt-3">to manage admission process details</p>
+        <Heading color={"blue.600"}>Fee Manager</Heading>
+        <p className="mt-3">to manage fee details</p>
         <Button
         mt={"4"}
             size={"md"}

@@ -37,7 +37,7 @@ export default function Home() {
   return (
     <Stack spacing={8} mx={"auto"} maxW={"md"} py={12} px={6}>
       <Stack align={"center"}>
-        <Heading fontSize={"3xl"}>Sign in to Admission Matrix</Heading>
+        <Heading fontSize={"3xl"}>Sign in to Fee Manager</Heading>
         <Text fontSize={"lg"} color={"gray.600"}>
           to manage Admission Process Details
         </Text>
