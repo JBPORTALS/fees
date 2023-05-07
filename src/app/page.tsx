@@ -1,6 +1,4 @@
 "use client";
-import AddCouncelAddmissionModel from "@/components/modals/AddCouncelAdmissionModal";
-import { Image } from "@chakra-ui/next-js";
 import Link from "next/link"
 import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
 
