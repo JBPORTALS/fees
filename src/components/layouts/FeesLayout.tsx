@@ -112,7 +112,11 @@ export default function FeesLayout({
     year: "",
   });
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const { isOpen:isProfileOpen, onClose:onProfileClose, onOpen:onProfileOpen } = useDisclosure();
+  const {
+    isOpen: isProfileOpen,
+    onClose: onProfileClose,
+    onOpen: onProfileOpen,
+  } = useDisclosure();
   const [branch, setBranch] = useState<string | undefined>("All");
   const [filterType, setFilterType] = useState<string>("");
   const [filterState, setFilterState] = useState({
@@ -131,7 +135,7 @@ export default function FeesLayout({
     | null
   >(null);
   const [isloading, setIsLoading] = useState(true);
-  const {user,supabase} = useSupabase()
+  const { user, supabase } = useSupabase();
 
   useEffect(() => {
     if (state.branch && state.year)
@@ -153,7 +157,10 @@ export default function FeesLayout({
       const formData = new FormData();
       formData.append("date", filterState.date);
       const response = await axios(
-        process.env.NEXT_PUBLIC_ADMIN_URL + "feesearchdate.php",
+        process.env.NEXT_PUBLIC_ADMIN_URL +
+          `${
+            filterType == "CHALLAN_DATE" ? "feesearchdate" : "feesearchpaiddate"
+          }.php`,
         {
           method: "POST",
           data: formData,
@@ -203,67 +210,69 @@ export default function FeesLayout({
           <Heading size={"md"}>Fee Manager</Heading>
         </HStack>
         <HStack>
-        <HStack>
           <HStack>
-            <Heading size={"md"}>{user?.username}</Heading>
-            <IconButton
-              onClick={onProfileOpen}
-              variant={"unstyled"}
-              aria-label="avatar"
-            >
-              <Avatar size={"sm"}></Avatar>
-            </IconButton>
+            <HStack>
+              <Heading size={"md"}>{user?.username}</Heading>
+              <IconButton
+                onClick={onProfileOpen}
+                variant={"unstyled"}
+                aria-label="avatar"
+              >
+                <Avatar size={"sm"}></Avatar>
+              </IconButton>
+            </HStack>
+            <Modal isOpen={isProfileOpen} size={"sm"} onClose={onProfileClose}>
+              <ModalOverlay className="backdrop-blur-sm" />
+              <ModalContent
+                position={"relative"}
+                zIndex={"toast"}
+                backdropBlur={"2xl"}
+                shadow={"2xl"}
+              >
+                <ModalHeader fontWeight="semibold" fontSize={"lg"}>
+                  Profile Info
+                </ModalHeader>
+                <ModalBody>
+                  <HStack spacing={"3"} py={"2"}>
+                    <AiOutlineUser className="text-2xl" />
+                    <Heading size={"sm"} fontWeight={"normal"}>
+                      {user?.username}
+                    </Heading>
+                  </HStack>
+                  <HStack spacing={"3"} py={"2"}>
+                    <AiOutlineMail className="text-2xl" />
+                    <Heading size={"sm"} fontWeight={"normal"}>
+                      {user?.email}
+                    </Heading>
+                  </HStack>
+                  <HStack spacing={"3"} py={"2"}>
+                    <AiOutlineFieldTime className="text-2xl" />
+                    <Heading size={"sm"} fontWeight={"normal"}>
+                      {moment(user?.last_login_at).format(
+                        "MMMM Do YYYY, h:mm a"
+                      )}
+                    </Heading>
+                  </HStack>
+                  <HStack spacing={"3"} py={"2"}>
+                    <Button
+                      leftIcon={<AiOutlineLogout />}
+                      onClick={async () => {
+                        await supabase
+                          .from("profiles")
+                          .update({ last_login_at: new Date(Date.now()) })
+                          .eq("id", user?.session?.user.id);
+                        await supabase.auth.signOut();
+                      }}
+                      colorScheme="facebook"
+                      w={"full"}
+                    >
+                      SignOut
+                    </Button>
+                  </HStack>
+                </ModalBody>
+              </ModalContent>
+            </Modal>
           </HStack>
-          <Modal isOpen={isProfileOpen} size={"sm"} onClose={onProfileClose}>
-            <ModalOverlay className="backdrop-blur-sm" />
-            <ModalContent
-              position={"relative"}
-              zIndex={"toast"}
-              backdropBlur={"2xl"}
-              shadow={"2xl"}
-            >
-              <ModalHeader fontWeight="semibold" fontSize={"lg"}>
-                Profile Info
-              </ModalHeader>
-              <ModalBody>
-                <HStack spacing={"3"} py={"2"}>
-                  <AiOutlineUser className="text-2xl" />
-                  <Heading size={"sm"} fontWeight={"normal"}>
-                    {user?.username}
-                  </Heading>
-                </HStack>
-                <HStack spacing={"3"} py={"2"}>
-                  <AiOutlineMail className="text-2xl" />
-                  <Heading size={"sm"} fontWeight={"normal"}>
-                    {user?.email}
-                  </Heading>
-                </HStack>
-                <HStack spacing={"3"} py={"2"}>
-                  <AiOutlineFieldTime className="text-2xl" />
-                  <Heading size={"sm"} fontWeight={"normal"}>
-                    {moment(user?.last_login_at).format("MMMM Do YYYY, h:mm a")}
-                  </Heading>
-                </HStack>
-                <HStack spacing={"3"} py={"2"}>
-                  <Button
-                    leftIcon={<AiOutlineLogout />}
-                    onClick={async () => {
-                      await supabase
-                        .from("profiles")
-                        .update({ last_login_at: new Date(Date.now()) })
-                        .eq("id", user?.session?.user.id);
-                      await supabase.auth.signOut();
-                    }}
-                    colorScheme="facebook"
-                    w={"full"}
-                  >
-                    SignOut
-                  </Button>
-                </HStack>
-              </ModalBody>
-            </ModalContent>
-          </Modal>
-        </HStack>
         </HStack>
       </HStack>
       <Tabs
@@ -339,8 +348,8 @@ export default function FeesLayout({
                                     textTransform={"capitalize"}
                                     whiteSpace={"nowrap"}
                                   >
-                                    {paymentData.name.toLowerCase()} (
-                                    {paymentData.usn})
+                                    {paymentData?.name.toString().toLowerCase()} (
+                                    {paymentData?.usn})
                                   </Heading>
                                   <Tag
                                     size={"md"}
@@ -386,7 +395,8 @@ export default function FeesLayout({
                     <FormControl>
                       <Select onChange={(e) => setFilterType(e.target.value)}>
                         <option value={""}>Select Filter</option>
-                        <option value={"DATE"}>By Date</option>
+                        <option value={"CHALLAN_DATE"}>By Challan Date</option>
+                        <option value={"PAID_DATE"}>By Paid Date</option>
                         <option value={"CHALLAN"}>By Challan No.</option>
                       </Select>
                     </FormControl>
@@ -411,7 +421,8 @@ export default function FeesLayout({
                                 }}
                               />
                             </>
-                          ) : filterType == "DATE" ? (
+                          ) : filterType == "PAID_DATE" ||
+                            filterType == "CHALLAN_DATE" ? (
                             <>
                               <FormLabel>Date</FormLabel>
                               <Input
@@ -434,7 +445,10 @@ export default function FeesLayout({
                                 case "CHALLAN":
                                   onChallanFilter();
                                   break;
-                                case "DATE":
+                                case "CHALLAN_DATE":
+                                  onDateFilter();
+                                  break;
+                                case "PAID_DATE":
                                   onDateFilter();
                                   break;
                                 default:
@@ -706,7 +720,10 @@ export default function FeesLayout({
                 placeHolder="All"
                 value={state.branch}
                 onChange={(value) => setBranch(value)}
-                options={branch_list.map((option:any)=>({option:option.branch,value:option.branch}))}
+                options={branch_list.map((option: any) => ({
+                  option: option.branch,
+                  value: option.branch,
+                }))}
               />
             </div>
             <VStack p={"5"}>
@@ -879,7 +896,10 @@ export default function FeesLayout({
                   onChange={(value) =>
                     setState((prev) => ({ ...prev, branch: value as string }))
                   }
-                  options={branch_list.map((option:any)=>({option:option.branch,value:option.branch}))}
+                  options={branch_list.map((option: any) => ({
+                    option: option.branch,
+                    value: option.branch,
+                  }))}
                 />
               ) : null}
 

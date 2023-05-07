@@ -167,6 +167,7 @@ export const updateFeeDetail = createAsyncThunk<
       const state = getState() as RootState;
       const selectedFee = state.fees.selected_fee.data;
       formData.append("regno", selectedFee[0].regno);
+      formData.append("name", selectedFee[0].name);
       formData.append("method", payload.method);
       formData.append("paid", payload.paid);
       formData.append("challan_id", payload.challan_id);
