@@ -11,6 +11,7 @@ type SupabaseContext = {
   supabase: SupabaseClient<any>;
   user: {
     email: string | undefined;
+    last_login_at: string | undefined;
     username: string | undefined;
     session: AuthSession | null;
   } | null;
@@ -27,6 +28,7 @@ export default function SupabaseProvider({
   const [user, setUser] = useState<{
     username: undefined | string;
     email: string | undefined;
+    last_login_at:string|undefined;
     session: AuthSession | null;
   } | null>(null);
   const router = useRouter();
@@ -35,12 +37,13 @@ export default function SupabaseProvider({
     const { data } = await supabase.auth.getSession();
     const { data: User } = await supabase
       .from("profiles")
-      .select("username")
+      .select("username,last_login_at")
       .eq("id", data.session?.user.id)
       .single();
     setUser({
       username: User?.username,
       email: data.session?.user.email,
+      last_login_at:User?.last_login_at,
       session: data.session,
     });
   }

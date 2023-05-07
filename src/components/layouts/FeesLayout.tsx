@@ -20,6 +20,7 @@ import {
   ArcElement,
 } from "chart.js";
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -27,10 +28,16 @@ import {
   FormLabel,
   Heading,
   HStack,
+  IconButton,
   Input,
   Menu,
   MenuButton,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Select,
   Skeleton,
   Stat,
@@ -52,11 +59,14 @@ import { Pie, Bar } from "react-chartjs-2";
 import {
   AiOutlineAim,
   AiOutlineDollarCircle,
+  AiOutlineFieldTime,
   AiOutlineFilePdf,
   AiOutlineFilter,
   AiOutlineLogout,
+  AiOutlineMail,
   AiOutlineSearch,
   AiOutlineSend,
+  AiOutlineUser,
 } from "react-icons/ai";
 import GenerateRecieptModal from "../modals/GenerateRecieptModal";
 import IModal from "../ui/utils/IModal";
@@ -64,6 +74,7 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { SC } from "@/utils/supabase";
 import { useSupabase } from "@/app/supabase-provider";
+import moment from "moment";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -99,6 +110,7 @@ export default function FeesLayout({
     year: "",
   });
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen:isProfileOpen, onClose:onProfileClose, onOpen:onProfileOpen } = useDisclosure();
   const [branch, setBranch] = useState<string | undefined>("All");
   const [filterType, setFilterType] = useState<string>("");
   const [filterState, setFilterState] = useState({
@@ -117,7 +129,7 @@ export default function FeesLayout({
     | null
   >(null);
   const [isloading, setIsLoading] = useState(true);
-  const {user} = useSupabase()
+  const {user,supabase} = useSupabase()
 
   useEffect(() => {
     if (state.branch && state.year)
@@ -189,18 +201,67 @@ export default function FeesLayout({
           <Heading size={"md"}>Fee Manager</Heading>
         </HStack>
         <HStack>
-          <Heading size={"sm"}>{user?.username}</Heading>
-          <Tag colorScheme="gray" variant={"outline"}>
-            {user?.email}
-          </Tag>
-          <Button
-            variant={"ghost"}
-            colorScheme="blue"
-            rightIcon={<AiOutlineLogout className="text-md" />}
-            onClick={async () => await SC().auth.signOut()}
-          >
-            Sign Out
-          </Button>
+        <HStack>
+          <HStack>
+            <Heading size={"md"}>{user?.username}</Heading>
+            <IconButton
+              onClick={onProfileOpen}
+              variant={"unstyled"}
+              aria-label="avatar"
+            >
+              <Avatar size={"sm"}></Avatar>
+            </IconButton>
+          </HStack>
+          <Modal isOpen={isProfileOpen} size={"sm"} onClose={onProfileClose}>
+            <ModalOverlay className="backdrop-blur-sm" />
+            <ModalContent
+              position={"relative"}
+              zIndex={"toast"}
+              backdropBlur={"2xl"}
+              shadow={"2xl"}
+            >
+              <ModalHeader fontWeight="semibold" fontSize={"lg"}>
+                Profile Info
+              </ModalHeader>
+              <ModalBody>
+                <HStack spacing={"3"} py={"2"}>
+                  <AiOutlineUser className="text-2xl" />
+                  <Heading size={"sm"} fontWeight={"normal"}>
+                    {user?.username}
+                  </Heading>
+                </HStack>
+                <HStack spacing={"3"} py={"2"}>
+                  <AiOutlineMail className="text-2xl" />
+                  <Heading size={"sm"} fontWeight={"normal"}>
+                    {user?.email}
+                  </Heading>
+                </HStack>
+                <HStack spacing={"3"} py={"2"}>
+                  <AiOutlineFieldTime className="text-2xl" />
+                  <Heading size={"sm"} fontWeight={"normal"}>
+                    {moment(user?.last_login_at).format("MMMM Do YYYY, h:mm a")}
+                  </Heading>
+                </HStack>
+                <HStack spacing={"3"} py={"2"}>
+                  <Button
+                    leftIcon={<AiOutlineLogout />}
+                    onClick={async () => {
+                      await supabase
+                        .from("profiles")
+                        .update({ last_login_at: new Date(Date.now()) })
+                        .eq("id", user?.session?.user.id);
+                      await supabase.auth.signOut();
+                    }}
+                    colorScheme="facebook"
+                    w={"full"}
+                  >
+                    SignOut
+                  </Button>
+                </HStack>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+        </HStack>
         </HStack>
       </HStack>
       <Tabs

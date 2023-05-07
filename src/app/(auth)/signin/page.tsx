@@ -13,7 +13,6 @@ import { Link } from "@chakra-ui/next-js";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { SC } from "@/utils/supabase";
-import Head from "next/head";
 
 export default function Home() {
   const [state, setState] = useState({
@@ -39,7 +38,7 @@ export default function Home() {
       <Stack align={"center"}>
         <Heading fontSize={"3xl"}>Sign in to Fee Manager</Heading>
         <Text fontSize={"lg"} color={"gray.600"}>
-          to manage Admission Process Details
+          To manage Fee Details
         </Text>
       </Stack>
       <Box rounded={"lg"} bg={"white"} boxShadow={"lg"} p={8}>
