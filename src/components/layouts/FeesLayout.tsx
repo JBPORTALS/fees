@@ -72,7 +72,6 @@ import GenerateRecieptModal from "../modals/GenerateRecieptModal";
 import IModal from "../ui/utils/IModal";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { SC } from "@/utils/supabase";
 import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 
@@ -102,6 +101,9 @@ export default function FeesLayout({
   const yearFeeDetails = useAppSelector(
     (state) => state.fees.year_fee.data
   ) as YearFee[];
+  const branch_list = useAppSelector(
+    (state) => state.fees.branch_list.data
+  ) as [];
   const overallFeeDetails = useAppSelector(
     (state) => state.fees.overall_fee.data
   ) as OverallFee[];
@@ -704,11 +706,7 @@ export default function FeesLayout({
                 placeHolder="All"
                 value={state.branch}
                 onChange={(value) => setBranch(value)}
-                options={[
-                  { value: "EBAC", option: "Commerce" },
-                  { value: "PCMB", option: "PCMB" },
-                  { value: "PCMC", option: "PCMC" },
-                ]}
+                options={branch_list.map((option:any)=>({option:option.branch,value:option.branch}))}
               />
             </div>
             <VStack p={"5"}>
@@ -872,7 +870,7 @@ export default function FeesLayout({
               )}
             </VStack>
           </TabPanel>
-          <TabPanel px={0} w={"full"} h={"88vh"}>
+          <TabPanel px={0} w={"100vw"} h={"88vh"}>
             <div className="w-full flex border-b py-2 space-x-3 px-5">
               {isFor == "admin" || isFor == "staff" ? (
                 <ISelect
@@ -881,11 +879,7 @@ export default function FeesLayout({
                   onChange={(value) =>
                     setState((prev) => ({ ...prev, branch: value as string }))
                   }
-                  options={[
-                    { value: "EBAC", option: "Commerce" },
-                    { value: "PCMB", option: "PCMB" },
-                    { value: "PCMC", option: "PCMC" },
-                  ]}
+                  options={branch_list.map((option:any)=>({option:option.branch,value:option.branch}))}
                 />
               ) : null}
 
@@ -912,6 +906,7 @@ export default function FeesLayout({
                 <InfoCard message="Select Year" />
               ) : null}
               <VStack
+                px={0}
                 spacing={0}
                 className={
                   "justify-start items-start flex w-full h-full overflow-scroll"

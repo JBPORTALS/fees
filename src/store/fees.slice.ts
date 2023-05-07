@@ -148,7 +148,7 @@ export const updateFeeDetail = createAsyncThunk<
   {
     method: string;
     paid: string;
-    challan_id:string;
+    challan_id: string;
   },
   {
     rejectValue: {
@@ -183,6 +183,31 @@ export const updateFeeDetail = createAsyncThunk<
           year: selectedFee[0].year,
         })
       );
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
+export const fetchBranchList = createAsyncThunk<
+  { msg: string },
+  void,
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/fees/fetchBranchList",
+  async (payload, { fulfillWithValue, rejectWithValue }) => {
+    var data;
+    try {
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMIN_URL + "retrievebranches.php",
+        method: "POST",
+      });
+      data = response.data;
       return fulfillWithValue(data);
     } catch (error: any) {
       return rejectWithValue({ msg: error.response.data.msg });
@@ -225,7 +250,7 @@ export interface PaymentHistory {
   date: string;
   method: string;
   amount_paid: string;
-  challan_id:string;
+  challan_id: string;
 }
 
 export interface SelectedFee extends Fee {
@@ -258,6 +283,11 @@ interface FeesIntialState {
     pending: boolean;
     error: null | string;
   };
+  branch_list: {
+    data: [];
+    pending: boolean;
+    error: null | string;
+  };
 }
 
 const initialState: FeesIntialState = {
@@ -286,6 +316,11 @@ const initialState: FeesIntialState = {
     error: null,
     pending: false,
   },
+  branch_list: {
+    data: [],
+    error: null,
+    pending: false,
+  },
 };
 
 export const FeesSlice = createSlice({
@@ -293,7 +328,7 @@ export const FeesSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [fetchFeeDetails.pending.toString()]: (state, action) => {
+    [fetchFeeDetails.pending.toString()]: (state, _action) => {
       state.all_fee.pending = true;
     },
     [fetchFeeDetails.fulfilled.toString()]: (state, action) => {
@@ -317,7 +352,7 @@ export const FeesSlice = createSlice({
       state.selected_fee.error = action.payload?.msg;
       toast.error(action.payload?.msg);
     },
-    [updateFeeDetail.pending.toString()]: (state, action) => {
+    [updateFeeDetail.pending.toString()]: (state, _action) => {
       state.selected_fee.pending = true;
     },
     [updateFeeDetail.fulfilled.toString()]: (state, action) => {
@@ -329,7 +364,7 @@ export const FeesSlice = createSlice({
       state.selected_fee.error = action.payload?.msg;
       toast.error(action.payload?.msg);
     },
-    [fetchBranchFeeDetails.pending.toString()]: (state, action) => {
+    [fetchBranchFeeDetails.pending.toString()]: (state, _action) => {
       state.branch_fee.pending = true;
     },
     [fetchBranchFeeDetails.fulfilled.toString()]: (state, action) => {
@@ -341,7 +376,7 @@ export const FeesSlice = createSlice({
       state.branch_fee.error = action.payload?.msg;
       toast.error(action.payload?.msg);
     },
-    [fetchOverAllFee.pending.toString()]: (state, action) => {
+    [fetchOverAllFee.pending.toString()]: (state, _action) => {
       state.overall_fee.pending = true;
     },
     [fetchOverAllFee.fulfilled.toString()]: (state, action) => {
@@ -353,7 +388,7 @@ export const FeesSlice = createSlice({
       state.overall_fee.error = action.payload?.msg;
       toast.error(action.payload?.msg);
     },
-    [fetchFeeYearView.pending.toString()]: (state, action) => {
+    [fetchFeeYearView.pending.toString()]: (state, _action) => {
       state.year_fee.pending = true;
     },
     [fetchFeeYearView.fulfilled.toString()]: (state, action) => {
@@ -364,6 +399,17 @@ export const FeesSlice = createSlice({
       state.year_fee.pending = false;
       state.year_fee.error = action.payload?.msg;
       toast.error(action.payload?.msg);
+    },
+    [fetchBranchList.pending.toString()]: (state, action) => {
+      state.branch_list.pending = true;
+    },
+    [fetchBranchList.fulfilled.toString()]: (state, action) => {
+      state.branch_list.pending = false;
+      state.branch_list.data = action.payload;
+    },
+    [fetchBranchList.rejected.toString()]: (state, action) => {
+      state.branch_list.pending = false;
+      state.branch_list.error = action.payload?.msg;
     },
   },
 });
