@@ -12,7 +12,7 @@ function ClassDataGrid() {
   ) as null | string;
 
   return (
-    <VStack h={"78vh"} w={"100vw"}>
+    <VStack h={"78vh"} w={"98vw"}>
       {FeeDetails.length > 0 ? (
         <AgGridReact
           className="w-full h-full  pb-6 ag-theme-material"

@@ -197,12 +197,16 @@ export default function FeesLayout({
   };
 
   return (
-    <div className="bg-primary overflow-hidden w-full  h-full flex flex-col">
+    <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
       <HStack
         w={"full"}
+        zIndex={"banner"}
         px={"5"}
         justifyContent={"space-between"}
         h={"14"}
+        position={"fixed"}
+        top={"0"}
+        left={"0"}
         className="bg-secondary border-b border-b-lightgray"
       >
         <HStack color={"blue.600"}>
@@ -280,9 +284,9 @@ export default function FeesLayout({
         size={"sm"}
         variant={"solid-rounded"}
         h={"full"}
-        pt={"4"}
+        pt={"14"}
       >
-        <TabList className="px-5">
+        <TabList bg={"whiteAlpha.100"} backdropBlur={"sm"} py={"4"} className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm">
           <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
               <Tab
@@ -519,9 +523,9 @@ export default function FeesLayout({
             </HStack>
           </HStack>
         </TabList>
-        <TabPanels px={"5"}>
-          <TabPanel>
-            <VStack alignItems={"start"}>
+        <TabPanels px={"0"} >
+          <TabPanel px={"5"} pb={"20"} w={"full"} h={"100vh"} overflowY={"scroll"}>
+            <VStack alignItems={"start"} h={"fit-content"}>
               <Heading size={"lg"}>Grand Total</Heading>
               <HStack>
                 <Card
@@ -598,7 +602,7 @@ export default function FeesLayout({
                 </Card>
               </HStack>
             </VStack>
-            <VStack py={"5"} alignItems={"start"}>
+            <VStack py={"5"} w={"full"} alignItems={"start"}>
               <Heading size={"lg"}>All Branches</Heading>
               <HStack
                 py={"5"}
@@ -606,26 +610,31 @@ export default function FeesLayout({
                 flexWrap={"wrap"}
                 spacing={0}
                 gap={"3"}
+                justifyContent={"center"}
               >
                 {branchFeeDetails.map((branchFee) => {
                   return (
                     <Card
                       key={branchFee.branch}
-                      w={"530px"}
+                      w={"580px"}
                       shadow={"lg"}
                       style={{ borderWidth: 1, borderColor: "#dddd" }}
                       px={"10"}
                       py={"5"}
+                      display={"flex"}
                     >
                       <Stat
                         h={"full"}
                         w={"full"}
                         display={"flex"}
+                        flexDirection={"column"}
                         justifyContent={"center"}
                         alignItems={"center"}
                       >
+                        <HStack>
+                        <VStack>
                         <VStack py={"3"}>
-                          <h1 className="text-2xl font-bold text-black">
+                          <h1 className="text-xl font-medium text-black">
                             {branchFee.branch}
                           </h1>{" "}
                           <Tag
@@ -637,10 +646,9 @@ export default function FeesLayout({
                             {branchFee.total_students} Students
                           </Tag>
                         </VStack>
-                        <HStack
+                        <VStack
                           w={"full"}
                           justifyContent={"center"}
-                          spacing={"5"}
                         >
                           <StatLabel
                             py={"2"}
@@ -650,7 +658,7 @@ export default function FeesLayout({
                             fontSize={"md"}
                           >
                             Total{" "}
-                            <StatNumber fontSize={"2xl"}>
+                            <StatNumber fontSize={"lg"}>
                               ₹ {branchFee.total1}
                             </StatNumber>
                           </StatLabel>
@@ -662,7 +670,7 @@ export default function FeesLayout({
                             fontSize={"md"}
                           >
                             Paid{" "}
-                            <StatNumber fontSize={"2xl"}>
+                            <StatNumber fontSize={"lg"}>
                               ₹ {branchFee.paid1}
                             </StatNumber>
                           </StatLabel>
@@ -674,18 +682,19 @@ export default function FeesLayout({
                             fontSize={"md"}
                           >
                             Balance{" "}
-                            <StatNumber fontSize={"2xl"}>
+                            <StatNumber fontSize={"lg"}>
                               ₹ {branchFee.remaining1}
                             </StatNumber>
                           </StatLabel>
-                        </HStack>
+                        </VStack>
+                        </VStack>
                         <Box p={"10"}>
                           <div>
                             <Pie
                               className="chart-bar"
                               options={{ responsive: true }}
-                              width={"300px"}
-                              height={"300px"}
+                              width={"250px"}
+                              height={"250px"}
                               data={{
                                 datasets: [
                                   {
@@ -707,6 +716,7 @@ export default function FeesLayout({
                             />
                           </div>
                         </Box>
+                        </HStack>
                       </Stat>
                     </Card>
                   );
