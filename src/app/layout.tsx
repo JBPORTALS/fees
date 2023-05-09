@@ -6,7 +6,7 @@ import SupabaseProvider from "./supabase-provider";
 const inter = Inter({ subsets: ["greek"] });
 
 export const metadata = {
-  title:"Admission Matrix"
+  title:"Fee Manager"
 }
 
 export default function RootLayout({
