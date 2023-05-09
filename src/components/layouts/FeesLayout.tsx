@@ -286,7 +286,7 @@ export default function FeesLayout({
         h={"full"}
         pt={"14"}
       >
-        <TabList bg={"whiteAlpha.100"} backdropBlur={"sm"} py={"4"} className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm">
+        <TabList position={"sticky"} zIndex={100} bg={"whiteAlpha.100"} backdropBlur={"sm"} py={"4"} className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm">
           <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
               <Tab
@@ -382,7 +382,7 @@ export default function FeesLayout({
                       })}
                 </VStack>
               </IModal>
-              <Menu size={"lg"}>
+              <Menu  size={"lg"}>
                 <MenuButton>
                   <Button
                     as={"view"}
@@ -394,7 +394,7 @@ export default function FeesLayout({
                     Filter
                   </Button>
                 </MenuButton>
-                <MenuList position={"absolute"} zIndex={"dropdown"}>
+                <MenuList zIndex={"tooltip"}>
                   <VStack px={"4"}>
                     <FormControl>
                       <Select onChange={(e) => setFilterType(e.target.value)}>
@@ -523,7 +523,7 @@ export default function FeesLayout({
             </HStack>
           </HStack>
         </TabList>
-        <TabPanels px={"0"} >
+        <TabPanels zIndex={"unset"} px={"0"} >
           <TabPanel px={"5"} pb={"20"} w={"full"} h={"100vh"} overflowY={"scroll"}>
             <VStack alignItems={"start"} h={"fit-content"}>
               <Heading size={"lg"}>Grand Total</Heading>
