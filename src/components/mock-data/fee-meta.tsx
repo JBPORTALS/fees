@@ -49,7 +49,56 @@ export const columns = [
   {
     field: "total1",
     headerName: "Total Fee",
-    width:"180px"
+    width:"180px",
+  },
+  {
+    field: "paid1",
+    headerName: "Paid",
+    width:"170px"
+  },
+  {
+    field: "remaining1",
+    headerName: "Balance",
+    width:"170px",
+    resizable: true,
+  },
+  
+  {
+    field: "status",
+    headerName: "Status",
+    resizable: true,
+    filter: true,
+    width:"120px",
+    cellRenderer: StatusView,
+    valueGetter: (params: any) => {
+      return params.data.status;
+    },
+  },
+  {
+    field: "",
+    headerName: "View",
+    width:"110px",
+    cellRenderer: CustomViewButton,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+];
+
+export const columnsForNonUpdate = [
+  {
+    field: "regno",
+    headerName: "Reg No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    resizable: true,
+    suppressMovable: true,
   },
   {
     field: "paid1",

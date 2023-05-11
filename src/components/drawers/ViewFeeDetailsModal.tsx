@@ -23,6 +23,7 @@ import { toast } from "react-hot-toast";
 import { AiOutlineCheckCircle, AiOutlineFileProtect } from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
+import { useSupabase } from "@/app/supabase-provider";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -48,6 +49,7 @@ export default function ViewFeeDetailsModal({ children, regno }: props) {
   const [state, setState] = useState({ total: "" });
   const [isUpdating, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const { user } = useSupabase();
   const [challanState, setChallanState] = useState<
     | {
         challan_id: string;
@@ -215,38 +217,42 @@ export default function ViewFeeDetailsModal({ children, regno }: props) {
                 {selectedFeeDetails[0]?.name} - {selectedFeeDetails[0]?.regno}
               </span>
             </HStack>
-            <HStack w={"full"} justifyContent={"space-between"}>
-              <h1>Total Amount</h1>
-              <Input
-                fontSize={"lg"}
-                fontWeight={"bold"}
-                value={state.total}
-                type={"number"}
-                w={"50%"}
-                onChange={(e) => {
-                  const value = Math.max(
-                    0,
-                    Math.min(1500000, Number(e.target.value))
-                  );
-                  setState((prev) => ({
-                    ...prev,
-                    total: value.toString(),
-                  }));
-                }}
-                variant={"flushed"}
-              />
-            </HStack>
-            <HStack w={"full"}>
-              <Button
-                w={"full"}
-                onClick={onUpdateTotal}
-                colorScheme={"green"}
-                isLoading={isUpdating}
-                leftIcon={<AiOutlineCheckCircle className="text-xl" />}
-              >
-                Update Total Fee
-              </Button>
-            </HStack>
+            {user?.can_update_total && (
+              <>
+                <HStack w={"full"} justifyContent={"space-between"}>
+                  <h1>Total Amount</h1>
+                  <Input
+                    fontSize={"lg"}
+                    fontWeight={"bold"}
+                    value={state.total}
+                    type={"number"}
+                    w={"50%"}
+                    onChange={(e) => {
+                      const value = Math.max(
+                        0,
+                        Math.min(1500000, Number(e.target.value))
+                      );
+                      setState((prev) => ({
+                        ...prev,
+                        total: value.toString(),
+                      }));
+                    }}
+                    variant={"flushed"}
+                  />
+                </HStack>
+                <HStack w={"full"}>
+                  <Button
+                    w={"full"}
+                    onClick={onUpdateTotal}
+                    colorScheme={"green"}
+                    isLoading={isUpdating}
+                    leftIcon={<AiOutlineCheckCircle className="text-xl" />}
+                  >
+                    Update Total Fee
+                  </Button>
+                </HStack>
+              </>
+            )}
             {selectedFeeDetails[0]?.payment_history.length && (
               <HStack w={"full"}>
                 <Button
