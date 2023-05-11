@@ -191,6 +191,41 @@ export const updateFeeDetail = createAsyncThunk<
   }
 );
 
+export const updateUSN = createAsyncThunk<
+  { msg: string },
+  {
+    challan_no: string;
+    usn: string;
+  },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/fees/updateUSN",
+  async (
+    payload,
+    { fulfillWithValue, rejectWithValue,}
+  ) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("challan_no", payload.challan_no);
+      formData.append("usn", payload.usn);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
 export const fetchBranchList = createAsyncThunk<
   { msg: string },
   void,
@@ -289,6 +324,10 @@ interface FeesIntialState {
     pending: boolean;
     error: null | string;
   };
+  update_usn: {
+    pending: boolean;
+    error: null | string;
+  };
 }
 
 const initialState: FeesIntialState = {
@@ -319,6 +358,10 @@ const initialState: FeesIntialState = {
   },
   branch_list: {
     data: [],
+    error: null,
+    pending: false,
+  },
+  update_usn: {
     error: null,
     pending: false,
   },
@@ -363,6 +406,17 @@ export const FeesSlice = createSlice({
     [updateFeeDetail.rejected.toString()]: (state, action) => {
       state.selected_fee.pending = false;
       state.selected_fee.error = action.payload?.msg;
+      toast.error(action.payload?.msg);
+    },
+    [updateUSN.pending.toString()]: (state, _action) => {
+      state.update_usn.pending = true;
+    },
+    [updateUSN.fulfilled.toString()]: (state, action) => {
+      state.update_usn.pending = false;
+      toast.success(action.payload?.msg);
+    },
+    [updateUSN.rejected.toString()]: (state, action) => {
+      state.update_usn.pending = false
       toast.error(action.payload?.msg);
     },
     [fetchBranchFeeDetails.pending.toString()]: (state, _action) => {

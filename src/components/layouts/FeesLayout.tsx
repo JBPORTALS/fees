@@ -7,6 +7,7 @@ import {
   fetchFeeYearView,
   fetchOverAllFee,
   OverallFee,
+  updateUSN,
   YearFee,
 } from "@/store/fees.slice";
 import {
@@ -74,6 +75,7 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
+import GenerateRecieptWithoutUSNModal from "../modals/GenerateRecieptModalWithoutUSN";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -135,6 +137,10 @@ export default function FeesLayout({
     | null
   >(null);
   const [isloading, setIsLoading] = useState(true);
+  const isUpdatingUSN = useAppSelector(
+    (state) => state.fees.update_usn.pending
+  ) as boolean;
+  const [usn, setUSN] = useState("");
   const { user, supabase } = useSupabase();
 
   useEffect(() => {
@@ -286,7 +292,14 @@ export default function FeesLayout({
         h={"full"}
         pt={"14"}
       >
-        <TabList position={"sticky"} zIndex={100} bg={"whiteAlpha.100"} backdropBlur={"sm"} py={"4"} className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm">
+        <TabList
+          position={"sticky"}
+          zIndex={100}
+          bg={"whiteAlpha.100"}
+          backdropBlur={"sm"}
+          py={"4"}
+          className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm"
+        >
           <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
               <Tab
@@ -333,56 +346,94 @@ export default function FeesLayout({
                       })
                     : filteredData?.map((paymentData, index) => {
                         return (
-                          <HStack
-                            key={paymentData.challan_id + index}
-                            w={"full"}
-                            className={"border-b border-b-lightgray"}
-                            bg={"gray.50"}
-                            px={"5"}
-                            py={"2"}
-                          >
-                            <VStack flex={1} alignItems={"start"}>
-                              <HStack justifyContent={"start"}>
-                                <VStack
-                                  justifyContent={"start"}
-                                  alignItems={"start"}
-                                >
-                                  <Heading
-                                    size={"sm"}
-                                    textTransform={"capitalize"}
-                                    whiteSpace={"nowrap"}
+                          <>
+                            <HStack
+                              key={paymentData.challan_id + index}
+                              w={"full"}
+                              className={"border-b border-b-lightgray"}
+                              bg={"gray.50"}
+                              px={"5"}
+                              py={"2"}
+                            >
+                              <VStack flex={1} alignItems={"start"}>
+                                <HStack justifyContent={"start"}>
+                                  <VStack
+                                    justifyContent={"start"}
+                                    alignItems={"start"}
                                   >
-                                    {paymentData?.name.toString().toLowerCase()} (
-                                    {paymentData?.usn})
-                                  </Heading>
-                                  <Tag
-                                    size={"md"}
-                                    variant={"outline"}
-                                    colorScheme={"teal"}
-                                    fontWeight={"bold"}
-                                  >
-                                    CH No. {paymentData.challan_id}
-                                  </Tag>
-                                </VStack>
-                              </HStack>
-                              <span className="text-sm">
-                                {paymentData.date}
-                              </span>
-                            </VStack>
-                            <VStack flex={1} alignItems={"end"}>
-                              <h1 className="text-xl font-bold text-green-600">
-                                ₹{paymentData.amount_paid1}
-                              </h1>
-                              <span className="text-md font-medium">
-                                <i>{paymentData.method}</i>
-                              </span>
-                            </VStack>
-                          </HStack>
+                                    <Heading
+                                      size={"sm"}
+                                      textTransform={"capitalize"}
+                                      whiteSpace={"nowrap"}
+                                    >
+                                      {paymentData?.name
+                                        .toString()
+                                        .toLowerCase()}{" "}
+                                      {paymentData.usn ? (
+                                        `(${paymentData.usn})`
+                                      ) : (
+                                        <Input
+                                          size={"sm"}
+                                          px={"3"}
+                                          value={usn}
+                                          onChange={(e) =>
+                                            setUSN(e.target.value)
+                                          }
+                                          variant={"flushed"}
+                                          placeholder="Enter USN here ..."
+                                        />
+                                      )}
+                                    </Heading>
+                                    <Tag
+                                      size={"md"}
+                                      variant={"outline"}
+                                      colorScheme={"teal"}
+                                      fontWeight={"bold"}
+                                    >
+                                      CH No. {paymentData.challan_id}
+                                    </Tag>
+                                  </VStack>
+                                </HStack>
+                                <span className="text-sm">
+                                  {paymentData.date}
+                                </span>
+                              </VStack>
+                              <VStack flex={1} alignItems={"end"}>
+                                <Box>
+                                  <h1 className="text-xl font-bold text-green-600">
+                                    ₹{paymentData.amount_paid1}
+                                  </h1>
+                                  <span className="text-md font-medium">
+                                    <i>{paymentData.method}</i>
+                                  </span>
+                                </Box>
+                              </VStack>
+                            </HStack>
+                            {!paymentData.usn && (
+                              <Button
+                                w={"full"}
+                                colorScheme="blue"
+                                onClick={() => {
+                                  dispatch(
+                                    updateUSN({
+                                      challan_no: paymentData.challan_id,
+                                      usn,
+                                    })
+                                  ).then(() => {
+                                    onChallanFilter();
+                                  });
+                                }}
+                                isLoading={isUpdatingUSN}
+                              >
+                                Save USN No.
+                              </Button>
+                            )}
+                          </>
                         );
                       })}
                 </VStack>
               </IModal>
-              <Menu  size={"lg"}>
+              <Menu size={"lg"}>
                 <MenuButton>
                   <Button
                     as={"view"}
@@ -506,6 +557,20 @@ export default function FeesLayout({
                   </MenuList>
                 </Menu>
               )}
+              <GenerateRecieptWithoutUSNModal>
+                {({ onOpen }) => (
+                  <Button
+                    onClick={onOpen}
+                    size={"sm"}
+                    shadow={"md"}
+                    variant={"outline"}
+                    leftIcon={<AiOutlineFilePdf className={"text-xl"} />}
+                    colorScheme={"whatsapp"}
+                  >
+                    Generate Reciept Without USN
+                  </Button>
+                )}
+              </GenerateRecieptWithoutUSNModal>
               <GenerateRecieptModal>
                 {({ onOpen }) => (
                   <Button
@@ -523,8 +588,14 @@ export default function FeesLayout({
             </HStack>
           </HStack>
         </TabList>
-        <TabPanels zIndex={"unset"} px={"0"} >
-          <TabPanel px={"5"} pb={"20"} w={"full"} h={"100vh"} overflowY={"scroll"}>
+        <TabPanels zIndex={"unset"} px={"0"}>
+          <TabPanel
+            px={"5"}
+            pb={"20"}
+            w={"full"}
+            h={"100vh"}
+            overflowY={"scroll"}
+          >
             <VStack alignItems={"start"} h={"fit-content"}>
               <Heading size={"lg"}>Grand Total</Heading>
               <HStack>
@@ -632,90 +703,87 @@ export default function FeesLayout({
                         alignItems={"center"}
                       >
                         <HStack>
-                        <VStack>
-                        <VStack py={"3"}>
-                          <h1 className="text-xl font-medium text-black">
-                            {branchFee.branch}
-                          </h1>{" "}
-                          <Tag
-                            variant={"solid"}
-                            size={"lg"}
-                            rounded={"full"}
-                            colorScheme={"blue"}
-                          >
-                            {branchFee.total_students} Students
-                          </Tag>
-                        </VStack>
-                        <VStack
-                          w={"full"}
-                          justifyContent={"center"}
-                        >
-                          <StatLabel
-                            py={"2"}
-                            alignItems={"center"}
-                            display={"flex"}
-                            flexDirection={"column"}
-                            fontSize={"md"}
-                          >
-                            Total{" "}
-                            <StatNumber fontSize={"lg"}>
-                              ₹ {branchFee.total1}
-                            </StatNumber>
-                          </StatLabel>
-                          <StatLabel
-                            py={"2"}
-                            alignItems={"center"}
-                            display={"flex"}
-                            flexDirection={"column"}
-                            fontSize={"md"}
-                          >
-                            Paid{" "}
-                            <StatNumber fontSize={"lg"}>
-                              ₹ {branchFee.paid1}
-                            </StatNumber>
-                          </StatLabel>
-                          <StatLabel
-                            py={"2"}
-                            alignItems={"center"}
-                            display={"flex"}
-                            flexDirection={"column"}
-                            fontSize={"md"}
-                          >
-                            Balance{" "}
-                            <StatNumber fontSize={"lg"}>
-                              ₹ {branchFee.remaining1}
-                            </StatNumber>
-                          </StatLabel>
-                        </VStack>
-                        </VStack>
-                        <Box p={"10"}>
-                          <div>
-                            <Pie
-                              className="chart-bar"
-                              options={{ responsive: true }}
-                              width={"250px"}
-                              height={"250px"}
-                              data={{
-                                datasets: [
-                                  {
-                                    data: [
-                                      branchFee?.total,
-                                      branchFee?.paid,
-                                      branchFee?.remaining,
-                                    ],
-                                    backgroundColor: [
-                                      "rgb(120,55,228,0.7)",
-                                      "rgba(33,191,91,0.7)",
-                                      "rgba(242,109,109,0.7)",
-                                    ],
-                                    type: "pie",
-                                  },
-                                ],
-                                labels: ["Total", "Paid", "Balance"],
-                              }}
-                            />
-                          </div>
-                        </Box>
+                          <VStack>
+                            <VStack py={"3"}>
+                              <h1 className="text-xl font-medium text-black">
+                                {branchFee.branch}
+                              </h1>{" "}
+                              <Tag
+                                variant={"solid"}
+                                size={"lg"}
+                                rounded={"full"}
+                                colorScheme={"blue"}
+                              >
+                                {branchFee.total_students} Students
+                              </Tag>
+                            </VStack>
+                            <VStack w={"full"} justifyContent={"center"}>
+                              <StatLabel
+                                py={"2"}
+                                alignItems={"center"}
+                                display={"flex"}
+                                flexDirection={"column"}
+                                fontSize={"md"}
+                              >
+                                Total{" "}
+                                <StatNumber fontSize={"lg"}>
+                                  ₹ {branchFee.total1}
+                                </StatNumber>
+                              </StatLabel>
+                              <StatLabel
+                                py={"2"}
+                                alignItems={"center"}
+                                display={"flex"}
+                                flexDirection={"column"}
+                                fontSize={"md"}
+                              >
+                                Paid{" "}
+                                <StatNumber fontSize={"lg"}>
+                                  ₹ {branchFee.paid1}
+                                </StatNumber>
+                              </StatLabel>
+                              <StatLabel
+                                py={"2"}
+                                alignItems={"center"}
+                                display={"flex"}
+                                flexDirection={"column"}
+                                fontSize={"md"}
+                              >
+                                Balance{" "}
+                                <StatNumber fontSize={"lg"}>
+                                  ₹ {branchFee.remaining1}
+                                </StatNumber>
+                              </StatLabel>
+                            </VStack>
+                          </VStack>
+                          <Box p={"10"}>
+                            <div>
+                              <Pie
+                                className="chart-bar"
+                                options={{ responsive: true }}
+                                width={"250px"}
+                                height={"250px"}
+                                data={{
+                                  datasets: [
+                                    {
+                                      data: [
+                                        branchFee?.total,
+                                        branchFee?.paid,
+                                        branchFee?.remaining,
+                                      ],
+                                      backgroundColor: [
+                                        "rgb(120,55,228,0.7)",
+                                        "rgba(33,191,91,0.7)",
+                                        "rgba(242,109,109,0.7)",
+                                      ],
+                                      type: "pie",
+                                    },
+                                  ],
+                                  labels: ["Total", "Paid", "Balance"],
+                                }}
+                              />
+                            </div>
+                          </Box>
                         </HStack>
                       </Stat>
                     </Card>
