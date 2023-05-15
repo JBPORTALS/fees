@@ -76,6 +76,7 @@ import axios from "axios";
 import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 import GenerateRecieptWithoutUSNModal from "../modals/GenerateRecieptModalWithoutUSN";
+import { Link } from "@chakra-ui/next-js";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -220,6 +221,9 @@ export default function FeesLayout({
           <Heading size={"md"}>Fee Manager</Heading>
         </HStack>
         <HStack>
+        {/* <Box mr={"3"}>
+          <Link fontSize={"md"} href={"/dashboard/salary"}>Salary Manager</Link>
+        </Box> */}
           <HStack>
             <HStack>
               <Heading size={"md"}>{user?.username}</Heading>

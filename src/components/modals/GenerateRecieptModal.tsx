@@ -444,7 +444,7 @@ export default function GenerateRecieptModal({ children }: props) {
               }}
               bg={"white"}
             >
-              <option value={""}>Select Payment Mode</option>
+              <option value={""} selected disabled>Select Payment Mode</option>
               <option value={"ONLINE"}>ONLINE</option>
               <option value={"CASH"}>CASH</option>
               <option value={"MISCELLANEOUS"}>Miscellaneous</option>
@@ -496,7 +496,7 @@ export default function GenerateRecieptModal({ children }: props) {
                             }))
                           }
                         >
-                          <option value={""}>Select {field.label}</option>
+                          <option selected disabled value={""}>Select {field.label}</option>
                           {field.option &&
                             field.option.map((opt) => (
                               <option key={opt.value} value={opt.value}>

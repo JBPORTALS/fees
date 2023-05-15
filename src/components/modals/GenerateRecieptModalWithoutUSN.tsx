@@ -1,6 +1,7 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import {
+  Button,
   FormControl,
   FormLabel,
   Grid,
@@ -26,6 +27,19 @@ interface StateProps {
 
 export default function GenerateRecieptWithoutUSNModal({ children }: props) {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const intialAssign = {
+    hostel_fee: "0",
+    excess_fee: "0",
+    college_fee: "0",
+    tuition_fee: "0",
+    total_fee: "0",
+    security_deposit: "0",
+    bus_fee: "0",
+    lab_fee: "0",
+    vtu_fee: "0",
+    total_msci: "0",
+  };
+
   const [state, setState] = useState<StateProps>({
     hostel_fee: "0",
     excess_fee: "0",
@@ -63,16 +77,9 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
       name: "sem",
       label: "Sem",
       type: "select",
-      option: [
-        {
-          value: "1",
-          option: "1",
-        },
-        {
-          value: "3",
-          option: "3",
-        },
-      ],
+      option: new Array(8)
+        .fill(0)
+        .map((_, index) => ({ value: index + 1, option: index + 1 })),
     },
     {
       name: "category",
@@ -220,16 +227,9 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
       name: "sem",
       label: "Sem",
       type: "select",
-      option: [
-        {
-          value: "1",
-          option: "1",
-        },
-        {
-          value: "3",
-          option: "3",
-        },
-      ],
+      option: new Array(8)
+        .fill(0)
+        .map((_, index) => ({ value: index + 1, option: index + 1 })),
     },
     {
       name: "category",
@@ -377,16 +377,9 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
       name: "sem",
       label: "sem",
       type: "select",
-      option: [
-        {
-          value: "1",
-          option: "1",
-        },
-        {
-          value: "3",
-          option: "3",
-        },
-      ],
+      option: new Array(8)
+        .fill(0)
+        .map((_, index) => ({ value: index + 1, option: index + 1 })),
     },
     {
       name: "category",
@@ -519,11 +512,16 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
               }}
               bg={"white"}
             >
-              <option value={""}>Select Payment Mode</option>
+              <option value={""} selected disabled>Select Payment Mode</option>
               <option value={"ONLINE"}>ONLINE</option>
               <option value={"CASH"}>CASH</option>
               <option value={"MISCELLANEOUS"}>Miscellaneous</option>
             </Select>
+            {paymentMode && (
+              <Button colorScheme={"blue"} onClick={() => {}} variant={"ghost"}>
+                Reset
+              </Button>
+            )}
           </HStack>
 
           {paymentMode && (
@@ -571,7 +569,7 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
                             }))
                           }
                         >
-                          <option value={""}>Select {field.label}</option>
+                          <option value={""} disabled selected>Select {field.label}</option>
                           {field.option &&
                             field.option.map((opt) => (
                               <option key={opt.value} value={opt.value}>
@@ -588,6 +586,7 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
                           //@ts-ignore
                           min={field?.min}
                           w={"64"}
+                          placeholder={field.type == "date" ? "dd/mm/yyyy" : ""}
                           value={state[field.name]}
                           onChange={(e) => {
                             if (field.type == "number") {
