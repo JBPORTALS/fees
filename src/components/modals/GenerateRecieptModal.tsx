@@ -1,6 +1,7 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import {
+  Button,
   FormControl,
   FormLabel,
   Grid,
@@ -296,54 +297,54 @@ const formMSCI = [
     name: "category",
     label: "Category",
     type: "select",
-    option:[
+    option: [
       {
-        value:"Library Fine",
-        option:"Library Fine"
+        value: "Library Fine",
+        option: "Library Fine",
       },
       {
-        value:"Certificates",
-        option:"Certificates"
+        value: "Certificates",
+        option: "Certificates",
       },
       {
-        value:"Attestation",
-        option:"Attestation"
+        value: "Attestation",
+        option: "Attestation",
       },
       {
-        value:"Lab Breakage",
-        option:"Lab Breakage"
+        value: "Lab Breakage",
+        option: "Lab Breakage",
       },
       {
-        value:"Application",
-        option:"Application"
+        value: "Application",
+        option: "Application",
       },
       {
-        value:"Miscellaneous",
-        option:"Miscellaneous"
+        value: "Miscellaneous",
+        option: "Miscellaneous",
       },
       {
-        value:"ID Card",
-        option:"ID Card"
+        value: "ID Card",
+        option: "ID Card",
       },
       {
-        value:"Uniform",
-        option:"Uniform"
+        value: "Uniform",
+        option: "Uniform",
       },
       {
-        value:"Books",
-        option:"Books"
+        value: "Books",
+        option: "Books",
       },
       {
-        value:"Duplicate Halltickets",
-        option:"Duplicate Halltickets"
-      }
-    ]
+        value: "Duplicate Halltickets",
+        option: "Duplicate Halltickets",
+      },
+    ],
   },
   {
     name: "total_msci",
     label: "Total",
     type: "number",
-    min:"0"
+    min: "0",
   },
 ];
 
@@ -363,7 +364,7 @@ export default function GenerateRecieptModal({ children }: props) {
     bus_fee: "0",
     lab_fee: "0",
     vtu_fee: "0",
-    total_msci:"0"
+    total_msci: "0",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [paymentMode, setPaymentMode] = useState("");
@@ -372,14 +373,14 @@ export default function GenerateRecieptModal({ children }: props) {
     setState((prev) => ({
       ...prev,
       total: (
-        parseInt(state["hostel_fee"]) +
-        parseInt(state["excess_fee"]) +
-        parseInt(state["vtu_fee"]) +
-        parseInt(state["lab_fee"]) +
-        parseInt(state["bus_fee"]) +
-        parseInt(state["security_deposit"]) +
-        parseInt(state["tuition_fee"]) +
-        parseInt(state["college_fee"])
+        (parseInt(state["hostel_fee"]) || 0) +
+        (parseInt(state["excess_fee"]) || 0) +
+        (parseInt(state["vtu_fee"]) || 0) +
+        (parseInt(state["lab_fee"]) || 0) +
+        (parseInt(state["bus_fee"]) || 0) +
+        (parseInt(state["security_deposit"]) || 0) +
+        (parseInt(state["tuition_fee"]) || 0) +
+        (parseInt(state["college_fee"]) || 0)
       ).toString(),
     }));
   }, [
@@ -444,11 +445,29 @@ export default function GenerateRecieptModal({ children }: props) {
               }}
               bg={"white"}
             >
-              <option value={""} selected disabled>Select Payment Mode</option>
+              <option value={""} selected disabled>
+                Select Payment Mode
+              </option>
               <option value={"ONLINE"}>ONLINE</option>
               <option value={"CASH"}>CASH</option>
               <option value={"MISCELLANEOUS"}>Miscellaneous</option>
             </Select>
+            {paymentMode && (
+              <Button
+                colorScheme={"blue"}
+                onClick={() => {
+                  Object.keys(state).forEach((key) => {
+                    setState((prev) => ({
+                      ...prev,
+                      [key]: "",
+                    }));
+                  });
+                }}
+                variant={"ghost"}
+              >
+                Reset
+              </Button>
+            )}
           </HStack>
 
           {paymentMode && (
@@ -496,7 +515,9 @@ export default function GenerateRecieptModal({ children }: props) {
                             }))
                           }
                         >
-                          <option selected disabled value={""}>Select {field.label}</option>
+                          <option selected disabled value={""}>
+                            Select {field.label}
+                          </option>
                           {field.option &&
                             field.option.map((opt) => (
                               <option key={opt.value} value={opt.value}>
@@ -513,28 +534,40 @@ export default function GenerateRecieptModal({ children }: props) {
                           //@ts-ignore
                           min={field?.min}
                           w={"64"}
-                          value={state[field.name]}
-                          onChange={(e) =>{
-                            if(field.type=="number"){
-                              const value = Math.max(0, Math.min(1500000, Number(e.target.value)));
+                          value={
+                            state[field.name] == "" && field.type == "number"
+                              ? 0
+                              : state[field.name]
+                          }
+                          onChange={(e) => {
+                            if (field.type == "number") {
+                              const value = Math.max(
+                                0,
+                                Math.min(1500000, Number(e.target.value))
+                              );
                               setState((prev) => ({
                                 ...prev,
                                 [field.name]: value.toString(),
-                              }))
-                            }else if(field.type=="text" && field.name=="cheque_no"){
-                              const result = e.target.value.replace(/[^a-z0-9A-Z]/gi, '');
+                              }));
+                            } else if (
+                              field.type == "text" &&
+                              field.name == "cheque_no"
+                            ) {
+                              const result = e.target.value.replace(
+                                /[^a-z0-9A-Z]/gi,
+                                ""
+                              );
                               setState((prev) => ({
                                 ...prev,
                                 [field.name]: result,
-                              }))
-                            }else{
+                              }));
+                            } else {
                               setState((prev) => ({
                                 ...prev,
                                 [field.name]: e.target.value,
-                              }))
+                              }));
                             }
-                          }
-                          }
+                          }}
                         />
                       )}
                     </FormControl>

@@ -440,14 +440,14 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
     setState((prev) => ({
       ...prev,
       total: (
-        parseInt(state["hostel_fee"]) +
-        parseInt(state["excess_fee"]) +
-        parseInt(state["vtu_fee"]) +
-        parseInt(state["lab_fee"]) +
-        parseInt(state["bus_fee"]) +
-        parseInt(state["security_deposit"]) +
-        parseInt(state["tuition_fee"]) +
-        parseInt(state["college_fee"])
+        (parseInt(state["hostel_fee"]) || 0) +
+        (parseInt(state["excess_fee"]) || 0) +
+        (parseInt(state["vtu_fee"]) || 0) +
+        (parseInt(state["lab_fee"]) || 0) +
+        (parseInt(state["bus_fee"]) || 0) +
+        (parseInt(state["security_deposit"]) || 0) +
+        (parseInt(state["tuition_fee"]) || 0) +
+        (parseInt(state["college_fee"]) || 0)
       ).toString(),
     }));
   }, [
@@ -512,13 +512,26 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
               }}
               bg={"white"}
             >
-              <option value={""} selected disabled>Select Payment Mode</option>
+              <option value={""} selected disabled>
+                Select Payment Mode
+              </option>
               <option value={"ONLINE"}>ONLINE</option>
               <option value={"CASH"}>CASH</option>
               <option value={"MISCELLANEOUS"}>Miscellaneous</option>
             </Select>
             {paymentMode && (
-              <Button colorScheme={"blue"} onClick={() => {}} variant={"ghost"}>
+              <Button
+                colorScheme={"blue"}
+                onClick={() => {
+                  Object.keys(state).forEach((key) => {
+                    setState((prev) => ({
+                      ...prev,
+                      [key]: "",
+                    }));
+                  });
+                }}
+                variant={"ghost"}
+              >
                 Reset
               </Button>
             )}
@@ -569,7 +582,9 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
                             }))
                           }
                         >
-                          <option value={""} disabled selected>Select {field.label}</option>
+                          <option value={""} disabled selected>
+                            Select {field.label}
+                          </option>
                           {field.option &&
                             field.option.map((opt) => (
                               <option key={opt.value} value={opt.value}>
@@ -587,7 +602,11 @@ export default function GenerateRecieptWithoutUSNModal({ children }: props) {
                           min={field?.min}
                           w={"64"}
                           placeholder={field.type == "date" ? "dd/mm/yyyy" : ""}
-                          value={state[field.name]}
+                          value={
+                            state[field.name] == "" && field.type == "number"
+                              ? 0
+                              : state[field.name]
+                          }
                           onChange={(e) => {
                             if (field.type == "number") {
                               const value = Math.max(
