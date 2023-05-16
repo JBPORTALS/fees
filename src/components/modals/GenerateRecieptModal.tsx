@@ -1,5 +1,8 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
+import "react-datepicker/dist/react-datepicker.css";
+import ReactDatePicker from "react-datepicker";
+import moment from "moment";
 import {
   Button,
   FormControl,
@@ -21,7 +24,17 @@ interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
 }
 
-const formData = [
+interface FormItemProps {
+  name: string;
+  type: string;
+  label: string;
+  value?: string | Date | null | number;
+  onChange?: (e: any) => void;
+  isReadonly?: boolean;
+  option?: { value: string | number; option: string | number }[];
+}
+
+const formData: FormItemProps[] = [
   {
     name: "regno",
     type: "text",
@@ -151,10 +164,11 @@ const formData = [
     name: "chequedate",
     type: "date",
     label: "Payment Date",
+    value:new Date()
   },
 ];
 
-const formDataOnline = [
+const formDataOnline: FormItemProps[] = [
   {
     name: "regno",
     type: "text",
@@ -284,10 +298,11 @@ const formDataOnline = [
     name: "chequedate",
     type: "date",
     label: "Payment Date",
+    value:new Date()
   },
 ];
 
-const formMSCI = [
+const formMSCI: FormItemProps[] = [
   {
     name: "regno",
     label: "USN No.",
@@ -344,12 +359,11 @@ const formMSCI = [
     name: "total_msci",
     label: "Total",
     type: "number",
-    min: "0",
   },
 ];
 
 interface StateProps {
-  [key: string]: string;
+  [key: string]: string | number | Date | null;
 }
 
 export default function GenerateRecieptModal({ children }: props) {
@@ -365,6 +379,7 @@ export default function GenerateRecieptModal({ children }: props) {
     lab_fee: "0",
     vtu_fee: "0",
     total_msci: "0",
+    chequedate: new Date(),
   });
   const [isLoading, setIsLoading] = useState(false);
   const [paymentMode, setPaymentMode] = useState("");
@@ -373,14 +388,14 @@ export default function GenerateRecieptModal({ children }: props) {
     setState((prev) => ({
       ...prev,
       total: (
-        (parseInt(state["hostel_fee"]) || 0) +
-        (parseInt(state["excess_fee"]) || 0) +
-        (parseInt(state["vtu_fee"]) || 0) +
-        (parseInt(state["lab_fee"]) || 0) +
-        (parseInt(state["bus_fee"]) || 0) +
-        (parseInt(state["security_deposit"]) || 0) +
-        (parseInt(state["tuition_fee"]) || 0) +
-        (parseInt(state["college_fee"]) || 0)
+        (parseInt(state["hostel_fee"] as string) || 0) +
+        (parseInt(state["excess_fee"] as string) || 0) +
+        (parseInt(state["vtu_fee"] as string) || 0) +
+        (parseInt(state["lab_fee"] as string) || 0) +
+        (parseInt(state["bus_fee"] as string) || 0) +
+        (parseInt(state["security_deposit"] as string) || 0) +
+        (parseInt(state["tuition_fee"] as string) || 0) +
+        (parseInt(state["college_fee"] as string) || 0)
       ).toString(),
     }));
   }, [
@@ -406,14 +421,25 @@ export default function GenerateRecieptModal({ children }: props) {
       await axios.get(
         process.env.NEXT_PUBLIC_ADMIN_URL +
           `${filename}?${Object.keys(state)
-            .map((key) => `${key}=${state[key]}`)
+            .map(
+              (key) =>
+                `${key}=${
+                  key == "chequedate"
+                    ? moment(state[key]).format("yyyy-MM-DD")
+                    : state[key]
+                }`
+            )
             .join("&")}`
       );
       const link = document.createElement("a");
       link.href =
         process.env.NEXT_PUBLIC_ADMIN_URL +
         `${filename}?${Object.keys(state)
-          .map((key) => `${key}=${state[key]}`)
+          .map((key) => `${key}=${
+            key == "chequedate"
+              ? moment(state[key]).format("yyyy-MM-DD")
+              : state[key]
+          }`)
           .join("&")}`;
       link.setAttribute("download", "Fee Reciept Offline.pdf");
       link.setAttribute("target", "_blank");
@@ -459,7 +485,7 @@ export default function GenerateRecieptModal({ children }: props) {
                   Object.keys(state).forEach((key) => {
                     setState((prev) => ({
                       ...prev,
-                      [key]: "",
+                      [key]: null,
                     }));
                   });
                 }}
@@ -483,97 +509,103 @@ export default function GenerateRecieptModal({ children }: props) {
                 : paymentMode == "MISCELLANEOUS"
                 ? formMSCI
                 : formDataOnline
-              ).map(
-                (
-                  field: {
-                    name: string;
-                    type: string;
-                    label: string;
-                    isReadonly?: boolean;
-                    option?: { value: string; option: string }[];
-                  },
-                  index
-                ) => {
-                  return (
-                    <FormControl
-                      key={index}
-                      display={"flex"}
-                      flexDir={"column"}
-                      w={"full"}
-                    >
-                      <FormLabel>{field.label}</FormLabel>
-                      {field.type == "select" ? (
-                        <Select
-                          boxShadow={"md"}
-                          bg={"white"}
-                          w={"64"}
-                          value={state[field.name]}
-                          onChange={(e) =>
+              ).map((field: FormItemProps, index) => {
+                return (
+                  <FormControl
+                    key={index}
+                    display={"flex"}
+                    flexDir={"column"}
+                    w={"full"}
+                  >
+                    <FormLabel>{field.label}</FormLabel>
+                    {field.type == "select" ? (
+                      <Select
+                        boxShadow={"md"}
+                        bg={"white"}
+                        w={"64"}
+                        value={state[field.name] as string}
+                        onChange={(e) =>
+                          setState((prev) => ({
+                            ...prev,
+                            [field.name]: e.target.value,
+                          }))
+                        }
+                      >
+                        <option value={""} disabled selected>
+                          Select {field.label}
+                        </option>
+                        {field.option &&
+                          field.option.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.option}
+                            </option>
+                          ))}
+                      </Select>
+                    ) : field.type == "date" ? (
+                      <ReactDatePicker
+                        isClearable
+                        className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                        todayButton="Today"
+                        selected={
+                          new Date(state[field.name] as string)
+                        }
+                        dateFormat={"dd/MM/yyyy"}
+                        adjustDateOnChange={true}
+                        onChange={(date) => {
+                          setState((prev) => ({
+                            ...prev,
+                            [field.name]: date,
+                          }));
+                        }}
+                      />
+                    ) : (
+                      <Input
+                        isReadOnly={field.isReadonly}
+                        type={field.type}
+                        boxShadow={"md"}
+                        bg={"white"}
+                        //@ts-ignore
+                        min={field?.min}
+                        w={"64"}
+                        value={
+                          state[field.name] == "" && field.type == "number"
+                            ? 0
+                            : (state[field.name] as string)
+                        }
+                        onChange={(e) => {
+                          if (field.type == "number") {
+                            const value = Math.max(
+                              0,
+                              Math.min(1500000, Number(e.target.value))
+                            );
+                            setState((prev) => ({
+                              ...prev,
+                              [field.name]: value.toString(),
+                            }));
+                          } else if (
+                            field.type == "text" &&
+                            field.name == "cheque_no"
+                          ) {
+                            const result = e.target.value.replace(
+                              /[^a-z0-9A-Z]/gi,
+                              ""
+                            );
+                            setState((prev) => ({
+                              ...prev,
+                              [field.name]: result,
+                            }));
+                          } else {
                             setState((prev) => ({
                               ...prev,
                               [field.name]: e.target.value,
-                            }))
+                            }));
                           }
-                        >
-                          <option selected disabled value={""}>
-                            Select {field.label}
-                          </option>
-                          {field.option &&
-                            field.option.map((opt) => (
-                              <option key={opt.value} value={opt.value}>
-                                {opt.option}
-                              </option>
-                            ))}
-                        </Select>
-                      ) : (
-                        <Input
-                          isReadOnly={field?.isReadonly}
-                          type={field.type}
-                          boxShadow={"md"}
-                          bg={"white"}
-                          //@ts-ignore
-                          min={field?.min}
-                          w={"64"}
-                          value={
-                            state[field.name] == "" && field.type == "number"
-                              ? 0
-                              : state[field.name]
-                          }
-                          onChange={(e) => {
-                            if (field.type == "number") {
-                              const value = Math.max(
-                                0,
-                                Math.min(1500000, Number(e.target.value))
-                              );
-                              setState((prev) => ({
-                                ...prev,
-                                [field.name]: value.toString(),
-                              }));
-                            } else if (
-                              field.type == "text" &&
-                              field.name == "cheque_no"
-                            ) {
-                              const result = e.target.value.replace(
-                                /[^a-z0-9A-Z]/gi,
-                                ""
-                              );
-                              setState((prev) => ({
-                                ...prev,
-                                [field.name]: result,
-                              }));
-                            } else {
-                              setState((prev) => ({
-                                ...prev,
-                                [field.name]: e.target.value,
-                              }));
-                            }
-                          }}
-                        />
-                      )}
-                    </FormControl>
-                  );
-                }
-              )}
+                        }}
+                      />
+                    )}
+                  </FormControl>
+                );
+              })}
             </SimpleGrid>
           )}
         </VStack>

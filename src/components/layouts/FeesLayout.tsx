@@ -54,6 +54,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import ReactDatePicker from "react-datepicker";
 import { InfoCard } from "../ui/utils/InfoCard";
 import ISelect from "../ui/utils/ISelect";
 import { Pie, Bar } from "react-chartjs-2";
@@ -76,7 +77,7 @@ import axios from "axios";
 import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 import GenerateRecieptWithoutUSNModal from "../modals/GenerateRecieptModalWithoutUSN";
-import { Link } from "@chakra-ui/next-js";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -122,8 +123,11 @@ export default function FeesLayout({
   } = useDisclosure();
   const [branch, setBranch] = useState<string | undefined>("All");
   const [filterType, setFilterType] = useState<string>("");
-  const [filterState, setFilterState] = useState({
-    date: "",
+  const [filterState, setFilterState] = useState<{
+    challan_no: string;
+    date: Date | null;
+  }>({
+    date: new Date(),
     challan_no: "0",
   });
   const [filteredData, setFilteredData] = useState<
@@ -162,7 +166,7 @@ export default function FeesLayout({
     setIsLoading(true);
     try {
       const formData = new FormData();
-      formData.append("date", filterState.date);
+      formData.append("date", moment(filterState.date).format("yyyy-MM-DD"));
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL +
           `${
@@ -484,16 +488,18 @@ export default function FeesLayout({
                             filterType == "CHALLAN_DATE" ? (
                             <>
                               <FormLabel>Date</FormLabel>
-                              <Input
-                                value={filterState.date}
-                                onChange={(e) =>
-                                  setFilterState((prev) => ({
-                                    ...prev,
-                                    date: e.target.value,
-                                  }))
-                                }
-                                type={"date"}
-                              />
+                              <ReactDatePicker
+                              className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                              selected={
+                                !filterState.date
+                                  ? new Date()
+                                  : new Date(filterState.date)
+                              }
+                              dateFormat={"dd/MM/yyyy"}
+                              onChange={(date) => {
+                                setFilterState((prev) => ({ ...prev, date:date}));
+                              }}
+                            />
                             </>
                           ) : null}
                         </FormControl>
