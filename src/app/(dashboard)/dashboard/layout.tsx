@@ -1,18 +1,9 @@
-import { redirect } from "next/navigation";
-import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { headers, cookies } from "next/headers";
+"use client";
 
+import FeesLayout from "@/components/layouts/FeesLayout";
 
-export default async function DashboardRootLayout({
-  children,
-}: {
+export default async function DashboardRootLayout(props: {
   children: React.ReactNode;
 }) {
-  const { auth } = createServerComponentSupabaseClient({
-    headers,
-    cookies,
-  });
-  const { data } = await auth.getSession();
-  if (data.session == null) redirect("/signin");
-  return <>{children}</>;
+  return <FeesLayout>{props?.children}</FeesLayout>;
 }
