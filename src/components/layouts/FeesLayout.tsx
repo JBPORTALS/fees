@@ -145,7 +145,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
       <Tabs
-        tabIndex={
+        index={
           pathname == "/dashboard"
             ? 0
             : pathname === "/dashboard/branchview"
