@@ -3,7 +3,7 @@ import { Box, Card, HStack, Heading, Stack, Stat, StatLabel, StatNumber, Tag, VS
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 import {useEffect} from "react"
-import { BranchFee, OverallFee, fetchBranchList } from "@/store/fees.slice";
+import { BranchFee, OverallFee, fetchBranchFeeDetails, fetchBranchList, fetchOverAllFee } from "@/store/fees.slice";
 import { useAppDispatch } from "@/hooks";
 import { Pie} from "react-chartjs-2";
 import {
@@ -38,7 +38,10 @@ export default function Home(){
     (state) => state.fees.branch_fee.data
   ) as BranchFee[];
 
-
+  useEffect(()=>{
+    dispatch(fetchOverAllFee());
+    dispatch(fetchBranchFeeDetails());
+  },[])
 
   return (
     <Stack h={"full"} w={"full"} justifyContent={"start"}>

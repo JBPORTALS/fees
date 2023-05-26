@@ -172,32 +172,21 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
               <Tab
                 as={Link}
                 href={"/dashboard"}
-                style={{ outlineColor: "#4945FF", outlineWidth: 1 }}
-                _selected={{ bg: "#4945FF", color: "#ffff" }}
+                _hover={{textDecoration:"none"}}
               >
                 Overall
               </Tab>
               <Tab
                 as={Link}
                 href={"/dashboard/branchview"}
-                style={{
-                  outlineColor: "#4945FF",
-                  outlineWidth: 1,
-                  marginLeft: "15px",
-                }}
-                _selected={{ bg: "#4945FF", color: "#ffff" }}
+                _hover={{textDecoration:"none"}}
               >
                 Branch Wise
               </Tab>
               <Tab
                 as={Link}
                 href={"/dashboard/classview"}
-                style={{
-                  outlineColor: "#4945FF",
-                  outlineWidth: 1,
-                  marginLeft: "15px",
-                }}
-                _selected={{ bg: "#4945FF", color: "#ffff" }}
+                _hover={{textDecoration:"none"}}
               >
                 Class Wise
               </Tab>
@@ -459,7 +448,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             px={"5"}
             pb={"20"}
             w={"full"}
-            h={"100vh"}
+            h={"83vh"}
             overflowY={"scroll"}
           >
             {children}
