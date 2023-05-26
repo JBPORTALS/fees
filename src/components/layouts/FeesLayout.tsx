@@ -148,7 +148,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
         tabIndex={
           pathname == "/dashboard"
             ? 0
-            : pathname === "/dashboard/classview"
+            : pathname === "/dashboard/branchview"
             ? 1
             : pathname === "/dashboard/classview"
             ? 2
