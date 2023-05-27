@@ -2,7 +2,7 @@
 import ISelect from "@/components/ui/utils/ISelect";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import { BranchFee, YearFee, fetchBranchList, fetchFeeYearView } from "@/store/fees.slice";
+import { BranchFee, YearFee, fetchBranchFeeDetails, fetchBranchList, fetchFeeYearView } from "@/store/fees.slice";
 import {
   Box,
   Card,
@@ -14,7 +14,7 @@ import {
   Tag,
   VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { AiOutlineAim } from "react-icons/ai";
 import { Pie} from "react-chartjs-2";
@@ -52,14 +52,23 @@ export default function BranchViewPage() {
   const yearFeeDetails = useAppSelector(
     (state) => state.fees.year_fee.data
   ) as YearFee[];
+  
+  const fetchYearVeiwMemo = useCallback((Ibranch:string)=>{
+    dispatch(fetchFeeYearView({branch:Ibranch}));
+  },[dispatch])
 
   useEffect(() => {
-    dispatch(fetchFeeYearView({ branch }));
-  }, [branch, dispatch]);
+    fetchYearVeiwMemo(branch)
+  }, [branch]);
   
-  useEffect(()=>{
-    dispatch(fetchBranchList())
-  },[]);
+  const fetchBranchListMemo = useCallback(()=>{
+    dispatch(fetchBranchList());
+    dispatch(fetchBranchFeeDetails());
+  },[dispatch])
+
+  useEffect(() => {
+    fetchBranchListMemo()
+  }, []);
 
   return (
     <>

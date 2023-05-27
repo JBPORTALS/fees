@@ -7,7 +7,7 @@ import {
   fetchFeeDetails,
 } from "@/store/fees.slice";
 import { VStack } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import "ag-grid-community/styles/ag-grid.css"
@@ -25,8 +25,12 @@ export default function BranchViewPage() {
   ) as [];
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
+  const fetchBranchListMemo = useCallback(()=>{
     dispatch(fetchBranchList());
+  },[dispatch])
+
+  useEffect(() => {
+    fetchBranchListMemo()
   }, []);
 
   useEffect(() => {

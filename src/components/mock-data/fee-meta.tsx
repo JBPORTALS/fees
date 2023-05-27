@@ -85,6 +85,63 @@ export const columns = [
   },
 ];
 
+export const SearchColumns = [
+  {
+    field: "sl_no",
+    headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width:"120px"
+  },
+  {
+    field: "challan_id",
+    headerName: "Challan Id",
+    resizable: true,
+    suppressMovable: true,
+    width:"120px"
+  },
+  {
+    field: "usn",
+    headerName: "USN",
+    width:"180px",
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    width:"170px"
+  },
+  {
+    field: "date",
+    headerName: "Date",
+    width:"170px",
+    resizable: true,
+  },
+
+  {
+    field: "particulars",
+    headerName: "Particulars",
+    width:"170px",
+    resizable: true,
+  },
+  {
+    field: "amount_paid1",
+    headerName: "Amount Paid",
+    width:"170px",
+    resizable: true,
+  },
+  {
+    field: "",
+    headerName: "View",
+    width:"110px",
+    cellRenderer: CustomViewButton,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+];
+
 export const columnsForNonUpdate = [
   {
     field: "regno",

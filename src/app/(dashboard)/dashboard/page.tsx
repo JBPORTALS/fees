@@ -2,8 +2,8 @@
 import { Box, Card, HStack, Heading, Stack, Stat, StatLabel, StatNumber, Tag, VStack,  } from "@chakra-ui/react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
-import {useEffect} from "react"
-import { BranchFee, OverallFee, fetchBranchFeeDetails, fetchBranchList, fetchOverAllFee } from "@/store/fees.slice";
+import {useCallback, useEffect} from "react"
+import { BranchFee, OverallFee, fetchBranchFeeDetails, fetchOverAllFee } from "@/store/fees.slice";
 import { useAppDispatch } from "@/hooks";
 import { Pie} from "react-chartjs-2";
 import {
@@ -37,10 +37,14 @@ export default function Home(){
   const branchFeeDetails = useAppSelector(
     (state) => state.fees.branch_fee.data
   ) as BranchFee[];
+  
+  const fetchData = useCallback(()=>{
+    dispatch(fetchBranchFeeDetails());
+    dispatch(fetchOverAllFee());
+  },[dispatch])
 
   useEffect(()=>{
-    dispatch(fetchOverAllFee());
-    dispatch(fetchBranchFeeDetails());
+    fetchData()
   },[])
 
   return (

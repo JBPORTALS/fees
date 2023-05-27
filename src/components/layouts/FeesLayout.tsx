@@ -1,6 +1,6 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import { updateUSN } from "@/store/fees.slice";
+import { fetchBranchList, updateUSN } from "@/store/fees.slice";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -33,7 +33,7 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import {
   AiOutlineFilePdf,
@@ -48,8 +48,9 @@ import axios from "axios";
 import moment from "moment";
 import GenerateRecieptWithoutUSNModal from "../modals/GenerateRecieptModalWithoutUSN";
 import "react-datepicker/dist/react-datepicker.css";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Link } from "@chakra-ui/next-js";
+import { shallowEqual } from "react-redux";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -68,6 +69,25 @@ ChartJS.register(
 export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const dispatch = useAppDispatch();
   const { isOpen, onClose, onOpen } = useDisclosure();
+
+  const [modeFilterState, setModeFilterState] = useState<{
+    branch: string;
+    sem: string;
+    mode: string;
+    fromDate: Date | null;
+    toDate: Date | null;
+  }>({
+    branch: "ALL",
+    sem: "ALL",
+    mode: "ALL",
+    fromDate: new Date(),
+    toDate: new Date(),
+  });
+
+  const branchList = useAppSelector(
+    (state) => state.fees.branch_list.data,
+    shallowEqual
+  ) as [];
 
   const [filterType, setFilterType] = useState<string>("");
   const [filterState, setFilterState] = useState<{
@@ -89,13 +109,21 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
     | null
   >(null);
   const [isloading, setIsLoading] = useState(true);
+  const [isPushing, setIsPushing] = useState(false);
   const isUpdatingUSN = useAppSelector(
     (state) => state.fees.update_usn.pending
   ) as boolean;
   const [usn, setUSN] = useState("");
   const pathname = usePathname();
+  const router = useRouter();
 
-  useEffect(() => console.log(pathname), [pathname]);
+  const fetchBranchListCb = useCallback(() => {
+    dispatch(fetchBranchList());
+  }, []);
+
+  useEffect(() => {
+    fetchBranchListCb();
+  }, [isOpen]);
 
   const onDateFilter = async () => {
     setIsLoading(true);
@@ -142,6 +170,20 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
     setIsLoading(false);
   };
 
+  const onModeFilter = async () => {
+    setIsPushing(true);
+    router.replace(
+      `/dashboard/search?branch=${modeFilterState.branch}&sem=${
+        modeFilterState.sem
+      }&mode=${modeFilterState.mode}&fromDate=${moment(
+        modeFilterState.fromDate
+      ).format("DD-MM-yyyy")}&toDate=${moment(modeFilterState.toDate).format(
+        "DD-MM-yyyy"
+      )}&hash=${new Date().getTime()}`
+    );
+    setIsPushing(false);
+  };
+
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
       <Tabs
@@ -152,46 +194,55 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             ? 1
             : pathname === "/dashboard/classview"
             ? 2
+            : pathname.startsWith("/dashboard/search")
+            ? 3
             : -1
         }
-        colorScheme={"purple"}
-        size={"sm"}
-        variant={"solid-rounded"}
+        colorScheme={"facebook"}
+        size={"lg"}
+        variant={"line"}
         h={"full"}
       >
         <TabList
+          zIndex={"sticky"}
           position={"sticky"}
-          zIndex={100}
           bg={"whiteAlpha.100"}
           backdropBlur={"sm"}
-          py={"4"}
-          className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm"
+          w={"100vw"}
+          className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm flex justify-between"
         >
           <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
               <Tab
                 as={Link}
                 href={"/dashboard"}
-                _hover={{textDecoration:"none"}}
+                _hover={{ textDecoration: "none" }}
               >
                 Overall
               </Tab>
               <Tab
                 as={Link}
                 href={"/dashboard/branchview"}
-                _hover={{textDecoration:"none"}}
+                _hover={{ textDecoration: "none" }}
               >
                 Branch Wise
               </Tab>
               <Tab
                 as={Link}
                 href={"/dashboard/classview"}
-                _hover={{textDecoration:"none"}}
+                _hover={{ textDecoration: "none" }}
               >
                 Class Wise
               </Tab>
+              <Tab
+                hidden
+                _hover={{ textDecoration: "none" }}
+              >
+                Search
+              </Tab>
             </HStack>
-            <HStack>
+
+            <HStack zIndex={"sticky"}>
               <IModal
                 hideBtn
                 size={"2xl"}
@@ -296,7 +347,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                 </VStack>
               </IModal>
               <Menu size={"lg"}>
-                <MenuButton>
+                <MenuButton position={"sticky"} zIndex={"popover"}>
                   <Button
                     as={"view"}
                     size={"sm"}
@@ -307,7 +358,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                     Filter
                   </Button>
                 </MenuButton>
-                <MenuList zIndex={"tooltip"}>
+                <MenuList zIndex={"popover"} pos={"sticky"}>
                   <VStack px={"4"}>
                     <FormControl>
                       <Select onChange={(e) => setFilterType(e.target.value)}>
@@ -361,19 +412,96 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                             </>
                           ) : filterType == "MODE" ? (
                             <>
+                              <FormLabel>Select Branch</FormLabel>
+                              <Select
+                                onChange={(e) =>
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    branch: e.target.value,
+                                  }))
+                                }
+                                value={modeFilterState.branch}
+                              >
+                                <option value={"ALL"}>All</option>
+                                {branchList?.map((value: any, index) => (
+                                  <option
+                                    value={value.branch}
+                                    key={value.branch}
+                                  >
+                                    {value?.branch}
+                                  </option>
+                                ))}
+                              </Select>
+                              <FormLabel>Select Sem</FormLabel>
+                              <Select
+                                onChange={(e) =>
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    sem: e.target.value,
+                                  }))
+                                }
+                                value={modeFilterState.sem}
+                              >
+                                <option value={"ALL"}>All</option>
+                                <option value={"1"}>1</option>
+                                <option value={"2"}>2</option>
+                                <option value={"3"}>3</option>
+                                <option value={"4"}>4</option>
+                                <option value={"5"}>5</option>
+                                <option value={"6"}>6</option>
+                                <option value={"7"}>7</option>
+                                <option value={"8"}>8</option>
+                              </Select>
+                              <FormLabel>Select Mode</FormLabel>
+                              <Select
+                                value={modeFilterState.mode}
+                                onChange={(e) =>
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    mode: e.target.value,
+                                  }))
+                                }
+                              >
+                                <option value={"ALL"}>All</option>
+                                <option value={"ONLINE"}>Online</option>
+                                <option value={" CASH/CHEQUE"}>
+                                  Cash/Cheque
+                                </option>
+                                <option value={"MISCELLANEOUS"}>
+                                  Miscellaneous
+                                </option>
+                                <option value={"BUS FEE"}>Bus Fee</option>
+                                <option value={"EXCESS FEE"}>Excess Fee</option>
+                              </Select>
                               <FormLabel>From Date</FormLabel>
                               <ReactDatePicker
                                 className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                                 selected={
-                                  !filterState.date
+                                  !modeFilterState.fromDate
                                     ? new Date()
-                                    : new Date(filterState.date)
+                                    : new Date(modeFilterState.fromDate)
                                 }
                                 dateFormat={"dd/MM/yyyy"}
                                 onChange={(date) => {
-                                  setFilterState((prev) => ({
+                                  setModeFilterState((prev) => ({
                                     ...prev,
-                                    date: date,
+                                    fromDate: date,
+                                  }));
+                                }}
+                              />
+                              <FormLabel>To Date</FormLabel>
+                              <ReactDatePicker
+                                className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                                selected={
+                                  !modeFilterState.toDate
+                                    ? new Date()
+                                    : new Date(modeFilterState.toDate)
+                                }
+                                dateFormat={"dd/MM/yyyy"}
+                                onChange={(date) => {
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    toDate: date,
                                   }));
                                 }}
                               />
@@ -382,21 +510,27 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         </FormControl>
                         <FormControl>
                           <Button
+                            isLoading={isPushing}
                             onClick={() => {
                               switch (filterType) {
                                 case "CHALLAN":
                                   onChallanFilter();
+                                  onOpen();
                                   break;
                                 case "CHALLAN_DATE":
                                   onDateFilter();
+                                  onOpen();
                                   break;
                                 case "PAID_DATE":
                                   onDateFilter();
+                                  onOpen();
+                                  break;
+                                case "MODE":
+                                  onModeFilter();
                                   break;
                                 default:
                                   return;
                               }
-                              onOpen();
                             }}
                             colorScheme={"blue"}
                             rightIcon={
@@ -443,7 +577,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             </HStack>
           </HStack>
         </TabList>
-        <TabPanels zIndex={"unset"} px={"0"}>
+        <TabPanels px={"0"} h={"full"}>
           <TabPanel
             px={"5"}
             pb={"20"}
@@ -453,8 +587,11 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
           >
             {children}
           </TabPanel>
-          <TabPanel px={0}>{children}</TabPanel>
+          <TabPanel px={0} w={"100vw"}>{children}</TabPanel>
           <TabPanel px={0} w={"100vw"} h={"88vh"}>
+            {children}
+          </TabPanel>
+          <TabPanel px={0} w={"100vw"} h={"88vh"} py={"0"}>
             {children}
           </TabPanel>
         </TabPanels>
