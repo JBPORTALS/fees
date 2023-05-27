@@ -588,7 +588,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             {children}
           </TabPanel>
           <TabPanel px={0} w={"100vw"}>{children}</TabPanel>
-          <TabPanel px={0} w={"100vw"} h={"88vh"}>
+          <TabPanel px={0} py={"0"} w={"100vw"} h={"88vh"}>
             {children}
           </TabPanel>
           <TabPanel px={0} w={"100vw"} h={"88vh"} py={"0"}>

@@ -40,7 +40,7 @@ export default function BranchViewPage() {
 
   return (
     <>
-      <div className="w-full h-full flex border-b py-2 space-x-3 px-5">
+      <div className="w-full flex border-b py-3 space-x-3 px-5">
         <ISelect
           placeHolder="Branch"
           value={state.branch}
