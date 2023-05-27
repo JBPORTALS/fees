@@ -1,22 +1,21 @@
 "use client";
 
 import "../../../globals.css";
-import FeesLayout from "@/components/layouts/FeesLayout";
 import { useAppDispatch } from "@/hooks";
-import { fetchBranchFeeDetails, fetchOverAllFee } from "@/store/fees.slice";
+import { fetchBranchFeeDetails, fetchBranchList } from "@/store/fees.slice";
 import { useCallback, useEffect } from "react";
 
 export default async function DashboardRootLayout(props: {
   children: React.ReactNode;
 }) {
   const dispatch = useAppDispatch();
-  const fetchData = useCallback(() => {
+  const fetchBranchListMemo = useCallback(()=>{
+    dispatch(fetchBranchList());
     dispatch(fetchBranchFeeDetails());
-    dispatch(fetchOverAllFee());
-  }, [dispatch]);
+  },[dispatch])
 
   useEffect(() => {
-    fetchData();
+    fetchBranchListMemo()
   }, []);
   return <>{props?.children}</>;
 }

@@ -61,14 +61,6 @@ export default function BranchViewPage() {
     fetchYearVeiwMemo(branch)
   }, [branch]);
   
-  const fetchBranchListMemo = useCallback(()=>{
-    dispatch(fetchBranchList());
-    dispatch(fetchBranchFeeDetails());
-  },[dispatch])
-
-  useEffect(() => {
-    fetchBranchListMemo()
-  }, []);
 
   return (
     <>

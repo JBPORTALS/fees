@@ -45,7 +45,7 @@ export const fetchBranchFeeDetails = createAsyncThunk<
   }
 >(
   "/fees/fetchbranchview",
-  async (_payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async (_payload, { fulfillWithValue, rejectWithValue }) => {
     var data;
     try {
       const response = await axios({

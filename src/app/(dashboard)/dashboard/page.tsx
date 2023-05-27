@@ -30,22 +30,12 @@ ChartJS.register(
 
 
 export default function Home(){
-  const dispatch = useAppDispatch();
   const overallFeeDetails = useAppSelector(
     (state) => state.fees.overall_fee.data
   ) as OverallFee[];
   const branchFeeDetails = useAppSelector(
     (state) => state.fees.branch_fee.data
   ) as BranchFee[];
-  
-  const fetchData = useCallback(()=>{
-    dispatch(fetchBranchFeeDetails());
-    dispatch(fetchOverAllFee());
-  },[dispatch])
-
-  useEffect(()=>{
-    fetchData()
-  },[])
 
   return (
     <Stack h={"full"} w={"full"} justifyContent={"start"}>

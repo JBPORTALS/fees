@@ -24,15 +24,6 @@ export default function BranchViewPage() {
     (state) => state.fees.branch_list.data
   ) as [];
   const dispatch = useAppDispatch();
-
-  const fetchBranchListMemo = useCallback(()=>{
-    dispatch(fetchBranchList());
-  },[dispatch])
-
-  useEffect(() => {
-    fetchBranchListMemo()
-  }, []);
-
   useEffect(() => {
     if (state.branch && state.year)
       dispatch(fetchFeeDetails({ branch: state.branch, year: state.year }));
