@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { headers, cookies } from "next/headers";
 import HeaderLayoutProvider from "./HeaderLayout";
+import "../globals.css"
 
 export default async function DashboardRootLayout(props: {
   children: React.ReactNode;
