@@ -1,6 +1,7 @@
 import { Tooltip } from "@chakra-ui/react";
 import { AiOutlineEye } from "react-icons/ai";
 import ViewFeeDetailsModal from "../drawers/ViewFeeDetailsModal";
+import ViewChallanDetails from "../drawers/ViewChallanDetails";
 
 const CustomViewButton = (data: any) => {
   return (
@@ -8,6 +9,19 @@ const CustomViewButton = (data: any) => {
       <ViewFeeDetailsModal regno={data.value.regno}>
         {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
       </ViewFeeDetailsModal>
+    </div>
+  );
+};
+
+const CustomViewChallanButton = (data: any) => {
+  return (
+    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
+      <ViewChallanDetails
+        regno={data.value.challan_id}
+        challan_id={data.value.challan_id}
+      >
+        {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
+      </ViewChallanDetails>
     </div>
   );
 };
@@ -49,26 +63,26 @@ export const columns = [
   {
     field: "total1",
     headerName: "Total Fee",
-    width:"180px",
+    width: "180px",
   },
   {
     field: "paid1",
     headerName: "Paid",
-    width:"170px"
+    width: "170px",
   },
   {
     field: "remaining1",
     headerName: "Balance",
-    width:"170px",
+    width: "170px",
     resizable: true,
   },
-  
+
   {
     field: "status",
     headerName: "Status",
     resizable: true,
     filter: true,
-    width:"120px",
+    width: "120px",
     cellRenderer: StatusView,
     valueGetter: (params: any) => {
       return params.data.status;
@@ -77,7 +91,7 @@ export const columns = [
   {
     field: "",
     headerName: "View",
-    width:"110px",
+    width: "110px",
     cellRenderer: CustomViewButton,
     valueGetter: (params: any) => {
       return params.data;
@@ -93,49 +107,49 @@ export const SearchColumns = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width:"120px"
+    width: "120px",
   },
   {
     field: "challan_id",
     headerName: "Challan Id",
     resizable: true,
     suppressMovable: true,
-    width:"120px"
+    width: "120px",
   },
   {
     field: "usn",
     headerName: "USN",
-    width:"180px",
+    width: "180px",
   },
   {
     field: "name",
     headerName: "Name",
-    width:"170px"
+    width: "170px",
   },
   {
     field: "date",
     headerName: "Date",
-    width:"170px",
+    width: "170px",
     resizable: true,
   },
 
   {
     field: "particulars",
     headerName: "Particulars",
-    width:"170px",
+    width: "170px",
     resizable: true,
   },
   {
     field: "amount_paid1",
     headerName: "Amount Paid",
-    width:"170px",
+    width: "170px",
     resizable: true,
   },
   {
     field: "",
     headerName: "View",
-    width:"110px",
-    cellRenderer: CustomViewButton,
+    width: "110px",
+    cellRenderer: CustomViewChallanButton,
     valueGetter: (params: any) => {
       return params.data;
     },
@@ -160,21 +174,21 @@ export const columnsForNonUpdate = [
   {
     field: "paid1",
     headerName: "Paid",
-    width:"170px"
+    width: "170px",
   },
   {
     field: "remaining1",
     headerName: "Balance",
-    width:"170px",
+    width: "170px",
     resizable: true,
   },
-  
+
   {
     field: "status",
     headerName: "Status",
     resizable: true,
     filter: true,
-    width:"120px",
+    width: "120px",
     cellRenderer: StatusView,
     valueGetter: (params: any) => {
       return params.data.status;
@@ -183,7 +197,7 @@ export const columnsForNonUpdate = [
   {
     field: "",
     headerName: "View",
-    width:"110px",
+    width: "110px",
     cellRenderer: CustomViewButton,
     valueGetter: (params: any) => {
       return params.data;
