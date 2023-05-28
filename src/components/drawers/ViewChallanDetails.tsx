@@ -15,6 +15,7 @@ import {
   Select,
   Tag,
   TagLabel,
+  TagLeftIcon,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -92,7 +93,7 @@ export default function ViewChallanDetails({
         .post(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php", formData)
         .then(async (res: any) => {
           toast.success(res.data.msg);
-          await findChallan()
+          await findChallan();
           setIsChecking(false);
         })
         .catch((e) => {
@@ -199,14 +200,17 @@ export default function ViewChallanDetails({
                 pl={"0"}
                 size={"lg"}
                 borderRadius={"full"}
-                colorScheme="facebook"
+                colorScheme="whatsapp"
               >
                 <Tag
                   size={"lg"}
                   borderRadius={"full"}
-                  colorScheme="facebook"
+                  colorScheme="whatsapp"
                   variant={"solid"}
                 >
+                  <TagLeftIcon fontSize={"2xl"}>
+                    <AiOutlineCheckCircle/>
+                  </TagLeftIcon>
                   <TagLabel>Amount Paid</TagLabel>
                 </Tag>
                 <TagLabel ml={"2"}>{challanState?.amount_paid}</TagLabel>
