@@ -2,6 +2,7 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import {
   fetchFeeDetails,
+  fetchSearchByMode,
   fetchSelectedFeeDeatails,
   SelectedFee,
   updateFeeDetail,
@@ -29,6 +30,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import {
   AiOutlineCheckCircle,
+  AiOutlineDelete,
   AiOutlineFilePdf,
   AiOutlineFileProtect,
 } from "react-icons/ai";
@@ -47,8 +49,9 @@ interface props {
 }
 
 export default function ViewChallanDetails({ children, challan_id }: props) {
-  const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const [isChecking, setIsChecking] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [usn, setUsn] = useState("");
   const [challanState, setChallanState] = useState<
     | {
@@ -65,14 +68,15 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
     | undefined
   >(undefined);
   const params = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-  const onOpen = () => {
-    onModalOpen();
-  };
+  const dispatch = useAppDispatch();
+  const branch = params.get("branch");
+  const sem = params.get("sem");
+  const toDate = params.get("toDate");
+  const fromDate = params.get("fromDate");
+  const mode = params.get("mode");
 
   const findChallan = useCallback(
-    async (param_usn?: string) => {
+    async () => {
       setIsChecking(true);
       try {
         const formData = new FormData();
@@ -99,7 +103,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
     isOpen && findChallan();
   }, [isOpen]);
 
-  const submit = () => {
+  const submit = useCallback(() => {
     if (usn) {
       setIsChecking(true);
       const formData = new FormData();
@@ -109,16 +113,54 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
         .post(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php", formData)
         .then(async (res: any) => {
           toast.success(res.data.msg);
-          await findChallan(usn);
+          await findChallan();
           setIsChecking(false);
-          router.refresh()
+          if (branch && mode && fromDate && toDate && sem)
+            dispatch(
+              fetchSearchByMode({
+                branch,
+                mode,
+                fromDate,
+                toDate,
+                sem,
+              })
+            );
         })
         .catch((e) => {
           toast.error(e.response?.data?.msg);
           setIsChecking(false);
         });
     }
-  };
+  }, [usn, challan_id]);
+
+  const onDelete = useCallback(() => {
+    if (challan_id) {
+      setIsDeleting(true);
+      const formData = new FormData();
+      formData.append("challan_id", challan_id);
+      axios
+        .post(process.env.NEXT_PUBLIC_ADMIN_URL + "feedeletechallan.php", formData)
+        .then(async (res: any) => {
+          toast.success(res.data.msg);
+          await findChallan();
+          setIsDeleting(false);
+          if (branch && mode && fromDate && toDate && sem)
+            dispatch(
+              fetchSearchByMode({
+                branch,
+                mode,
+                fromDate,
+                toDate,
+                sem,
+              })
+            );
+        })
+        .catch((e) => {
+          toast.error(e.response?.data?.msg);
+          setIsDeleting(false);
+        });
+    }
+  }, [usn, challan_id]);
 
   return (
     <>
@@ -290,6 +332,15 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
               leftIcon={<AiOutlineFilePdf className={"text-xl"} />}
             >
               Download Challan
+            </Button>
+            <Button
+              w={"full"}
+              colorScheme="red"
+              isLoading={isDeleting}
+              onClick={onDelete}
+              leftIcon={<AiOutlineDelete className={"text-xl"} />}
+            >
+              Delete Challan
             </Button>
           </VStack>
         </VStack>
