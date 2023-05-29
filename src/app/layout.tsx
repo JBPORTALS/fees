@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} overflow-hidden`}>
+      <body className={`${inter.className} overflow-hidden h-[100vh] w-[100vw]`}>
       <SupabaseProvider>
         <Providers>{children}</Providers>
       </SupabaseProvider>

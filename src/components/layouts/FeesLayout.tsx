@@ -1,15 +1,6 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import {
-  BranchFee,
-  fetchBranchFeeDetails,
-  fetchFeeDetails,
-  fetchFeeYearView,
-  fetchOverAllFee,
-  OverallFee,
-  updateUSN,
-  YearFee,
-} from "@/store/fees.slice";
+import { fetchBranchList, updateUSN } from "@/store/fees.slice";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -21,29 +12,18 @@ import {
   ArcElement,
 } from "chart.js";
 import {
-  Avatar,
   Box,
   Button,
-  Card,
   FormControl,
   FormLabel,
   Heading,
   HStack,
-  IconButton,
   Input,
   Menu,
   MenuButton,
   MenuList,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Select,
   Skeleton,
-  Stat,
-  StatLabel,
-  StatNumber,
   Tab,
   TabList,
   TabPanel,
@@ -53,35 +33,27 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
-import { InfoCard } from "../ui/utils/InfoCard";
-import ISelect from "../ui/utils/ISelect";
-import { Pie, Bar } from "react-chartjs-2";
 import {
-  AiOutlineAim,
-  AiOutlineDollarCircle,
-  AiOutlineFieldTime,
   AiOutlineFilePdf,
   AiOutlineFilter,
-  AiOutlineLogout,
-  AiOutlineMail,
   AiOutlineSearch,
   AiOutlineSend,
-  AiOutlineUser,
 } from "react-icons/ai";
 import GenerateRecieptModal from "../modals/GenerateRecieptModal";
 import IModal from "../ui/utils/IModal";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 import GenerateRecieptWithoutUSNModal from "../modals/GenerateRecieptModalWithoutUSN";
 import "react-datepicker/dist/react-datepicker.css";
+import { usePathname, useRouter } from "next/navigation";
+import { Link } from "@chakra-ui/next-js";
+import { shallowEqual } from "react-redux";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
-  isFor: "admin" | "coadmin" | "staff";
 }
 
 ChartJS.register(
@@ -94,34 +66,29 @@ ChartJS.register(
   ArcElement
 );
 
-export default function FeesLayout({
-  children,
-  isFor = "admin",
-}: AttendanceLayoutProps) {
+export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const dispatch = useAppDispatch();
-  const branchFeeDetails = useAppSelector(
-    (state) => state.fees.branch_fee.data
-  ) as BranchFee[];
-  const yearFeeDetails = useAppSelector(
-    (state) => state.fees.year_fee.data
-  ) as YearFee[];
-  const branch_list = useAppSelector(
-    (state) => state.fees.branch_list.data
-  ) as [];
-  const overallFeeDetails = useAppSelector(
-    (state) => state.fees.overall_fee.data
-  ) as OverallFee[];
-  const [state, setState] = useState({
-    branch: "",
-    year: "",
-  });
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const {
-    isOpen: isProfileOpen,
-    onClose: onProfileClose,
-    onOpen: onProfileOpen,
-  } = useDisclosure();
-  const [branch, setBranch] = useState<string | undefined>("All");
+
+  const [modeFilterState, setModeFilterState] = useState<{
+    branch: string;
+    sem: string;
+    mode: string;
+    fromDate: Date | null;
+    toDate: Date | null;
+  }>({
+    branch: "ALL",
+    sem: "ALL",
+    mode: "ALL",
+    fromDate: new Date(),
+    toDate: new Date(),
+  });
+
+  const branchList = useAppSelector(
+    (state) => state.fees.branch_list.data,
+    shallowEqual
+  ) as [];
+
   const [filterType, setFilterType] = useState<string>("");
   const [filterState, setFilterState] = useState<{
     challan_no: string;
@@ -142,25 +109,21 @@ export default function FeesLayout({
     | null
   >(null);
   const [isloading, setIsLoading] = useState(true);
+  const [isPushing, setIsPushing] = useState(false);
   const isUpdatingUSN = useAppSelector(
     (state) => state.fees.update_usn.pending
   ) as boolean;
   const [usn, setUSN] = useState("");
-  const { user, supabase } = useSupabase();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const fetchBranchListCb = useCallback(() => {
+    dispatch(fetchBranchList());
+  }, []);
 
   useEffect(() => {
-    if (state.branch && state.year)
-      dispatch(fetchFeeDetails({ branch: state.branch, year: state.year }));
-
-    dispatch(fetchBranchFeeDetails());
-    dispatch(fetchOverAllFee());
-  }, [state.branch, state.year, dispatch]);
-
-  useEffect(() => {
-    branch && dispatch(fetchFeeYearView({ branch }));
-  }, [branch, dispatch]);
-
-  const onSubmitSendMessage = async () => {};
+    fetchBranchListCb();
+  }, [isOpen]);
 
   const onDateFilter = async () => {
     setIsLoading(true);
@@ -207,137 +170,79 @@ export default function FeesLayout({
     setIsLoading(false);
   };
 
+  const onModeFilter = async () => {
+    setIsPushing(true);
+    router.replace(
+      `/dashboard/search?branch=${modeFilterState.branch}&sem=${
+        modeFilterState.sem
+      }&mode=${modeFilterState.mode}&fromDate=${moment(
+        modeFilterState.fromDate
+      ).format("DD-MM-yyyy")}&toDate=${moment(modeFilterState.toDate).format(
+        "DD-MM-yyyy"
+      )}&hash=${new Date().getTime()}`
+    );
+    setIsPushing(false);
+  };
+
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
-      <HStack
-        w={"full"}
-        zIndex={"banner"}
-        px={"5"}
-        justifyContent={"space-between"}
-        h={"14"}
-        position={"fixed"}
-        top={"0"}
-        left={"0"}
-        className="bg-secondary border-b border-b-lightgray"
-      >
-        <HStack color={"blue.600"}>
-          <AiOutlineDollarCircle className="text-3xl" />
-          <Heading size={"md"}>Fee Manager</Heading>
-        </HStack>
-        <HStack>
-        {/* <Box mr={"3"}>
-          <Link fontSize={"md"} href={"/dashboard/salary"}>Salary Manager</Link>
-        </Box> */}
-          <HStack>
-            <HStack>
-              <Heading size={"md"}>{user?.username}</Heading>
-              <IconButton
-                onClick={onProfileOpen}
-                variant={"unstyled"}
-                aria-label="avatar"
-              >
-                <Avatar size={"sm"}></Avatar>
-              </IconButton>
-            </HStack>
-            <Modal isOpen={isProfileOpen} size={"sm"} onClose={onProfileClose}>
-              <ModalOverlay className="backdrop-blur-sm" />
-              <ModalContent
-                position={"relative"}
-                zIndex={"toast"}
-                backdropBlur={"2xl"}
-                shadow={"2xl"}
-              >
-                <ModalHeader fontWeight="semibold" fontSize={"lg"}>
-                  Profile Info
-                </ModalHeader>
-                <ModalBody>
-                  <HStack spacing={"3"} py={"2"}>
-                    <AiOutlineUser className="text-2xl" />
-                    <Heading size={"sm"} fontWeight={"normal"}>
-                      {user?.username}
-                    </Heading>
-                  </HStack>
-                  <HStack spacing={"3"} py={"2"}>
-                    <AiOutlineMail className="text-2xl" />
-                    <Heading size={"sm"} fontWeight={"normal"}>
-                      {user?.email}
-                    </Heading>
-                  </HStack>
-                  <HStack spacing={"3"} py={"2"}>
-                    <AiOutlineFieldTime className="text-2xl" />
-                    <Heading size={"sm"} fontWeight={"normal"}>
-                      {moment(user?.last_login_at).format(
-                        "MMMM Do YYYY, h:mm a"
-                      )}
-                    </Heading>
-                  </HStack>
-                  <HStack spacing={"3"} py={"2"}>
-                    <Button
-                      leftIcon={<AiOutlineLogout />}
-                      onClick={async () => {
-                        await supabase
-                          .from("profiles")
-                          .update({ last_login_at: new Date(Date.now()) })
-                          .eq("id", user?.session?.user.id);
-                        await supabase.auth.signOut();
-                      }}
-                      colorScheme="facebook"
-                      w={"full"}
-                    >
-                      SignOut
-                    </Button>
-                  </HStack>
-                </ModalBody>
-              </ModalContent>
-            </Modal>
-          </HStack>
-        </HStack>
-      </HStack>
       <Tabs
-        colorScheme={"purple"}
-        size={"sm"}
-        variant={"solid-rounded"}
+        index={
+          pathname == "/dashboard"
+            ? 0
+            : pathname === "/dashboard/branchview"
+            ? 1
+            : pathname === "/dashboard/classview"
+            ? 2
+            : pathname.startsWith("/dashboard/search")
+            ? 3
+            : -1
+        }
+        colorScheme={"facebook"}
+        size={"lg"}
+        variant={"line"}
         h={"full"}
-        pt={"14"}
       >
         <TabList
+          zIndex={"sticky"}
           position={"sticky"}
-          zIndex={100}
           bg={"whiteAlpha.100"}
           backdropBlur={"sm"}
-          py={"4"}
-          className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm"
+          w={"100vw"}
+          className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm flex justify-between"
         >
           <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
               <Tab
-                style={{ outlineColor: "#4945FF", outlineWidth: 1 }}
-                _selected={{ bg: "#4945FF", color: "#ffff" }}
+                as={Link}
+                href={"/dashboard"}
+                _hover={{ textDecoration: "none" }}
               >
                 Overall
               </Tab>
               <Tab
-                style={{
-                  outlineColor: "#4945FF",
-                  outlineWidth: 1,
-                  marginLeft: "15px",
-                }}
-                _selected={{ bg: "#4945FF", color: "#ffff" }}
+                as={Link}
+                href={"/dashboard/branchview"}
+                _hover={{ textDecoration: "none" }}
               >
                 Branch Wise
               </Tab>
               <Tab
-                style={{
-                  outlineColor: "#4945FF",
-                  outlineWidth: 1,
-                  marginLeft: "15px",
-                }}
-                _selected={{ bg: "#4945FF", color: "#ffff" }}
+                as={Link}
+                href={"/dashboard/classview"}
+                _hover={{ textDecoration: "none" }}
               >
                 Class Wise
               </Tab>
+              <Tab
+                hidden
+                _hover={{ textDecoration: "none" }}
+              >
+                Search
+              </Tab>
             </HStack>
-            <HStack>
+
+            <HStack zIndex={"sticky"}>
               <IModal
                 hideBtn
                 size={"2xl"}
@@ -442,7 +347,7 @@ export default function FeesLayout({
                 </VStack>
               </IModal>
               <Menu size={"lg"}>
-                <MenuButton>
+                <MenuButton position={"sticky"} zIndex={"popover"}>
                   <Button
                     as={"view"}
                     size={"sm"}
@@ -453,7 +358,7 @@ export default function FeesLayout({
                     Filter
                   </Button>
                 </MenuButton>
-                <MenuList zIndex={"tooltip"}>
+                <MenuList zIndex={"popover"} pos={"sticky"}>
                   <VStack px={"4"}>
                     <FormControl>
                       <Select onChange={(e) => setFilterType(e.target.value)}>
@@ -461,6 +366,7 @@ export default function FeesLayout({
                         <option value={"CHALLAN_DATE"}>By Challan Date</option>
                         <option value={"PAID_DATE"}>By Paid Date</option>
                         <option value={"CHALLAN"}>By Challan No.</option>
+                        <option value={"MODE"}>By Mode</option>
                       </Select>
                     </FormControl>
                     {filterType && (
@@ -489,37 +395,142 @@ export default function FeesLayout({
                             <>
                               <FormLabel>Date</FormLabel>
                               <ReactDatePicker
-                              className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                              selected={
-                                !filterState.date
-                                  ? new Date()
-                                  : new Date(filterState.date)
-                              }
-                              dateFormat={"dd/MM/yyyy"}
-                              onChange={(date) => {
-                                setFilterState((prev) => ({ ...prev, date:date}));
-                              }}
-                            />
+                                className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                                selected={
+                                  !filterState.date
+                                    ? new Date()
+                                    : new Date(filterState.date)
+                                }
+                                dateFormat={"dd/MM/yyyy"}
+                                onChange={(date) => {
+                                  setFilterState((prev) => ({
+                                    ...prev,
+                                    date: date,
+                                  }));
+                                }}
+                              />
+                            </>
+                          ) : filterType == "MODE" ? (
+                            <>
+                              <FormLabel>Select Branch</FormLabel>
+                              <Select
+                                onChange={(e) =>
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    branch: e.target.value,
+                                  }))
+                                }
+                                value={modeFilterState.branch}
+                              >
+                                <option value={"ALL"}>All</option>
+                                {branchList?.map((value: any, index) => (
+                                  <option
+                                    value={value.branch}
+                                    key={value.branch}
+                                  >
+                                    {value?.branch}
+                                  </option>
+                                ))}
+                              </Select>
+                              <FormLabel>Select Sem</FormLabel>
+                              <Select
+                                onChange={(e) =>
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    sem: e.target.value,
+                                  }))
+                                }
+                                value={modeFilterState.sem}
+                              >
+                                <option value={"ALL"}>All</option>
+                                <option value={"1"}>1</option>
+                                <option value={"2"}>2</option>
+                                <option value={"3"}>3</option>
+                                <option value={"4"}>4</option>
+                                <option value={"5"}>5</option>
+                                <option value={"6"}>6</option>
+                                <option value={"7"}>7</option>
+                                <option value={"8"}>8</option>
+                              </Select>
+                              <FormLabel>Select Mode</FormLabel>
+                              <Select
+                                value={modeFilterState.mode}
+                                onChange={(e) =>
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    mode: e.target.value,
+                                  }))
+                                }
+                              >
+                                <option value={"ALL"}>All</option>
+                                <option value={"ONLINE"}>Online</option>
+                                <option value={" CASH/CHEQUE"}>
+                                  Cash/Cheque
+                                </option>
+                                <option value={"MISCELLANEOUS"}>
+                                  Miscellaneous
+                                </option>
+                                <option value={"BUS FEE"}>Bus Fee</option>
+                                <option value={"EXCESS FEE"}>Excess Fee</option>
+                              </Select>
+                              <FormLabel>From Date</FormLabel>
+                              <ReactDatePicker
+                                className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                                selected={
+                                  !modeFilterState.fromDate
+                                    ? new Date()
+                                    : new Date(modeFilterState.fromDate)
+                                }
+                                dateFormat={"dd/MM/yyyy"}
+                                onChange={(date) => {
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    fromDate: date,
+                                  }));
+                                }}
+                              />
+                              <FormLabel>To Date</FormLabel>
+                              <ReactDatePicker
+                                className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
+                                selected={
+                                  !modeFilterState.toDate
+                                    ? new Date()
+                                    : new Date(modeFilterState.toDate)
+                                }
+                                dateFormat={"dd/MM/yyyy"}
+                                onChange={(date) => {
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    toDate: date,
+                                  }));
+                                }}
+                              />
                             </>
                           ) : null}
                         </FormControl>
                         <FormControl>
                           <Button
+                            isLoading={isPushing}
                             onClick={() => {
                               switch (filterType) {
                                 case "CHALLAN":
                                   onChallanFilter();
+                                  onOpen();
                                   break;
                                 case "CHALLAN_DATE":
                                   onDateFilter();
+                                  onOpen();
                                   break;
                                 case "PAID_DATE":
                                   onDateFilter();
+                                  onOpen();
+                                  break;
+                                case "MODE":
+                                  onModeFilter();
                                   break;
                                 default:
                                   return;
                               }
-                              onOpen();
                             }}
                             colorScheme={"blue"}
                             rightIcon={
@@ -535,38 +546,6 @@ export default function FeesLayout({
                   </VStack>
                 </MenuList>
               </Menu>
-              {state.branch && state.year && (
-                <Menu size={"lg"}>
-                  <MenuButton>
-                    <Button
-                      as={"view"}
-                      size={"sm"}
-                      shadow={"md"}
-                      leftIcon={<AiOutlineSend className={"text-xl"} />}
-                      colorScheme={"orange"}
-                    >
-                      Notify Balance Fee Students
-                    </Button>
-                  </MenuButton>
-                  <MenuList position={"absolute"} zIndex={"tooltip"}>
-                    <VStack px={"4"}>
-                      <FormControl>
-                        <FormLabel>Final date to pay</FormLabel>
-                        <Input type={"date"} />
-                      </FormControl>
-                      <FormControl>
-                        <Button
-                          colorScheme={"blue"}
-                          rightIcon={<AiOutlineSend className={"text-lg"} />}
-                          w={"full"}
-                        >
-                          Send
-                        </Button>
-                      </FormControl>
-                    </VStack>
-                  </MenuList>
-                </Menu>
-              )}
               <GenerateRecieptWithoutUSNModal>
                 {({ onOpen }) => (
                   <Button
@@ -598,432 +577,22 @@ export default function FeesLayout({
             </HStack>
           </HStack>
         </TabList>
-        <TabPanels zIndex={"unset"} px={"0"}>
+        <TabPanels px={"0"} h={"full"}>
           <TabPanel
             px={"5"}
             pb={"20"}
             w={"full"}
-            h={"100vh"}
+            h={"83vh"}
             overflowY={"scroll"}
           >
-            <VStack alignItems={"start"} h={"fit-content"}>
-              <Heading size={"lg"}>Grand Total</Heading>
-              <HStack>
-                <Card
-                  style={{ borderWidth: 2, borderColor: "white" }}
-                  w={"fit-content"}
-                  p={"10"}
-                  borderWidth={"2"}
-                  borderColor={"purple.700"}
-                  className={
-                    "bg-gradient-to-tr from-gray-900 via-purple-900 to-violet-600"
-                  }
-                >
-                  <Stat
-                    as={"div"}
-                    borderWidth={"1"}
-                    borderColor={"purple.700"}
-                    h={"full"}
-                    w={"full"}
-                    className={"backdrop-blur-lg bg-[rgba(255,255,255,0.8)"}
-                    display={"flex"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                  >
-                    <StatLabel py={"2"} color={"white"} fontSize={"lg"}>
-                      Amount
-                    </StatLabel>
-                    <StatNumber fontSize={"3xl"} className={"text-white"}>
-                      ₹ {overallFeeDetails[0]?.total}
-                    </StatNumber>
-                  </Stat>
-                </Card>
-                <Card
-                  style={{ borderWidth: 2, borderColor: "white" }}
-                  w={"fit-content"}
-                  p={"10"}
-                  className={"bg-gradient-to-tr to-green-500 from-green-900"}
-                >
-                  <Stat
-                    h={"full"}
-                    w={"full"}
-                    display={"flex"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                  >
-                    <StatLabel py={"2"} color={"white"} fontSize={"lg"}>
-                      Amount Paid
-                    </StatLabel>
-                    <StatNumber fontSize={"3xl"} className={"text-white"}>
-                      ₹ {overallFeeDetails[0]?.paid}
-                    </StatNumber>
-                  </Stat>
-                </Card>
-                <Card
-                  style={{ borderWidth: 2, borderColor: "white" }}
-                  width={"190px"}
-                  className="bg-gradient-to-tr to-red-400 from-red-900"
-                  w={"fit-content"}
-                  p={"10"}
-                >
-                  <Stat
-                    h={"full"}
-                    w={"full"}
-                    display={"flex"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                  >
-                    <StatLabel py={"2"} fontSize={"lg"} color={"white"}>
-                      Amount To Be Paid
-                    </StatLabel>
-                    <StatNumber fontSize={"3xl"} className={"text-white"}>
-                      ₹ {overallFeeDetails[0]?.remaining}
-                    </StatNumber>
-                  </Stat>
-                </Card>
-              </HStack>
-            </VStack>
-            <VStack py={"5"} w={"full"} alignItems={"start"}>
-              <Heading size={"lg"}>All Branches</Heading>
-              <HStack
-                py={"5"}
-                pb={"12"}
-                flexWrap={"wrap"}
-                spacing={0}
-                gap={"3"}
-                justifyContent={"center"}
-              >
-                {branchFeeDetails.map((branchFee) => {
-                  return (
-                    <Card
-                      key={branchFee.branch}
-                      w={"580px"}
-                      shadow={"lg"}
-                      style={{ borderWidth: 1, borderColor: "#dddd" }}
-                      px={"10"}
-                      py={"5"}
-                      display={"flex"}
-                    >
-                      <Stat
-                        h={"full"}
-                        w={"full"}
-                        display={"flex"}
-                        flexDirection={"column"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                      >
-                        <HStack>
-                          <VStack>
-                            <VStack py={"3"}>
-                              <h1 className="text-xl font-medium text-black">
-                                {branchFee.branch}
-                              </h1>{" "}
-                              <Tag
-                                variant={"solid"}
-                                size={"lg"}
-                                rounded={"full"}
-                                colorScheme={"blue"}
-                              >
-                                {branchFee.total_students} Students
-                              </Tag>
-                            </VStack>
-                            <VStack w={"full"} justifyContent={"center"}>
-                              <StatLabel
-                                py={"2"}
-                                alignItems={"center"}
-                                display={"flex"}
-                                flexDirection={"column"}
-                                fontSize={"md"}
-                              >
-                                Total{" "}
-                                <StatNumber fontSize={"lg"}>
-                                  ₹ {branchFee.total1}
-                                </StatNumber>
-                              </StatLabel>
-                              <StatLabel
-                                py={"2"}
-                                alignItems={"center"}
-                                display={"flex"}
-                                flexDirection={"column"}
-                                fontSize={"md"}
-                              >
-                                Paid{" "}
-                                <StatNumber fontSize={"lg"}>
-                                  ₹ {branchFee.paid1}
-                                </StatNumber>
-                              </StatLabel>
-                              <StatLabel
-                                py={"2"}
-                                alignItems={"center"}
-                                display={"flex"}
-                                flexDirection={"column"}
-                                fontSize={"md"}
-                              >
-                                Balance{" "}
-                                <StatNumber fontSize={"lg"}>
-                                  ₹ {branchFee.remaining1}
-                                </StatNumber>
-                              </StatLabel>
-                            </VStack>
-                          </VStack>
-                          <Box p={"10"}>
-                            <div>
-                              <Pie
-                                className="chart-bar"
-                                options={{ responsive: true }}
-                                width={"250px"}
-                                height={"250px"}
-                                data={{
-                                  datasets: [
-                                    {
-                                      data: [
-                                        branchFee?.total,
-                                        branchFee?.paid,
-                                        branchFee?.remaining,
-                                      ],
-                                      backgroundColor: [
-                                        "rgb(120,55,228,0.7)",
-                                        "rgba(33,191,91,0.7)",
-                                        "rgba(242,109,109,0.7)",
-                                      ],
-                                      type: "pie",
-                                    },
-                                  ],
-                                  labels: ["Total", "Paid", "Balance"],
-                                }}
-                              />
-                            </div>
-                          </Box>
-                        </HStack>
-                      </Stat>
-                    </Card>
-                  );
-                })}
-              </HStack>
-            </VStack>
+            {children}
           </TabPanel>
-          <TabPanel px={0}>
-            <div className="w-full flex border-b py-2 space-x-3 px-5">
-              <ISelect
-                placeHolder="All"
-                value={state.branch}
-                onChange={(value) => setBranch(value)}
-                options={branch_list.map((option: any) => ({
-                  option: option.branch,
-                  value: option.branch,
-                }))}
-              />
-            </div>
-            <VStack p={"5"}>
-              {branch == "" ? (
-                <HStack>
-                  <Card width={"450px"} height={"450px"} p={"5"}>
-                    <Bar
-                      width={"400px"}
-                      height={"400px"}
-                      data={{
-                        datasets: [
-                          {
-                            data: branchFeeDetails?.map((value) => value.paid),
-                            label: "Paid Ammount",
-                            backgroundColor: "rgba(33,191,91,0.7)",
-                            barPercentage: 0.7,
-                          },
-                          {
-                            data: branchFeeDetails?.map(
-                              (value) => value.remaining
-                            ),
-                            label: "Balance Ammount",
-                            backgroundColor: "rgba(242,109,109,0.7)",
-                            barPercentage: 0.7,
-                          },
-                        ],
-                        labels: branchFeeDetails?.map((value) => value.branch),
-                      }}
-                    />
-                  </Card>
-                </HStack>
-              ) : (
-                <HStack
-                  py={"5"}
-                  pb={"12"}
-                  flexWrap={"wrap"}
-                  spacing={0}
-                  gap={"3"}
-                >
-                  {yearFeeDetails.length == 0 && (
-                    <Card w={"420px"} h={"420px"}>
-                      <VStack w={"full"} justifyContent={"center"} h={"full"}>
-                        <AiOutlineAim className="text-6xl text-purple-500" />
-                        <Heading size={"lg"} color={"gray.600"}>
-                          No Data Found !
-                        </Heading>
-                      </VStack>
-                    </Card>
-                  )}
-                  {yearFeeDetails.map((yearFee) => {
-                    return (
-                      <HStack
-                        key={yearFee.year}
-                        w={"fit-content"}
-                        shadow={"lg"}
-                        style={{ borderWidth: 1, borderColor: "#dddd" }}
-                        px={"10"}
-                        py={"5"}
-                      >
-                        <Stat
-                          h={"full"}
-                          w={"full"}
-                          display={"flex"}
-                          flexDirection={"row"}
-                          justifyContent={"center"}
-                          alignItems={"center"}
-                        >
-                          <VStack py={"3"}>
-                            <h1 className="text-2xl font-bold text-black">
-                              {yearFee.year} Year
-                            </h1>{" "}
-                            <Tag
-                              variant={"solid"}
-                              size={"lg"}
-                              rounded={"full"}
-                              colorScheme={"blue"}
-                            >
-                              {yearFee.total_students} Students
-                            </Tag>
-                          </VStack>
-                          <VStack
-                            w={"full"}
-                            justifyContent={"center"}
-                            spacing={"5"}
-                          >
-                            <StatLabel
-                              py={"2"}
-                              alignItems={"center"}
-                              display={"flex"}
-                              flexDirection={"column"}
-                              fontSize={"md"}
-                            >
-                              Total{" "}
-                              <StatNumber fontSize={"2xl"}>
-                                ₹ {yearFee.total1}
-                              </StatNumber>
-                            </StatLabel>
-                            <StatLabel
-                              py={"2"}
-                              alignItems={"center"}
-                              display={"flex"}
-                              flexDirection={"column"}
-                              fontSize={"md"}
-                            >
-                              Paid{" "}
-                              <StatNumber fontSize={"2xl"}>
-                                ₹ {yearFee.paid1}
-                              </StatNumber>
-                            </StatLabel>
-                            <StatLabel
-                              py={"2"}
-                              alignItems={"center"}
-                              display={"flex"}
-                              flexDirection={"column"}
-                              fontSize={"md"}
-                            >
-                              Balance{" "}
-                              <StatNumber fontSize={"2xl"}>
-                                ₹ {yearFee.remaining1}
-                              </StatNumber>
-                            </StatLabel>
-                          </VStack>
-                        </Stat>
-                        <Box p={"10"}>
-                          <div>
-                            <Pie
-                              className="chart-bar"
-                              options={{ responsive: true }}
-                              width={"300px"}
-                              height={"300px"}
-                              data={{
-                                datasets: [
-                                  {
-                                    data: [
-                                      100,
-                                      yearFee?.paid_percentage,
-                                      yearFee?.remaining_percentage,
-                                    ],
-                                    backgroundColor: [
-                                      "rgb(120,55,228,0.7)",
-                                      "rgba(33,191,91,0.7)",
-                                      "rgba(242,109,109,0.7)",
-                                    ],
-                                    type: "pie",
-                                    label: "Total",
-                                  },
-                                ],
-                                labels: [
-                                  `Total (100%)`,
-                                  `Paid (${yearFee?.paid_percentage}%)`,
-                                  `Balance (${yearFee?.remaining_percentage}%)`,
-                                ],
-                              }}
-                            />
-                          </div>
-                        </Box>
-                      </HStack>
-                    );
-                  })}
-                </HStack>
-              )}
-            </VStack>
+          <TabPanel px={0} w={"100vw"}>{children}</TabPanel>
+          <TabPanel px={0} py={"0"} w={"100vw"} h={"88vh"}>
+            {children}
           </TabPanel>
-          <TabPanel px={0} w={"100vw"} h={"88vh"}>
-            <div className="w-full flex border-b py-2 space-x-3 px-5">
-              {isFor == "admin" || isFor == "staff" ? (
-                <ISelect
-                  placeHolder="Branch"
-                  value={state.branch}
-                  onChange={(value) =>
-                    setState((prev) => ({ ...prev, branch: value as string }))
-                  }
-                  options={branch_list.map((option: any) => ({
-                    option: option.branch,
-                    value: option.branch,
-                  }))}
-                />
-              ) : null}
-
-              {isFor == "admin" || (isFor == "staff" && state.branch) ? (
-                <ISelect
-                  placeHolder="Year"
-                  value={state.year}
-                  onChange={(value) =>
-                    setState((prev) => ({ ...prev, year: value as string }))
-                  }
-                  options={[
-                    { value: "1", option: "1" },
-                    { value: "2", option: "2" },
-                  ]}
-                />
-              ) : null}
-            </div>
-            <VStack className="w-full h-full" spacing={0}>
-              {(isFor == "admin" && !state.branch) ||
-              (isFor == "staff" && !state.branch) ? (
-                <InfoCard message="Select Branch" />
-              ) : (isFor == "admin" && state.branch && !state.year) ||
-                (isFor == "staff" && !state.branch) ? (
-                <InfoCard message="Select Year" />
-              ) : null}
-              <VStack
-                px={0}
-                spacing={0}
-                className={
-                  "justify-start items-start flex w-full h-full overflow-scroll"
-                }
-              >
-                {/* displaying admin childrens */}
-                {isFor == "admin" && state.branch && state.year && children}
-              </VStack>
-            </VStack>
+          <TabPanel px={0} w={"100vw"} h={"88vh"} py={"0"}>
+            {children}
           </TabPanel>
         </TabPanels>
       </Tabs>

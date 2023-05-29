@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
 import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { headers, cookies } from "next/headers";
+import HeaderLayoutProvider from "./HeaderLayout";
+import "../globals.css"
 
-
-export default async function SalaryRootLayout({
-  children,
-}: {
+export default async function DashboardRootLayout(props: {
   children: React.ReactNode;
 }) {
   const { auth } = createServerComponentSupabaseClient({
@@ -14,5 +13,5 @@ export default async function SalaryRootLayout({
   });
   const { data } = await auth.getSession();
   if (data.session == null) redirect("/signin");
-  return <>{children}</>;
+  return <HeaderLayoutProvider>{props?.children}</HeaderLayoutProvider>;
 }

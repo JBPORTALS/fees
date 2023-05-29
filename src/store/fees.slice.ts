@@ -45,7 +45,7 @@ export const fetchBranchFeeDetails = createAsyncThunk<
   }
 >(
   "/fees/fetchbranchview",
-  async (_payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async (_payload, { fulfillWithValue, rejectWithValue }) => {
     var data;
     try {
       const response = await axios({
@@ -76,6 +76,57 @@ export const fetchOverAllFee = createAsyncThunk<
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeoverall.php",
         method: "POST",
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
+interface SearchResultProps {
+  sl_no: string;
+  challan_id: string;
+  usn: string;
+  name: string;
+  branch: string;
+  sem: string;
+  date: string;
+  particulars: string;
+  amount_paid1: string;
+}
+
+export const fetchSearchByMode = createAsyncThunk<
+  SearchResultProps[],
+  {
+    branch: string;
+    sem: string;
+    mode: string;
+    fromDate: string;
+    toDate: string;
+  },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/fees/fetchSearchBymode",
+  async (payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("branch", payload.branch);
+      formData.append("sem", payload.sem);
+      formData.append("mode", payload.mode);
+      formData.append("fromdate", payload.fromDate);
+      formData.append("todate", payload.toDate);
+
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMIN_URL + "feefilter.php",
+        method: "POST",
+        data: formData,
       });
       data = response.data;
       return fulfillWithValue(data);
@@ -202,29 +253,23 @@ export const updateUSN = createAsyncThunk<
       msg: string;
     };
   }
->(
-  "/fees/updateUSN",
-  async (
-    payload,
-    { fulfillWithValue, rejectWithValue,}
-  ) => {
-    var data;
-    try {
-      const formData = new FormData();
-      formData.append("challan_no", payload.challan_no);
-      formData.append("usn", payload.usn);
-      const response = await axios({
-        url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php",
-        method: "POST",
-        data: formData,
-      });
-      data = response.data;
-      return fulfillWithValue(data);
-    } catch (error: any) {
-      return rejectWithValue({ msg: error.response.data.msg });
-    }
+>("/fees/updateUSN", async (payload, { fulfillWithValue, rejectWithValue }) => {
+  var data;
+  try {
+    const formData = new FormData();
+    formData.append("challan_no", payload.challan_no);
+    formData.append("usn", payload.usn);
+    const response = await axios({
+      url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php",
+      method: "POST",
+      data: formData,
+    });
+    data = response.data;
+    return fulfillWithValue(data);
+  } catch (error: any) {
+    return rejectWithValue({ msg: error.response.data.msg });
   }
-);
+});
 
 export const fetchBranchList = createAsyncThunk<
   { msg: string },
@@ -328,6 +373,11 @@ interface FeesIntialState {
     pending: boolean;
     error: null | string;
   };
+  search_by_mode: {
+    data: [];
+    error: null | string;
+    pending: boolean;
+  };
 }
 
 const initialState: FeesIntialState = {
@@ -362,6 +412,11 @@ const initialState: FeesIntialState = {
     pending: false,
   },
   update_usn: {
+    error: null,
+    pending: false,
+  },
+  search_by_mode: {
+    data: [],
     error: null,
     pending: false,
   },
@@ -416,7 +471,7 @@ export const FeesSlice = createSlice({
       toast.success(action.payload?.msg);
     },
     [updateUSN.rejected.toString()]: (state, action) => {
-      state.update_usn.pending = false
+      state.update_usn.pending = false;
       toast.error(action.payload?.msg);
     },
     [fetchBranchFeeDetails.pending.toString()]: (state, _action) => {
@@ -465,6 +520,18 @@ export const FeesSlice = createSlice({
     [fetchBranchList.rejected.toString()]: (state, action) => {
       state.branch_list.pending = false;
       state.branch_list.error = action.payload?.msg;
+    },
+    [fetchSearchByMode.pending.toString()]: (state, action) => {
+      state.search_by_mode.pending = true;
+    },
+    [fetchSearchByMode.fulfilled.toString()]: (state, action) => {
+      state.search_by_mode.pending = false;
+      state.search_by_mode.data = action.payload;
+    },
+    [fetchSearchByMode.rejected.toString()]: (state, action) => {
+      state.search_by_mode.data = [];
+      state.search_by_mode.pending = false;
+      state.search_by_mode.error = action.payload?.msg;
     },
   },
 });
