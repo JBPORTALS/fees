@@ -17,7 +17,7 @@ const CustomViewChallanButton = (data: any) => {
   return (
     <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
       <ViewChallanDetails
-        regno={data.value.challan_id}
+        regno={data.value.usn}
         challan_id={data.value.challan_id}
       >
         {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
