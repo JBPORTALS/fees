@@ -9,23 +9,35 @@ import {
 import {
   Button,
   Center,
+  FormControl,
+  FormLabel,
   Heading,
   HStack,
   Input,
+  InputGroup,
+  InputRightAddon,
   Select,
   Tag,
   TagLabel,
   TagLeftIcon,
+  Text,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { AiOutlineCheckCircle, AiOutlineFileProtect } from "react-icons/ai";
+import {
+  AiOutlineCheckCircle,
+  AiOutlineFilePdf,
+  AiOutlineFileProtect,
+} from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
 import { useSupabase } from "@/app/supabase-provider";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter as useNavigation } from "next/router";
+import { Link } from "@chakra-ui/next-js";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -34,11 +46,7 @@ interface props {
   challan_id: string;
 }
 
-export default function ViewChallanDetails({
-  children,
-  regno,
-  challan_id,
-}: props) {
+export default function ViewChallanDetails({ children, challan_id }: props) {
   const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
   const [isChecking, setIsChecking] = useState(false);
   const [usn, setUsn] = useState("");
@@ -49,35 +57,43 @@ export default function ViewChallanDetails({
         date: string;
         usn: string;
         method: string;
-        amount_paid: string;
         amount_paid1: string;
+        sem: string;
+        branch: string;
+        bank: string;
       }
     | undefined
   >(undefined);
-
+  const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const onOpen = () => {
     onModalOpen();
   };
 
-  const findChallan = useCallback(async () => {
-    setIsChecking(true);
-    try {
-      const formData = new FormData();
-      formData.append("challan_id", challan_id);
-      const response = await axios(
-        process.env.NEXT_PUBLIC_ADMIN_URL + "feesearchchallan.php",
-        {
-          method: "POST",
-          data: formData,
-        }
-      );
-      setChallanState(response.data[0]);
-      setUsn(response.data[0]?.usn);
-    } catch (e: any) {
-      toast.error(e.response?.data?.msg);
-    }
-    setIsChecking(false);
-  }, [challan_id]);
+  const findChallan = useCallback(
+    async (param_usn?: string) => {
+      setIsChecking(true);
+      try {
+        const formData = new FormData();
+        formData.append("challan_id", challan_id);
+
+        const response = await axios(
+          process.env.NEXT_PUBLIC_ADMIN_URL + "feechallanfilter.php",
+          {
+            method: "POST",
+            data: formData,
+          }
+        );
+        setChallanState(response.data[0]);
+        setUsn(response.data[0]?.usn);
+      } catch (e: any) {
+        toast.error(e.response?.data?.msg);
+      }
+      setIsChecking(false);
+    },
+    [challan_id]
+  );
 
   useEffect(() => {
     isOpen && findChallan();
@@ -93,8 +109,9 @@ export default function ViewChallanDetails({
         .post(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php", formData)
         .then(async (res: any) => {
           toast.success(res.data.msg);
-          await findChallan();
+          await findChallan(usn);
           setIsChecking(false);
+          router.refresh()
         })
         .catch((e) => {
           toast.error(e.response?.data?.msg);
@@ -116,106 +133,164 @@ export default function ViewChallanDetails({
         isOpen={isOpen}
         heading="Challan Details"
       >
-        <VStack w={"full"} h={"full"} justifyContent={"space-between"}>
+        <VStack
+          alignItems={"flex-start"}
+          pt={"5"}
+          w={"full"}
+          h={"full"}
+          gap={"2"}
+          justifyContent={"start"}
+          position={"relative"}
+        >
+          <FormControl px={"5"}>
+            <HStack>
+              <FormLabel flex={1}>
+                <Text>Challan Id</Text>
+              </FormLabel>
+              <Input
+                bg={"white"}
+                isReadOnly
+                value={challanState?.challan_id}
+                variant={"filled"}
+                flex={"1.5"}
+              />
+            </HStack>
+          </FormControl>
+          <FormControl px={"5"}>
+            <HStack>
+              <FormLabel flex={1}>
+                <Text>USN</Text>
+              </FormLabel>
+              <Input
+                bg={"white"}
+                isReadOnly={!!challanState?.usn}
+                value={usn}
+                onChange={(e) => setUsn(e.target.value)}
+                variant={"filled"}
+                flex={"1.5"}
+              />
+            </HStack>
+          </FormControl>
+          <FormControl px={"5"}>
+            <HStack>
+              <FormLabel flex={1}>
+                <Text>Name</Text>
+              </FormLabel>
+              <Input
+                bg={"white"}
+                isReadOnly
+                value={challanState?.name}
+                variant={"filled"}
+                flex={"1.5"}
+              />
+            </HStack>
+          </FormControl>
+          <FormControl px={"5"}>
+            <HStack>
+              <FormLabel flex={1}>
+                <Text>Branch</Text>
+              </FormLabel>
+              <Input
+                variant={"filled"}
+                isReadOnly
+                bg={"white"}
+                value={challanState?.branch}
+                flex={"1.5"}
+              />
+            </HStack>
+          </FormControl>
+          <FormControl px={"5"}>
+            <HStack>
+              <FormLabel flex={1}>
+                <Text>Sem</Text>
+              </FormLabel>
+              <Input
+                variant={"filled"}
+                isReadOnly
+                bg={"white"}
+                flex={"1.5"}
+                value={challanState?.sem}
+              />
+            </HStack>
+          </FormControl>
+          <FormControl px={"5"}>
+            <HStack>
+              <FormLabel flex={1}>
+                <Text>Bank</Text>
+              </FormLabel>
+              <Input
+                variant={"filled"}
+                isReadOnly
+                bg={"white"}
+                flex={"1.5"}
+                value={challanState?.bank}
+              />
+            </HStack>
+          </FormControl>
+          <FormControl px={"5"}>
+            <HStack>
+              <FormLabel flex={1}>
+                <Text>Date</Text>
+              </FormLabel>
+              <Input
+                variant={"filled"}
+                isReadOnly
+                bg={"white"}
+                flex={"1.5"}
+                value={challanState?.date}
+              />
+            </HStack>
+          </FormControl>
+          <FormControl px={"5"}>
+            <HStack>
+              <FormLabel flex={1}>
+                <Text>Method</Text>
+              </FormLabel>
+              <Input
+                variant={"filled"}
+                isReadOnly
+                bg={"white"}
+                flex={"1.5"}
+                value={challanState?.method}
+              />
+            </HStack>
+          </FormControl>
+          <FormControl px={"5"}>
+            <HStack w={"full"}>
+              <FormLabel flex={1}>
+                <Text>Amount Paid</Text>
+              </FormLabel>
+              <Input
+                flex={"1.5"}
+                variant={"filled"}
+                isReadOnly
+                bg={"white"}
+                value={challanState?.amount_paid1}
+              />
+            </HStack>
+          </FormControl>
           <VStack
             position={"sticky"}
-            py={"5"}
+            p={"5"}
             top={"100%"}
             className="border-gray-300 border-top"
             bottom={"0"}
             w={"full"}
-            bg={"white"}
           >
-            <Heading size={"md"}>{challanState?.name}</Heading>
-            {challanState && challanState.usn.length == 0 ? (
-              <Input
-                value={usn}
-                textAlign={"center"}
-                size={"sm"}
-                placeholder="Enter USN"
-                mb={"5"}
-                w={"50%"}
-                onChange={(e) => setUsn(e.target.value)}
-              />
-            ) : (
-              <Heading size={"sm"} color={"gray.600"}>
-                {usn}
-              </Heading>
-            )}
-            <HStack
-              pt={"5"}
-              flexWrap={"wrap"}
-              justifyContent={"center"}
-              gap={"3"}
+            <Button
+              as={Link}
+              target="_blank"
+              href={
+                process.env.NEXT_PUBLIC_ADMIN_URL +
+                "feedownloadreciept.php?challan_id=" +
+                challanState?.challan_id
+              }
+              w={"full"}
+              colorScheme="purple"
+              leftIcon={<AiOutlineFilePdf className={"text-xl"} />}
             >
-              <Tag
-                pl={"0"}
-                size={"lg"}
-                borderRadius={"full"}
-                colorScheme="facebook"
-              >
-                <Tag
-                  size={"lg"}
-                  borderRadius={"full"}
-                  colorScheme="facebook"
-                  variant={"solid"}
-                >
-                  Challan Id
-                </Tag>
-                <TagLabel ml={"2"}>{challan_id}</TagLabel>
-              </Tag>
-              <Tag
-                pl={"0"}
-                size={"lg"}
-                borderRadius={"full"}
-                colorScheme="facebook"
-              >
-                <Tag
-                  size={"lg"}
-                  borderRadius={"full"}
-                  colorScheme="facebook"
-                  variant={"solid"}
-                >
-                  Method
-                </Tag>
-                <TagLabel ml={"2"}>{challanState?.method}</TagLabel>
-              </Tag>
-              <Tag
-                pl={"0"}
-                size={"lg"}
-                borderRadius={"full"}
-                colorScheme="facebook"
-              >
-                <Tag
-                  size={"lg"}
-                  borderRadius={"full"}
-                  colorScheme="facebook"
-                  variant={"solid"}
-                >
-                  Paid Date
-                </Tag>
-                <TagLabel ml={"2"}>{challanState?.date}</TagLabel>
-              </Tag>
-              <Tag
-                pl={"0"}
-                size={"lg"}
-                borderRadius={"full"}
-                colorScheme="whatsapp"
-              >
-                <Tag
-                  size={"lg"}
-                  borderRadius={"full"}
-                  colorScheme="whatsapp"
-                  variant={"solid"}
-                >
-                  <TagLeftIcon fontSize={"2xl"}>
-                    <AiOutlineCheckCircle/>
-                  </TagLeftIcon>
-                  <TagLabel>Amount Paid</TagLabel>
-                </Tag>
-                <TagLabel ml={"2"}>{challanState?.amount_paid}</TagLabel>
-              </Tag>
-            </HStack>
+              Download Challan
+            </Button>
           </VStack>
         </VStack>
       </IDrawer>

@@ -1,4 +1,7 @@
 "use client";
+
+export const dynamic = "force-dynamic";
+
 import {
   Center,
   HStack,
@@ -7,26 +10,18 @@ import {
   Stack,
   Tag,
   TagLabel,
-  TagLeftIcon,
-  TagRightIcon,
   VStack,
 } from "@chakra-ui/react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
-import { useCallback, useEffect } from "react";
-import { fetchBranchList, fetchSearchByMode } from "@/store/fees.slice";
+import {useEffect } from "react";
+import {  fetchSearchByMode } from "@/store/fees.slice";
 import { useAppDispatch } from "@/hooks";
 import { useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/store";
 import { AgGridReact } from "ag-grid-react";
 import { SearchColumns } from "@/components/mock-data/fee-meta";
 import { FcSearch } from "react-icons/fc";
-import {
-  AiOutlineDotChart,
-  AiOutlinePushpin,
-  AiOutlineTag,
-} from "react-icons/ai";
-import { isPending } from "@reduxjs/toolkit";
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -37,6 +32,7 @@ export default function Home() {
   const toDate = params.get("toDate");
   const fromDate = params.get("fromDate");
   const mode = params.get("mode");
+  const hash = params.get("hash");
 
   const feeFilter = useAppSelector(
     (state) => state.fees.search_by_mode.data
@@ -49,7 +45,7 @@ export default function Home() {
   ) as boolean;
 
   useEffect(() => {
-    if (branch && mode && fromDate && toDate && sem)
+    if (branch && mode && fromDate && toDate && sem && hash)
       dispatch(
         fetchSearchByMode({
           branch,
@@ -59,14 +55,16 @@ export default function Home() {
           sem,
         })
       );
-  }, [branch, sem, toDate, mode, fromDate]);
+  }, [branch, sem, toDate, mode, fromDate, hash]);
 
   if (isLoading)
     return (
       <Center h={"100%"} pb={"28"}>
         <VStack justifyContent={"center"}>
-          <Spinner borderWidth={"2px"} size={"xl"} color="blue.700"/>
-          <Heading size={"md"} mt={"3"}>Searching...</Heading>
+          <Spinner borderWidth={"2px"} size={"xl"} color="blue.700" />
+          <Heading size={"md"} mt={"3"}>
+            Searching...
+          </Heading>
         </VStack>
       </Center>
     );
