@@ -1,25 +1,11 @@
 "use client";
-import {
-  FormControl,
-  FormErrorIcon,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Select,
-  SimpleGrid,
-  Stack,
-} from "@chakra-ui/react";
-import { Formik, useField, FieldHookConfig } from "formik";
+import { SimpleGrid, Stack } from "@chakra-ui/react";
+import { Formik } from "formik";
 import * as Yup from "yup";
 import React from "react";
 import { useAppSelector } from "@/store";
-
-const ValidationSchema = Yup.object().shape({
-  paymentType: Yup.string().required("Fill the field !"),
-  name: Yup.string()
-    .required("Fill the field !")
-    .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
-});
+import { Field } from "@/components/ui/Field";
+import moment from "moment";
 
 const initialValues = {
   paymentType: "",
@@ -28,54 +14,13 @@ const initialValues = {
   sem: "",
   category: "",
   acadYear: "",
-};
-
-type HookProps = FieldHookConfig<string>;
-
-type OtherProps = {
-  options?: { value: string; option: string }[];
-};
-
-const Field = (props: HookProps & OtherProps) => {
-  const [fieldProps, metaProps] = useField(props);
-
-  function renderConditionalInputField() {
-    switch (props.type) {
-      case "text":
-        return (
-          <Input
-            variant={"filled"}
-            {...fieldProps}
-            placeholder={props.placeholder}
-            type={props.type}
-          />
-        );
-      case "select":
-        return (
-          <Select variant={"filled"} {...fieldProps}>
-            <option value={""}>{props.placeholder}</option>
-            {props.options?.map((op) => (
-              <option value={op.value}>{op.option}</option>
-            ))}
-          </Select>
-        );
-      default:
-        return null;
-    }
-  }
-
-  return (
-    <FormControl isInvalid={!!metaProps.touched && !!metaProps.error}>
-      <FormLabel>{props["aria-label"]}</FormLabel>
-      {renderConditionalInputField()}
-      {metaProps.touched && metaProps.error && (
-        <FormErrorMessage>
-          <FormErrorIcon />
-          {metaProps.error}
-        </FormErrorMessage>
-      )}
-    </FormControl>
-  );
+  tuitionFee: 0,
+  vtuFee: 0,
+  bank: "",
+  paymentMode: "",
+  date:moment(new Date()).format("yyyy-MM-DD"),
+  transactionId:"",
+  ddNo:""
 };
 
 export default function WithoutUSNPage() {
@@ -89,11 +34,32 @@ export default function WithoutUSNPage() {
         name: "paymentType",
         label: "Payment Type",
         type: "select",
+        validate: Yup.string().required("Fill the field !"),
         placeholder: "Select Payment Type",
         options: [
           {
             value: "FEE",
             option: "Fee",
+          },
+          {
+            value: "MISCELLANEOUS",
+            option: "Miscellaneous",
+          },
+          {
+            value: "BUS_FEE",
+            option: "Bus Fee",
+          },
+          {
+            value: "EXCESS_FEE",
+            option: "Excess Fee",
+          },
+          {
+            value: "SECURITY_DEPOSIT",
+            option: "Security Deposit",
+          },
+          {
+            value: "HOSTEL_FEE",
+            option: "Hostel Fee",
           },
         ],
       },
@@ -101,12 +67,16 @@ export default function WithoutUSNPage() {
         name: "name",
         label: "Name",
         type: "text",
+        validate: Yup.string()
+          .required("Field required !")
+          .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
       },
       {
         name: "branch",
         label: "Branch",
         type: "select",
         placeholder: "Select Branch",
+        validate: Yup.string().required("Fill the field !"),
         options: branchList.map((value) => ({
           value: value.branch,
           option: value.branch,
@@ -117,11 +87,13 @@ export default function WithoutUSNPage() {
         label: "Sem",
         type: "select",
         placeholder: "Select Sem",
+        validate: Yup.string().required("Fill the field !"),
         options: [
-          {
-            value: "1",
-            option: "1",
-          },
+          { option: "New Admission", value: "NEW_ADMISSION" },
+          ...new Array(8).fill(0).map((_value, index) => ({
+            value: (index + 1).toString(),
+            option: (index + 1).toString(),
+          })),
         ],
       },
       {
@@ -129,6 +101,7 @@ export default function WithoutUSNPage() {
         label: "Academic Year",
         type: "select",
         placeholder: "Select Academic Year",
+        validate: Yup.string().required("Fill the field !"),
         options: [
           {
             value: "2023-24",
@@ -140,23 +113,116 @@ export default function WithoutUSNPage() {
           },
         ],
       },
+      {
+        name: "tuitionFee",
+        label: "Tuition Fee",
+        type: "text",
+        validate: Yup.number()
+          .typeError("invalid number")
+          .required("Field required !")
+          .min(0, "minimum amount should be 0"),
+      },
+      {
+        name: "vtuFee",
+        label: "VTU/DTE/DDPI/GP.INS/ IRC Fee",
+        type: "text",
+        validate: Yup.number()
+          .typeError("invalid number")
+          .required("Field required !")
+          .min(0, "minimum amount should be 0"),
+      },
+      {
+        name: "collegeFee",
+        label: "College Fee",
+        type: "text",
+        validate: Yup.number()
+          .typeError("invalid number")
+          .required("Field required !")
+          .min(0, "minimum amount should be 0"),
+      },
+      {
+        name: "bank",
+        label: "Bank",
+        type: "select",
+        placeholder: "Select Bank",
+        options: [
+          {
+            option: "Union",
+            value: "UNION",
+          },
+          {
+            option: "Axis",
+            value: "AXIS",
+          },
+        ],
+        validate: Yup.string().required("Fill the field !"),
+      },
+      {
+        name: "paymentMode",
+        label: "Payment Mode",
+        type: "select",
+        placeholder: "Select Payment Mode",
+        options: [
+          {
+            option: "Online",
+            value: "ONLINE",
+          },
+          {
+            option: "Cash",
+            value: "CASH",
+          },
+          {
+            option: "Cheque",
+            value: "CHEQUE",
+          },
+        ],
+        validate: Yup.string().required("Fill the field !"),
+      },
     ],
   };
+
+  const chequeTemplate = [
+    {
+      name: "chequeNo",
+      label: "Cheque No.",
+      type: "text",
+      validate: Yup.string().required("Fill the field!"),
+    },
+    {
+      name:"date",
+      label:"Payment Date",
+      type:"date",
+      validate:Yup.date().required("Fill the field!").typeError("Not valid date")
+    }
+  ];
 
   return (
     <Stack h={"full"} px={"36"} py={"5"} w={"full"} justifyContent={"start"}>
       <SimpleGrid columns={3} gap={"5"}>
         <Formik
-          validationSchema={ValidationSchema}
+          // validationSchema={ValidationSchema}
           {...{ initialValues }}
           onSubmit={() => {}}
         >
-          {(formik) => {
+          {({ values }) => {
+            const checkOnPamentModeTemplate = values.paymentMode=="CHEQUE"?chequeTemplate:undefined;
+
             return (
               <>
                 {template.fields.map((field) => {
                   return (
                     <Field
+                      validate={(value) => {
+                        let error;
+                        if (field.validate) {
+                          try {
+                            field.validate.validateSync(value)?.toString();
+                          } catch (e: any) {
+                            error = e.message;
+                          }
+                        }
+                        return error;
+                      }}
                       aria-label={field.label}
                       name={field.name}
                       type={field.type}
@@ -165,9 +231,27 @@ export default function WithoutUSNPage() {
                     />
                   );
                 })}
-                {/* <pre className="flex flex-wrap whitespace-nowrap">
-                  {JSON.stringify(formik)}
-                </pre> */}
+                {
+                  checkOnPamentModeTemplate?.map((cashFields) => (
+                    <Field
+                      validate={(value) => {
+                        let error;
+                        if (cashFields.validate) {
+                          try {
+                            cashFields.validate.validateSync(value)?.toString();
+                          } catch (e: any) {
+                            error = e.message;
+                          }
+                        }
+                        return error;
+                      }}
+                      aria-label={cashFields.label}
+                      name={cashFields.name}
+                      type={cashFields.type}
+                    />
+                  ))
+                }
+                <pre>{JSON.stringify(values.date)}</pre>
               </>
             );
           }}
