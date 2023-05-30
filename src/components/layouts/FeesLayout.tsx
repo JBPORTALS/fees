@@ -546,34 +546,16 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                   </VStack>
                 </MenuList>
               </Menu>
-              <GenerateRecieptWithoutUSNModal>
-                {({ onOpen }) => (
                   <Button
-                    onClick={onOpen}
+                    as={Link}
+                    href={"/generate-reciept/without-usn"}
                     size={"sm"}
                     shadow={"md"}
-                    variant={"outline"}
-                    leftIcon={<AiOutlineFilePdf className={"text-xl"} />}
-                    colorScheme={"whatsapp"}
-                  >
-                    Generate Reciept Without USN
-                  </Button>
-                )}
-              </GenerateRecieptWithoutUSNModal>
-              <GenerateRecieptModal>
-                {({ onOpen }) => (
-                  <Button
-                    onClick={onOpen}
-                    size={"sm"}
-                    shadow={"md"}
-                    variant={"outline"}
                     leftIcon={<AiOutlineFilePdf className={"text-xl"} />}
                     colorScheme={"whatsapp"}
                   >
                     Generate Reciept
                   </Button>
-                )}
-              </GenerateRecieptModal>
             </HStack>
           </HStack>
         </TabList>
