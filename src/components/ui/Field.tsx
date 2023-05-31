@@ -34,7 +34,25 @@ export const Field = (props: HookProps & OtherProps) => {
               },
               borderWidth: "2px",
             }}
-            variant={"filled"}
+            bg={"white"}
+            {...fieldProps}
+            placeholder={props.placeholder}
+            type={props.type}
+          />
+        );
+      case "number":
+        return (
+          <Input
+            _invalid={{
+              background(theme) {
+                return theme.colors.red["50"];
+              },
+              borderColor(theme) {
+                return theme.colors.red["500"];
+              },
+              borderWidth: "2px",
+            }}
+            bg={"white"}
             {...fieldProps}
             placeholder={props.placeholder}
             type={props.type}
@@ -53,7 +71,7 @@ export const Field = (props: HookProps & OtherProps) => {
               },
               borderWidth: "2px",
             }}
-            variant={"filled"}
+            bg={"white"}
             selected={
               fieldProps.value == "" ? new Date(fieldProps.value) : new Date()
             }
@@ -78,7 +96,7 @@ export const Field = (props: HookProps & OtherProps) => {
               },
               borderWidth: "2px",
             }}
-            variant={"filled"}
+            bg={"white"}
             {...fieldProps}
           >
             <option value={""}>{props.placeholder}</option>
