@@ -32,11 +32,11 @@ export default function SearchViewLayout(props: {
           sem,
         })
       );
-  }, [branch, sem, toDate, mode, fromDate, hash, feeType]);
+  }, [branch, sem, toDate, mode, fromDate, hash, feeType,dispatch]);
 
   useEffect(() => {
     fetchSearchResult();
-  }, []);
-  
+  }, [fetchSearchResult]);
+
   return <>{props?.children}</>;
 }
