@@ -145,7 +145,13 @@ export const SearchColumns = [
 
   {
     field: "particulars",
-    headerName: "Particulars",
+    headerName: "Payment Mode",
+    width: "170px",
+    resizable: true,
+  },
+  {
+    field: "payment_type",
+    headerName: "Payment Type",
     width: "170px",
     resizable: true,
   },
