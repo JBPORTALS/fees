@@ -14,8 +14,8 @@ import {
 } from "@chakra-ui/react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
-import {useEffect } from "react";
-import {  fetchSearchByMode } from "@/store/fees.slice";
+import { useCallback, useEffect } from "react";
+import { fetchSearchByMode } from "@/store/fees.slice";
 import { useAppDispatch } from "@/hooks";
 import { useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/store";
@@ -33,6 +33,7 @@ export default function Home() {
   const fromDate = params.get("fromDate");
   const mode = params.get("mode");
   const hash = params.get("hash");
+  const feeType = params.get("feeType");
 
   const feeFilter = useAppSelector(
     (state) => state.fees.search_by_mode.data
@@ -44,8 +45,8 @@ export default function Home() {
     (state) => state.fees.search_by_mode.pending
   ) as boolean;
 
-  useEffect(() => {
-    if (branch && mode && fromDate && toDate && sem && hash)
+  const fetchSearchResult = useCallback(() => {
+    if (branch && mode && fromDate && toDate && sem && hash && feeType)
       dispatch(
         fetchSearchByMode({
           branch,
@@ -53,9 +54,14 @@ export default function Home() {
           fromDate,
           toDate,
           sem,
+          feeType,
         })
       );
-  }, [branch, sem, toDate, mode, fromDate, hash]);
+  }, [branch, sem, toDate, mode, fromDate, hash, feeType]);
+
+  useEffect(() => {
+    fetchSearchResult();
+  }, [fetchSearchResult]);
 
   if (isLoading)
     return (
@@ -78,57 +84,38 @@ export default function Home() {
         bg={"white"}
         className="border-gray-300 border-b"
       >
-        <Tag pl={"0"} size={"lg"} borderRadius={"full"} colorScheme="facebook">
-          <Tag
-            size={"lg"}
-            borderRadius={"full"}
-            colorScheme="facebook"
-            variant={"solid"}
-          >
+        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
             Branch
           </Tag>
           <TagLabel ml={"2"}>{branch}</TagLabel>
         </Tag>
-        <Tag pl={"0"} size={"lg"} borderRadius={"full"} colorScheme="facebook">
-          <Tag
-            size={"lg"}
-            borderRadius={"full"}
-            colorScheme="facebook"
-            variant={"solid"}
-          >
+        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
             Sem
           </Tag>
           <TagLabel ml={"2"}>{sem}</TagLabel>
         </Tag>
-        <Tag pl={"0"} size={"lg"} borderRadius={"full"} colorScheme="facebook">
-          <Tag
-            size={"lg"}
-            borderRadius={"full"}
-            colorScheme="facebook"
-            variant={"solid"}
-          >
+        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
+            Fee Type
+          </Tag>
+          <TagLabel ml={"2"}>{feeType}</TagLabel>
+        </Tag>
+        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
             Mode
           </Tag>
           <TagLabel ml={"2"}>{mode}</TagLabel>
         </Tag>
-        <Tag pl={"0"} size={"lg"} borderRadius={"full"} colorScheme="facebook">
-          <Tag
-            size={"lg"}
-            borderRadius={"full"}
-            colorScheme="facebook"
-            variant={"solid"}
-          >
+        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
             From Date
           </Tag>
           <TagLabel ml={"2"}>{fromDate}</TagLabel>
         </Tag>
-        <Tag pl={"0"} size={"lg"} borderRadius={"full"} colorScheme="facebook">
-          <Tag
-            size={"lg"}
-            borderRadius={"full"}
-            colorScheme="facebook"
-            variant={"solid"}
-          >
+        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
             To Date
           </Tag>
           <TagLabel ml={"2"}>{toDate}</TagLabel>

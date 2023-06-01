@@ -105,6 +105,7 @@ export const fetchSearchByMode = createAsyncThunk<
     mode: string;
     fromDate: string;
     toDate: string;
+    feeType:string;
   },
   {
     rejectValue: {
@@ -122,6 +123,7 @@ export const fetchSearchByMode = createAsyncThunk<
       formData.append("mode", payload.mode);
       formData.append("fromdate", payload.fromDate);
       formData.append("todate", payload.toDate);
+      formData.append("type", payload.feeType);
 
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feefilter.php",
