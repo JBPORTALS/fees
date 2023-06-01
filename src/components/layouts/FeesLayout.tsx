@@ -76,12 +76,14 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
     mode: string;
     fromDate: Date | null;
     toDate: Date | null;
+    type: string;
   }>({
     branch: "ALL",
     sem: "ALL",
     mode: "ALL",
     fromDate: new Date(),
     toDate: new Date(),
+    type: "ALL",
   });
 
   const branchList = useAppSelector(
@@ -175,7 +177,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
     router.replace(
       `/dashboard/search?branch=${modeFilterState.branch}&sem=${
         modeFilterState.sem
-      }&mode=${modeFilterState.mode}&fromDate=${moment(
+      }&mode=${modeFilterState.mode}&feeType=${modeFilterState.type}&fromDate=${moment(
         modeFilterState.fromDate
       ).format("DD-MM-yyyy")}&toDate=${moment(modeFilterState.toDate).format(
         "DD-MM-yyyy"
@@ -234,10 +236,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
               >
                 Class Wise
               </Tab>
-              <Tab
-                hidden
-                _hover={{ textDecoration: "none" }}
-              >
+              <Tab hidden _hover={{ textDecoration: "none" }}>
                 Search
               </Tab>
             </HStack>
@@ -443,6 +442,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                 value={modeFilterState.sem}
                               >
                                 <option value={"ALL"}>All</option>
+                                <option value={"NEW_ADMISSION"}>
+                                  New Admission
+                                </option>
                                 <option value={"1"}>1</option>
                                 <option value={"2"}>2</option>
                                 <option value={"3"}>3</option>
@@ -451,6 +453,28 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                 <option value={"6"}>6</option>
                                 <option value={"7"}>7</option>
                                 <option value={"8"}>8</option>
+                              </Select>
+                              <FormLabel>Select Fee Type</FormLabel>
+                              <Select
+                                value={modeFilterState.type}
+                                onChange={(e) =>
+                                  setModeFilterState((prev) => ({
+                                    ...prev,
+                                    type: e.target.value,
+                                  }))
+                                }
+                              >
+                                <option value={"ALL"}>All</option>
+                                <option value={"FEE"}>Fee</option>
+                                <option value={"MISCELLANEOUS"}>
+                                  Miscellaneous
+                                </option>
+                                <option value={"BUS_FEE"}>Bus Fee</option>
+                                <option value={"EXCESS_FEE"}>Excess Fee</option>
+                                <option value={"SECURITY_DEPOSIT"}>
+                                  Security Deposit
+                                </option>
+                                <option value={"HOSTEL_FEE"}>Hostel Fee</option>
                               </Select>
                               <FormLabel>Select Mode</FormLabel>
                               <Select
@@ -463,15 +487,10 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                 }
                               >
                                 <option value={"ALL"}>All</option>
+                                <option value={"CASH"}>Cash</option>
                                 <option value={"ONLINE"}>Online</option>
-                                <option value={" CASH/CHEQUE"}>
-                                  Cash/Cheque
-                                </option>
-                                <option value={"MISCELLANEOUS"}>
-                                  Miscellaneous
-                                </option>
-                                <option value={"BUS FEE"}>Bus Fee</option>
-                                <option value={"EXCESS FEE"}>Excess Fee</option>
+                                <option value={"CHEQUE"}>Cheque</option>
+                                <option value={"DD"}>DD</option>
                               </Select>
                               <FormLabel>From Date</FormLabel>
                               <ReactDatePicker
@@ -546,16 +565,16 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                   </VStack>
                 </MenuList>
               </Menu>
-                  <Button
-                    as={Link}
-                    href={"/generate-reciept/without-usn"}
-                    size={"sm"}
-                    shadow={"md"}
-                    leftIcon={<AiOutlineFilePdf className={"text-xl"} />}
-                    colorScheme={"whatsapp"}
-                  >
-                    Generate Reciept
-                  </Button>
+              <Button
+                as={Link}
+                href={"/generate-reciept/without-usn"}
+                size={"sm"}
+                shadow={"md"}
+                leftIcon={<AiOutlineFilePdf className={"text-xl"} />}
+                colorScheme={"whatsapp"}
+              >
+                Generate Reciept
+              </Button>
             </HStack>
           </HStack>
         </TabList>
@@ -569,7 +588,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
           >
             {children}
           </TabPanel>
-          <TabPanel px={0} w={"100vw"}>{children}</TabPanel>
+          <TabPanel px={0} w={"100vw"}>
+            {children}
+          </TabPanel>
           <TabPanel px={0} py={"0"} w={"100vw"} h={"88vh"}>
             {children}
           </TabPanel>
