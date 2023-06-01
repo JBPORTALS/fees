@@ -9,15 +9,21 @@ import {
 import { FieldHookConfig, useField } from "formik";
 import moment from "moment";
 import ReactDatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.module.css";
+import * as Yup from "yup"
 
 type HookProps = FieldHookConfig<string>;
 
-type OtherProps = {
+type FieldProps = {
   options?: { value: string; option: string }[];
-};
+  label: string;
+  isDisabled?: boolean;
+  isReadonly?: boolean;
+  placeholder?: string;
+  type?: string;
+  validateField:Yup.StringSchema | Yup.NumberSchema | Yup.DateSchema
+} & HookProps;
 
-export const Field = (props: HookProps & OtherProps) => {
+export const Field = (props: FieldProps) => {
   const [fieldProps, metaProps, helperProps] = useField(props);
 
   function renderConditionalInputField() {
@@ -38,6 +44,8 @@ export const Field = (props: HookProps & OtherProps) => {
             {...fieldProps}
             placeholder={props.placeholder}
             type={props.type}
+            isDisabled={props?.isDisabled}
+            isReadOnly={props?.isReadonly}
           />
         );
       case "number":
@@ -56,6 +64,8 @@ export const Field = (props: HookProps & OtherProps) => {
             {...fieldProps}
             placeholder={props.placeholder}
             type={props.type}
+            isDisabled={props?.isDisabled}
+            isReadOnly={props?.isReadonly}
           />
         );
       case "date":
@@ -73,11 +83,13 @@ export const Field = (props: HookProps & OtherProps) => {
             }}
             bg={"white"}
             selected={
-              fieldProps.value == "" ? new Date(fieldProps.value) : new Date()
+              fieldProps.value !== "" ? new Date(fieldProps.value) : new Date()
             }
             dateFormat={"dd/MM/yyyy"}
             onBlur={fieldProps.onBlur}
             name={fieldProps.name}
+            isDisabled={props?.isDisabled}
+            isReadOnly={props?.isReadonly}
             //  @ts-ignore
             onChange={(value: Date) =>
               helperProps.setValue(moment(value).format("yyyy-MM-DD"))
@@ -87,6 +99,8 @@ export const Field = (props: HookProps & OtherProps) => {
       case "select":
         return (
           <Select
+          isDisabled={props?.isDisabled}
+          isReadOnly={props?.isReadonly}
             _invalid={{
               background(theme) {
                 return theme.colors.red["50"];
@@ -101,7 +115,9 @@ export const Field = (props: HookProps & OtherProps) => {
           >
             <option value={""}>{props.placeholder}</option>
             {props.options?.map((op) => (
-              <option value={op.value}>{op.option}</option>
+              <option value={op.value} key={op.value}>
+                {op.option}
+              </option>
             ))}
           </Select>
         );
@@ -112,7 +128,7 @@ export const Field = (props: HookProps & OtherProps) => {
 
   return (
     <FormControl isInvalid={!!metaProps.touched && !!metaProps.error}>
-      <FormLabel>{props["aria-label"]}</FormLabel>
+      <FormLabel>{props.label}</FormLabel>
       {renderConditionalInputField()}
       {metaProps.touched && metaProps.error && (
         <FormErrorMessage>

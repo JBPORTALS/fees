@@ -18,22 +18,33 @@ interface GenerateRecieptLayoutProps {
   children: React.ReactNode;
 }
 
-export default function GenerateRecieptLayout({ children }: GenerateRecieptLayoutProps) {
-  const pathname = usePathname()
+export default function GenerateRecieptLayout({
+  children,
+}: GenerateRecieptLayoutProps) {
+  const pathname = usePathname();
 
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
       <HStack px={"5"} py={"1"} className="border-gray-300 border-b">
-        <IconButton as={Link} href={"/dashboard"} variant={"ghost"} rounded={"full"} aria-label="back" icon={<AiOutlineArrowLeft className="text-2xl"/>}/>
-        <Heading size={"md"} color={"gray.600"}>Generate Reciept</Heading>
+        <IconButton
+          as={Link}
+          href={"/dashboard"}
+          variant={"ghost"}
+          rounded={"full"}
+          aria-label="back"
+          icon={<AiOutlineArrowLeft className="text-2xl" />}
+        />
+        <Heading size={"md"} color={"gray.600"}>
+          Generate Reciept
+        </Heading>
       </HStack>
       <Tabs
         isLazy
         lazyBehavior="unmount"
         index={
-          pathname == "/generate-reciept/without-usn"
+          pathname.startsWith("/generate-reciept/without-usn")
             ? 0
-            : pathname === "/generate-reciept/with-usn"
+            : pathname.startsWith("/generate-reciept/with-usn")
             ? 1
             : -1
         }
@@ -69,21 +80,15 @@ export default function GenerateRecieptLayout({ children }: GenerateRecieptLayou
             </HStack>
           </HStack>
         </TabList>
-        <TabPanels px={"0"} h={"full"}>
-          <TabPanel
-            px={"5"}
-            pb={"20"}
-            w={"full"}
-            h={"full"}
-            overflowY={"scroll"}
-          >
+        <TabPanels h={"fit"}>
+          <TabPanel p={"0"} w={"full"} h={"fit-content"}>
             {children}
           </TabPanel>
-          <TabPanel px={"5"}
-            pb={"20"}
+          <TabPanel
+            px={"5"}
             w={"full"}
             h={"full"}
-            overflowY={"scroll"}>
+          >
             {children}
           </TabPanel>
         </TabPanels>
