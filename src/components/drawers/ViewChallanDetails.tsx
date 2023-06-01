@@ -74,6 +74,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
   const toDate = params.get("toDate");
   const fromDate = params.get("fromDate");
   const mode = params.get("mode");
+  const feeType = params.get("feeType");
 
   const findChallan = useCallback(
     async () => {
@@ -115,7 +116,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           toast.success(res.data.msg);
           await findChallan();
           setIsChecking(false);
-          if (branch && mode && fromDate && toDate && sem)
+          if (branch && mode && fromDate && toDate && sem && feeType)
             dispatch(
               fetchSearchByMode({
                 branch,
@@ -123,6 +124,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
                 fromDate,
                 toDate,
                 sem,
+                feeType
               })
             );
         })
@@ -144,7 +146,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           toast.success(res.data.msg);
           await findChallan();
           setIsDeleting(false);
-          if (branch && mode && fromDate && toDate && sem)
+          if (branch && mode && fromDate && toDate && sem && feeType)
             dispatch(
               fetchSearchByMode({
                 branch,
@@ -152,6 +154,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
                 fromDate,
                 toDate,
                 sem,
+                feeType
               })
             );
         })
