@@ -27,7 +27,6 @@ import { AiOutlineFileExcel } from "react-icons/ai";
 import { Link } from "@chakra-ui/next-js";
 
 export default function Home() {
-  const dispatch = useAppDispatch();
   const params = useSearchParams();
 
   const branch = params.get("branch");
@@ -35,7 +34,6 @@ export default function Home() {
   const toDate = params.get("toDate");
   const fromDate = params.get("fromDate");
   const mode = params.get("mode");
-  const hash = params.get("hash");
   const feeType = params.get("feeType");
 
   const feeFilter = useAppSelector(
@@ -48,23 +46,7 @@ export default function Home() {
     (state) => state.fees.search_by_mode.pending
   ) as boolean;
 
-  const fetchSearchResult = useCallback(() => {
-    if (branch && mode && fromDate && toDate && sem && hash && feeType)
-      dispatch(
-        fetchSearchByMode({
-          feeType,
-          branch,
-          mode,
-          fromDate,
-          toDate,
-          sem,
-        })
-      );
-  }, [branch, sem, toDate, mode, fromDate, hash, feeType]);
-
-  useEffect(() => {
-    fetchSearchResult();
-  }, [fetchSearchResult]);
+  
 
   if (isLoading)
     return (
@@ -89,45 +71,57 @@ export default function Home() {
         justifyContent={"space-between"}
       >
         <HStack>
-        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
-          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
-            Branch
+          <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+            <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
+              Branch
+            </Tag>
+            <TagLabel ml={"2"}>{branch}</TagLabel>
           </Tag>
-          <TagLabel ml={"2"}>{branch}</TagLabel>
-        </Tag>
-        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
-          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
-            Sem
+          <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+            <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
+              Sem
+            </Tag>
+            <TagLabel ml={"2"}>{sem}</TagLabel>
           </Tag>
-          <TagLabel ml={"2"}>{sem}</TagLabel>
-        </Tag>
-        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
-          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
-            Fee Type
+          <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+            <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
+              Fee Type
+            </Tag>
+            <TagLabel ml={"2"}>{feeType}</TagLabel>
           </Tag>
-          <TagLabel ml={"2"}>{feeType}</TagLabel>
-        </Tag>
-        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
-          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
-            Mode
+          <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+            <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
+              Mode
+            </Tag>
+            <TagLabel ml={"2"}>{mode}</TagLabel>
           </Tag>
-          <TagLabel ml={"2"}>{mode}</TagLabel>
-        </Tag>
-        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
-          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
-            From Date
+          <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+            <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
+              From Date
+            </Tag>
+            <TagLabel ml={"2"}>{fromDate}</TagLabel>
           </Tag>
-          <TagLabel ml={"2"}>{fromDate}</TagLabel>
-        </Tag>
-        <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
-          <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
-            To Date
+          <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+            <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
+              To Date
+            </Tag>
+            <TagLabel ml={"2"}>{toDate}</TagLabel>
           </Tag>
-          <TagLabel ml={"2"}>{toDate}</TagLabel>
-        </Tag>
         </HStack>
         <HStack>
-          <Button as={Link} target="_blank" href={process.env.NEXT_PUBLIC_ADMIN_URL+"feedownloadexcel.php"} size={"sm"} colorScheme="facebook" leftIcon={<AiOutlineFileExcel className={"text-lg"}/>}>Download Excell</Button>
+          <Button
+            as={Link}
+            target="_blank"
+            href={
+              process.env.NEXT_PUBLIC_ADMIN_URL +
+              `feedownloadexcel.php?branch=${branch}&sem=${sem}&mode=${mode}&type=${feeType}&fromdate=${fromDate}&todate=${toDate}`
+            }
+            size={"sm"}
+            colorScheme="facebook"
+            leftIcon={<AiOutlineFileExcel className={"text-lg"} />}
+          >
+            Download Excel
+          </Button>
         </HStack>
       </HStack>
       {feeFilter.length > 0 ? (
