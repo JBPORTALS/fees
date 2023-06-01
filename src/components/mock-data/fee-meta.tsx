@@ -119,12 +119,22 @@ export const SearchColumns = [
   {
     field: "usn",
     headerName: "USN",
-    width: "180px",
+    width: "100px",
   },
   {
     field: "name",
     headerName: "Name",
     width: "170px",
+  },
+  {
+    field: "branch",
+    headerName: "Branch",
+    width: "100px",
+  },
+  {
+    field: "sem",
+    headerName: "Sem",
+    width: "80px",
   },
   {
     field: "date",
