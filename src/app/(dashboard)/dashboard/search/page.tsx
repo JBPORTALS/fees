@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import {
+  Button,
   Center,
   HStack,
   Heading,
@@ -22,6 +23,8 @@ import { useAppSelector } from "@/store";
 import { AgGridReact } from "ag-grid-react";
 import { SearchColumns } from "@/components/mock-data/fee-meta";
 import { FcSearch } from "react-icons/fc";
+import { AiOutlineFileExcel } from "react-icons/ai";
+import { Link } from "@chakra-ui/next-js";
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -83,7 +86,9 @@ export default function Home() {
         w={"full"}
         bg={"white"}
         className="border-gray-300 border-b"
+        justifyContent={"space-between"}
       >
+        <HStack>
         <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
           <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
             Branch
@@ -120,6 +125,10 @@ export default function Home() {
           </Tag>
           <TagLabel ml={"2"}>{toDate}</TagLabel>
         </Tag>
+        </HStack>
+        <HStack>
+          <Button as={Link} target="_blank" href={process.env.NEXT_PUBLIC_ADMIN_URL+"feedownloadexcel.php"} size={"sm"} colorScheme="facebook" leftIcon={<AiOutlineFileExcel className={"text-lg"}/>}>Download Excell</Button>
+        </HStack>
       </HStack>
       {feeFilter.length > 0 ? (
         <AgGridReact
