@@ -49,12 +49,12 @@ export default function Home() {
     if (branch && mode && fromDate && toDate && sem && hash && feeType)
       dispatch(
         fetchSearchByMode({
+          feeType,
           branch,
           mode,
           fromDate,
           toDate,
           sem,
-          feeType,
         })
       );
   }, [branch, sem, toDate, mode, fromDate, hash, feeType]);
