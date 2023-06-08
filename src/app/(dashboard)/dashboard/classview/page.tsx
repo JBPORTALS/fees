@@ -54,6 +54,8 @@ export default function BranchViewPage() {
             options={[
               { value: "1", option: "1" },
               { value: "2", option: "2" },
+              { value: "3", option: "3" },
+              { value: "4", option: "4" },
             ]}
           />
         ) : null}

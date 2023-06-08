@@ -63,8 +63,8 @@ export default function BranchViewPage() {
   
 
   return (
-    <>
-      <div className="w-full flex border-b py-2 space-x-3 px-5">
+    <div className={"h-fit w-full"}>
+      <div className="w-full backdrop-blur-sm z-20 h-fit flex border-b py-3 sticky top-0 space-x-3 px-5">
         <ISelect
           placeHolder="All"
           value={branch}
@@ -75,7 +75,7 @@ export default function BranchViewPage() {
           }))}
         />
       </div>
-      <VStack p={"5"}>
+      <VStack p={"5"}  h={"fit"}>
         {branch == "All" || !branch ? (
           <HStack>
             <Card width={"450px"} height={"450px"} p={"5"}>
@@ -223,6 +223,6 @@ export default function BranchViewPage() {
           </HStack>
         )}
       </VStack>
-    </>
+    </div>
   );
 }

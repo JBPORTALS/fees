@@ -174,9 +174,11 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
     router.replace(
       `/dashboard/search?branch=${modeFilterState.branch}&sem=${
         modeFilterState.sem
-      }&mode=${modeFilterState.mode}&feeType=${modeFilterState.type}&fromDate=${moment(
-        modeFilterState.fromDate
-      ).format("DD-MM-yyyy")}&toDate=${moment(modeFilterState.toDate).format(
+      }&mode=${modeFilterState.mode}&feeType=${
+        modeFilterState.type
+      }&fromDate=${moment(modeFilterState.fromDate).format(
+        "DD-MM-yyyy"
+      )}&toDate=${moment(modeFilterState.toDate).format(
         "DD-MM-yyyy"
       )}&hash=${new Date().getTime()}`
     );
@@ -585,7 +587,14 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
           >
             {children}
           </TabPanel>
-          <TabPanel px={0} w={"100vw"}>
+          <TabPanel
+            py={"0"}
+            px={"0"}
+            pb={"20"}
+            w={"full"}
+            h={"83vh"}
+            overflowY={"scroll"}
+          >
             {children}
           </TabPanel>
           <TabPanel px={0} py={"0"} w={"100vw"} h={"88vh"}>
