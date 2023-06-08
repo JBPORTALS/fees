@@ -1,13 +1,6 @@
-"use client";
-import { Stack} from "@chakra-ui/react";
+import { redirect } from "next/navigation";
 
 
-
-export default function Home(){
-
-  return (
-    <Stack h={"full"} w={"full"} justifyContent={"start"}>
-        Generate reciept
-    </Stack>
-  );
+export default function GenerateReciept(){
+  redirect("/generate-reciept/without-usn")
 }
