@@ -178,6 +178,10 @@ export default function WithoutUSNDynamicPage() {
           option: "Cheque",
           value: "CHEQUE",
         },
+        {
+          option: "DD",
+          value: "DD",
+        },
       ],
       validateField: Yup.string().required("Fill the field !"),
     },
@@ -349,6 +353,10 @@ export default function WithoutUSNDynamicPage() {
           option: "Cheque",
           value: "CHEQUE",
         },
+        {
+          option: "DD",
+          value: "DD",
+        },
       ],
       validateField: Yup.string().required("Fill the field !"),
     },
@@ -426,6 +434,10 @@ export default function WithoutUSNDynamicPage() {
         {
           option: "Cheque",
           value: "CHEQUE",
+        },
+        {
+          option: "DD",
+          value: "DD",
         },
       ],
       validateField: Yup.string().required("Fill the field !"),
@@ -505,6 +517,10 @@ export default function WithoutUSNDynamicPage() {
           option: "Cheque",
           value: "CHEQUE",
         },
+        {
+          option: "DD",
+          value: "DD",
+        },
       ],
       validateField: Yup.string().required("Fill the field !"),
     },
@@ -583,6 +599,10 @@ export default function WithoutUSNDynamicPage() {
           option: "Cheque",
           value: "CHEQUE",
         },
+        {
+          option: "DD",
+          value: "DD",
+        },
       ],
       validateField: Yup.string().required("Fill the field !"),
     },
@@ -625,6 +645,28 @@ export default function WithoutUSNDynamicPage() {
     {
       name: "chequeNo",
       label: "Transaction ID",
+      type: "text",
+      validateField: Yup.string()
+        .required("Fill the field!")
+        .matches(
+          /^[a-z0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
+    },
+    {
+      name: "date",
+      label: "Payment Date",
+      type: "date",
+      validateField: Yup.date()
+        .required("Fill the field!")
+        .typeError("Not valid date"),
+    },
+  ];
+
+  const ddTemplate = [
+    {
+      name: "chequeNo",
+      label: "DD No.",
       type: "text",
       validateField: Yup.string()
         .required("Fill the field!")
@@ -702,6 +744,8 @@ export default function WithoutUSNDynamicPage() {
               ? cashTemplate
               : paymentMode == "ONLINE"
               ? onlineTemplate
+              : paymentMode == "DD"
+              ? ddTemplate
               : undefined;
 
           const checkOnPaymentType =
