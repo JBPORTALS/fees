@@ -282,7 +282,7 @@ export default function WithoutUSNDynamicPage() {
       ],
     },
     {
-      name: "category",
+      name: "misc_category",
       label: "Category",
       type: "select",
       placeholder: "Select Category",
