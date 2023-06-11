@@ -1,13 +1,6 @@
-"use client";
-import { Stack, Text} from "@chakra-ui/react";
+import { redirect } from 'next/navigation'
 
-
-
-export default function WithUsn(){
-
-  return (
-    <Stack h={"full"} w={"full"} justifyContent={"start"}>
-       <Text> With USN </Text>
-    </Stack>
-  );
+export default function WithoutUSNPage() {
+  redirect("/generate-reciept/with-usn/FEE")
 }
+
