@@ -29,7 +29,7 @@ const initialValues = {
   vtuFee: 0, //✅
   bank: "", //✅
   paymentMode: "", //✅
-  date: moment(new Date()).format("yyyy-MM-DD"), //✅
+  date: moment(new Date(Date.now())).format("yyyy-MM-DD"), //✅
   transactionId: "",
   chequeNo: "", //✅
   busFee: 0, //✅
