@@ -18,10 +18,9 @@ import { AiOutlineFileDone } from "react-icons/ai";
 import axios from "axios";
 
 const initialValues = {
-  name: "", //✅
-  branch: "", //✅
-  sem: "", //✅
+  usn: "", //✅
   category: "", //✅
+  misc_category: "", //✅
   acadYear: "", //✅
   tuitionFee: 0, //✅
   collegeFee: 0, //✅
@@ -71,78 +70,15 @@ export default function WithoutUSNDynamicPage() {
 
   const feeTemplate = [
     {
-      name: "name",
-      label: "Name",
+      name: "usn",
+      label: "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
-        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
-    },
-    {
-      name: "branch",
-      label: "Branch",
-      type: "select",
-      placeholder: "Select Branch",
-      validateField: Yup.string().required("Fill the field !"),
-      options: branchList.map((value) => ({
-        value: value.branch,
-        option: value.branch,
-      })),
-    },
-    {
-      name: "sem",
-      label: "Sem",
-      type: "select",
-      placeholder: "Select Sem",
-      validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
-    },
-    {
-      name: "category",
-      label: "Category",
-      type: "select",
-      placeholder: "Select Category",
-      validateField: Yup.string().required("Fill the field !"),
-      options: [
-        {
-          value: "SNQ",
-          option: "SNQ",
-        },
-        {
-          value: "MGT",
-          option: "MGT",
-        },
-        {
-          value: "COMEDK",
-          option: "COMEDK",
-        },
-        {
-          value: "GM",
-          option: "GM",
-        },
-        {
-          value: "SC",
-          option: "SC",
-        },
-        {
-          value: "ST",
-          option: "ST",
-        },
-        {
-          value: "CAT-I",
-          option: "CAT-I",
-        },
-        {
-          value: "DIP-LE",
-          option: "DIP-LE",
-        },
-      ],
+        .matches(
+          /^[Aa-zZ0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
     },
     {
       name: "acadYear",
@@ -243,9 +179,9 @@ export default function WithoutUSNDynamicPage() {
           value: "CHEQUE",
         },
         {
-          option:"DD",
-          value:"DD"
-        }
+          option: "DD",
+          value: "DD",
+        },
       ],
       validateField: Yup.string().required("Fill the field !"),
     },
@@ -253,37 +189,15 @@ export default function WithoutUSNDynamicPage() {
 
   const miscellaneousTemplate = [
     {
-      name: "name",
-      label: "Name",
+      name: "usn",
+      label: "USN",
       type: "text",
       validateField: Yup.string()
-        .required("Field required !")
-        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
-    },
-    {
-      name: "branch",
-      label: "Branch",
-      type: "select",
-      placeholder: "Select Branch",
-      validateField: Yup.string().required("Fill the field !"),
-      options: branchList.map((value) => ({
-        value: value.branch,
-        option: value.branch,
-      })),
-    },
-    {
-      name: "sem",
-      label: "Sem",
-      type: "select",
-      placeholder: "Select Sem",
-      validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+        .required("Fill the field!")
+        .matches(
+          /^[Aa-zZ0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
     },
     {
       name: "misc_category",
@@ -368,37 +282,15 @@ export default function WithoutUSNDynamicPage() {
 
   const busFeeTemplate = [
     {
-      name: "name",
-      label: "Name",
+      name: "usn",
+      label: "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
-        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
-    },
-    {
-      name: "branch",
-      label: "Branch",
-      type: "select",
-      placeholder: "Select Branch",
-      validateField: Yup.string().required("Fill the field !"),
-      options: branchList.map((value) => ({
-        value: value.branch,
-        option: value.branch,
-      })),
-    },
-    {
-      name: "sem",
-      label: "Sem",
-      type: "select",
-      placeholder: "Select Sem",
-      validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+        .matches(
+          /^[Aa-zZ0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
     },
     {
       name: "acadYear",
@@ -472,37 +364,15 @@ export default function WithoutUSNDynamicPage() {
 
   const excessFeeTemplate = [
     {
-      name: "name",
-      label: "Name",
+      name: "usn",
+      label: "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
-        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
-    },
-    {
-      name: "branch",
-      label: "Branch",
-      type: "select",
-      placeholder: "Select Branch",
-      validateField: Yup.string().required("Fill the field !"),
-      options: branchList.map((value) => ({
-        value: value.branch,
-        option: value.branch,
-      })),
-    },
-    {
-      name: "sem",
-      label: "Sem",
-      type: "select",
-      placeholder: "Select Sem",
-      validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+        .matches(
+          /^[Aa-zZ0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
     },
     {
       name: "acadYear",
@@ -576,37 +446,15 @@ export default function WithoutUSNDynamicPage() {
 
   const securityFeeTemplate = [
     {
-      name: "name",
-      label: "Name",
+      name: "usn",
+      label: "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
-        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
-    },
-    {
-      name: "branch",
-      label: "Branch",
-      type: "select",
-      placeholder: "Select Branch",
-      validateField: Yup.string().required("Fill the field !"),
-      options: branchList.map((value) => ({
-        value: value.branch,
-        option: value.branch,
-      })),
-    },
-    {
-      name: "sem",
-      label: "Sem",
-      type: "select",
-      placeholder: "Select Sem",
-      validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+        .matches(
+          /^[Aa-zZ0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
     },
     {
       name: "acadYear",
@@ -680,37 +528,15 @@ export default function WithoutUSNDynamicPage() {
 
   const hostelFeeTemplate = [
     {
-      name: "name",
-      label: "Name",
+      name: "usn",
+      label: "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
-        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
-    },
-    {
-      name: "branch",
-      label: "Branch",
-      type: "select",
-      placeholder: "Select Branch",
-      validateField: Yup.string().required("Fill the field !"),
-      options: branchList.map((value) => ({
-        value: value.branch,
-        option: value.branch,
-      })),
-    },
-    {
-      name: "sem",
-      label: "Sem",
-      type: "select",
-      placeholder: "Select Sem",
-      validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+        .matches(
+          /^[Aa-zZ0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
     },
     {
       name: "acadYear",
@@ -865,7 +691,7 @@ export default function WithoutUSNDynamicPage() {
         {...{ initialValues }}
         onSubmit={async (state) => {
           try {
-            const filename = "feerecieptwithoutusn.php";
+            const filename = "feerecieptwithusn.php";
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
                 `${filename}?${Object.keys(state)
