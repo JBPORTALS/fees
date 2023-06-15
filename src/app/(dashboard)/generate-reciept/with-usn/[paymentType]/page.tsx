@@ -649,8 +649,8 @@ export default function WithoutUSNDynamicPage() {
       validateField: Yup.string()
         .required("Fill the field!")
         .matches(
-          /^[a-z0-9]+$/i,
-          "Only alphanumaric values are allowed for this field"
+          /^[a-z0-9,]+$/i,
+          "Only [a-z],[0-9] or `,` are allowed for this field"
         ),
     },
     {
