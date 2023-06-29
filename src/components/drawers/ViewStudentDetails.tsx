@@ -162,7 +162,7 @@ export default function ViewStudentsDetails() {
           router.back();
         }}
         isOpen={true}
-        heading="New Student"
+        heading="Student Details"
       >
         <VStack
           alignItems={"flex-start"}
