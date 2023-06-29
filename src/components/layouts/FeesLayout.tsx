@@ -48,6 +48,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { usePathname, useRouter } from "next/navigation";
 import { Link } from "@chakra-ui/next-js";
 import { shallowEqual } from "react-redux";
+import SideBar from "../ui/SideBar";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -186,7 +187,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   };
 
   return (
-    <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
+    <div className="bg-primary relative overflow-hidden w-full h-full flex flex-col">
       <Tabs
         index={
           pathname == "/dashboard"
@@ -209,7 +210,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
           position={"sticky"}
           bg={"whiteAlpha.100"}
           backdropBlur={"sm"}
-          w={"100vw"}
+          w={"full"}
           className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm flex justify-between"
         >
           <HStack justifyContent={"space-between"} w={"full"}>

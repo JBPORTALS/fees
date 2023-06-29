@@ -326,6 +326,8 @@ export interface Fee {
   paid: number;
   remaining: number;
   status: "FULLY PAID" | "PARTIALLY PAID" | "NOT PAID";
+  category:string;
+  sem:string;
 }
 
 export interface PaymentHistory {

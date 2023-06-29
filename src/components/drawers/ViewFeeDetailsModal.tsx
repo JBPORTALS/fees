@@ -12,7 +12,6 @@ import {
   Heading,
   HStack,
   Input,
-  Select,
   Tag,
   useDisclosure,
   VStack,

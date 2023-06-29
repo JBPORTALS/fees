@@ -10,7 +10,6 @@ export default async function DashboardRootLayout(props: {
 }) {
   const dispatch = useAppDispatch();
   const fetchData = useCallback(() => {
-    console.log("rendered");
     dispatch(fetchBranchFeeDetails());
     dispatch(fetchOverAllFee());
   }, [dispatch]);
@@ -18,5 +17,6 @@ export default async function DashboardRootLayout(props: {
   useEffect(() => {
     fetchData();
   }, []);
+  
   return <FeesLayout>{props?.children}</FeesLayout>;
 }

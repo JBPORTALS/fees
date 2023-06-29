@@ -2,29 +2,25 @@
 
 import { useAppSelector } from "@/store";
 import { AgGridReact } from "ag-grid-react";
-import { columns, columnsForNonUpdate } from "../mock-data/fee-meta";
 import { Center, Heading, VStack } from "@chakra-ui/react";
-import { useSupabase } from "@/app/supabase-provider";
+import { StudentColumnDefs } from "../mock-data/students-meta";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 
-function ClassDataGrid() {
+function StudentDataGrid() {
   const FeeDetails = useAppSelector((state) => state.fees.all_fee.data) as any;
   const Error = useAppSelector((state) => state.fees.all_fee.error) as
     | null
     | string;
-  const { user } = useSupabase();
 
   return (
-    <VStack h={"78vh"} w={"98vw"}>
+    <VStack h={"full"} w={"full"}>
       {FeeDetails.length > 0 ? (
         <AgGridReact
-          className="w-full h-full  pb-6 ag-theme-material"
+          className="w-full h-full ag-theme-material"
           animateRows={true}
           rowData={FeeDetails}
-          columnDefs={
-            user?.can_update_total ? (columns as any) : (columnsForNonUpdate as any)
-          }
+          columnDefs={StudentColumnDefs as any}
           alwaysShowHorizontalScroll
           onRowEditingStarted={(e) => {}}
         />
@@ -37,4 +33,4 @@ function ClassDataGrid() {
   );
 }
 
-export default ClassDataGrid;
+export default StudentDataGrid;
