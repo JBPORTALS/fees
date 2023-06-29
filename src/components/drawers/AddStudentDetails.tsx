@@ -38,6 +38,41 @@ const Schema = Yup.object().shape({
   total: Yup.number().required().min(0).typeError("invalid number"),
 });
 
+const Categories = [
+  {
+    value: "SNQ",
+    option: "SNQ",
+  },
+  {
+    value: "MGT",
+    option: "MGT",
+  },
+  {
+    value: "COMEDK",
+    option: "COMEDK",
+  },
+  {
+    value: "GM",
+    option: "GM",
+  },
+  {
+    value: "SC",
+    option: "SC",
+  },
+  {
+    value: "ST",
+    option: "ST",
+  },
+  {
+    value: "CAT-I",
+    option: "CAT-I",
+  },
+  {
+    value: "DIP-LE",
+    option: "DIP-LE",
+  },
+];
+
 export default function AddStudentsDetails({ children }: props) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const branch_list = useAppSelector(
@@ -170,6 +205,8 @@ export default function AddStudentsDetails({ children }: props) {
                 <option value={"4"}>4</option>
                 <option value={"5"}>5</option>
                 <option value={"6"}>6</option>
+                <option value={"7"}>6</option>
+                <option value={"8"}>6</option>
               </Select>
               <FormErrorMessage>{errors.sem}</FormErrorMessage>
             </FormControl>
@@ -217,7 +254,11 @@ export default function AddStudentsDetails({ children }: props) {
                 onBlur={handleBlur}
               >
                 <option value={""}>Select Branch</option>
-                <option value={"GM"}>GM</option>
+                {Categories.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.option}
+                  </option>
+                ))}
               </Select>
               <FormErrorMessage>{errors.category}</FormErrorMessage>
             </FormControl>
