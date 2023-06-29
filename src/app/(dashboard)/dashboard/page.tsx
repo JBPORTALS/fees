@@ -2,9 +2,7 @@
 import { Box, Card, HStack, Heading, Stack, Stat, StatLabel, StatNumber, Tag, VStack,  } from "@chakra-ui/react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
-import {useCallback, useEffect} from "react"
-import { BranchFee, OverallFee, fetchBranchFeeDetails, fetchOverAllFee } from "@/store/fees.slice";
-import { useAppDispatch } from "@/hooks";
+import { BranchFee, OverallFee, } from "@/store/fees.slice";
 import { Pie} from "react-chartjs-2";
 import {
   Chart as ChartJS,

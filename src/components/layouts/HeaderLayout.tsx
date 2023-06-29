@@ -22,6 +22,7 @@ import {
 import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
+import SideBar from "../ui/SideBar";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -118,7 +119,10 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
           </HStack>
         </HStack>
       </HStack>
-      {children}
+      <div className="w-full h-full grid grid-cols-7 grid-flow-row">
+        <SideBar />
+        <div className="col-span-6 h-full w-full">{children}</div>
+      </div>
     </div>
   );
 }

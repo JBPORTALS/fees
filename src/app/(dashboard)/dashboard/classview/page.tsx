@@ -2,18 +2,13 @@
 import ISelect from "@/components/ui/utils/ISelect";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import {
-  fetchBranchList,
-  fetchFeeDetails,
-} from "@/store/fees.slice";
+import { fetchFeeDetails } from "@/store/fees.slice";
 import { VStack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
-import "ag-grid-community/styles/ag-grid.css"
-import "ag-grid-community/styles/ag-theme-material.css"
-
-
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-material.css";
 
 export default function BranchViewPage() {
   const [state, setState] = useState({

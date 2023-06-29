@@ -76,7 +76,6 @@ export const columns = [
     width: "170px",
     resizable: true,
   },
-
   {
     field: "status",
     headerName: "Status",
