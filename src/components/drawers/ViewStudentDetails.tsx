@@ -19,6 +19,8 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import { AiOutlineUserDelete } from "react-icons/ai";
+import { fetchFeeDetails } from "@/store/fees.slice";
+import { useAppDispatch } from "@/hooks";
 
 const Schema = Yup.object().shape({
   name: Yup.string().required().min(2),
@@ -73,7 +75,7 @@ export default function ViewStudentsDetails() {
     state.fees.all_fee.data.filter((vlaue: any) => vlaue.regno == params.regno)
   );
 
-  console.log(data, params);
+  const dispatch = useAppDispatch();
 
   const initialState = {
     usn: data[0]?.regno ?? "",
@@ -103,6 +105,7 @@ export default function ViewStudentsDetails() {
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
       toast.success("Updated successfully", { position: "top-right" });
+      dispatch(fetchFeeDetails({ branch: values.branch, year: data[0].year }));
       router.back();
       router.replace("/students");
     } catch (e: any) {
@@ -295,7 +298,6 @@ export default function ViewStudentsDetails() {
             <FormControl
               isInvalid={!!errors.total?.length && touched.total}
               px={"5"}
-              pb={"5"}
             >
               <FormLabel flex={1}>
                 <Text>Total</Text>
@@ -311,8 +313,57 @@ export default function ViewStudentsDetails() {
               />
               <FormErrorMessage>{errors.total}</FormErrorMessage>
             </FormControl>
+
+            <FormControl isReadOnly px={"5"} >
+              <FormLabel flex={1}>
+                <Text>Paid</Text>
+              </FormLabel>
+              <Input
+                isReadOnly
+                name="paid"
+                bg={"white"}
+                variant={"filled"}
+                flex={"1.5"}
+                value={data[0]?.paid}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              <FormErrorMessage>{errors.total}</FormErrorMessage>
+            </FormControl>
+
+            <FormControl isReadOnly px={"5"}>
+              <FormLabel flex={1}>
+                <Text>Balance</Text>
+              </FormLabel>
+              <Input
+                isReadOnly
+                name="remaining"
+                bg={"white"}
+                variant={"filled"}
+                flex={"1.5"}
+                value={data[0]?.remaining}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </FormControl>
+
+            <FormControl isReadOnly px={"5"}>
+              <FormLabel flex={1}>
+                <Text>Status</Text>
+              </FormLabel>
+              <Input
+                isReadOnly
+                name="status"
+                bg={"white"}
+                variant={"filled"}
+                flex={"1.5"}
+                value={data[0]?.status}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </FormControl>
           </>
-          <HStack position={"sticky"} bottom={"0"} w={"full"} p={"5"}>
+          <HStack position={"sticky"} className="backdrop-blur-sm" bg={"rgba(255,255,255,0.4)"} bottom={"0"} w={"full"} p={"5"}>
             <Button
               isLoading={isDeleting}
               onClick={deleteStudent}
