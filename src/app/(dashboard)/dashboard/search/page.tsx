@@ -46,8 +46,6 @@ export default function Home() {
     (state) => state.fees.search_by_mode.pending
   ) as boolean;
 
-  
-
   if (isLoading)
     return (
       <Center h={"100%"} pb={"28"}>
@@ -61,16 +59,15 @@ export default function Home() {
     );
 
   return (
-    <Stack h={"100%"} w={"100vw"} justifyContent={"start"}>
+    <Stack h={"100%"} w={"full"} justifyContent={"start"}>
       <HStack
         py={"3"}
         px={"5"}
         w={"full"}
         bg={"white"}
         className="border-gray-300 border-b"
-        justifyContent={"space-between"}
       >
-        <HStack>
+        <HStack w={"full"}>
           <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
             <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
               Branch
@@ -107,9 +104,8 @@ export default function Home() {
             </Tag>
             <TagLabel ml={"2"}>{toDate}</TagLabel>
           </Tag>
-        </HStack>
-        <HStack>
           <Button
+            ml={"5"}
             as={Link}
             target="_blank"
             href={
