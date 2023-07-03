@@ -105,7 +105,7 @@ export default function Home() {
             <TagLabel ml={"2"}>{toDate}</TagLabel>
           </Tag>
           <Button
-            ml={"5"}
+            ml={"2"}
             as={Link}
             target="_blank"
             href={
