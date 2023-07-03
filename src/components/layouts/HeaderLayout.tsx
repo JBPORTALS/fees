@@ -38,13 +38,13 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
   const { user, supabase } = useSupabase();
 
   return (
-    <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
+    <div className="bg-primary relative overflow-hidden w-full  h-[100vh]">
       <HStack
         w={"full"}
         zIndex={"banner"}
         px={"5"}
         justifyContent={"space-between"}
-        h={"14"}
+        h={"58px"}
         top={"0"}
         left={"0"}
         className="bg-secondary border-b border-b-lightgray"
