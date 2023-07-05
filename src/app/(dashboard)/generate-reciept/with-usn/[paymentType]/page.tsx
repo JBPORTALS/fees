@@ -694,13 +694,11 @@ export default function WithoutUSNDynamicPage() {
         onSubmit={async (state) => {
           try {
             const filename =
-              state.paymentMode == "ONLINE" && paymentType == "FEE"
+              state.paymentMode == "ONLINE" && paymentType !== "MISCELLANEOUS"
                 ? "feegenerateonlinewithusn.php"
                 : paymentType == "MISCELLANEOUS"
                 ? "feegeneratemiscellaneouswithusn.php"
-                : paymentType == "FEE"
-                ? "feegeneraterecieptwithusn.php"
-                : "feerecieptwithusn.php";
+                : "feegeneraterecieptwithusn.php";
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
                 `${filename}?${Object.keys(state)
