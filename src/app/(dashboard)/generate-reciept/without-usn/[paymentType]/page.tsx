@@ -865,7 +865,14 @@ export default function WithoutUSNDynamicPage() {
         {...{ initialValues }}
         onSubmit={async (state) => {
           try {
-            const filename = "feerecieptwithoutusn.php";
+            const filename =
+              state.paymentMode == "ONLINE" && paymentType == "FEE"
+                ? "feegenerateonlinewithoutusn.php"
+                : paymentType == "MISCELLANEOUS"
+                ? "feegeneratemiscellaneouswithoutusn.php"
+                : paymentType == "FEE"
+                ? "feegeneraterecieptwithoutusn.php"
+                : "feerecieptwithoutusn.php";
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
                 `${filename}?${Object.keys(state)

@@ -57,16 +57,18 @@ const FormikContextProvider = () => {
 };
 
 export default function WithoutUSNDynamicPage() {
-  const branchList = useAppSelector((state) => state.fees.branch_list.data) as {
-    branch: string;
-  }[];
-
   const toast = useToast({
     position: "bottom-left",
   });
 
   const params = useParams();
-  const paymentType = params.paymentType;
+  const paymentType = params.paymentType as
+    | "FEE"
+    | "MISCELLANEOUS"
+    | "BUS_FEE"
+    | "EXCESS_FEE"
+    | "SECURITY_DEPOSIT"
+    | "HOSTEL_FEE";
 
   const feeTemplate = [
     {
@@ -691,7 +693,14 @@ export default function WithoutUSNDynamicPage() {
         {...{ initialValues }}
         onSubmit={async (state) => {
           try {
-            const filename = "feerecieptwithusn.php";
+            const filename =
+              state.paymentMode == "ONLINE" && paymentType == "FEE"
+                ? "feegenerateonlinewithusn.php"
+                : paymentType == "MISCELLANEOUS"
+                ? "feegeneratemiscellaneouswithusn.php"
+                : paymentType == "FEE"
+                ? "feegeneraterecieptwithusn.php"
+                : "feerecieptwithusn.php";
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
                 `${filename}?${Object.keys(state)
