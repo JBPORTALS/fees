@@ -1,14 +1,37 @@
 import { Tooltip } from "@chakra-ui/react";
-import { AiOutlineEye } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineProfile, AiOutlineUser } from "react-icons/ai";
+import { CiReceipt } from "react-icons/ci";
+import { ImProfile } from "react-icons/im";
 import ViewFeeDetailsModal from "../drawers/ViewFeeDetailsModal";
 import ViewChallanDetails from "../drawers/ViewChallanDetails";
+import ViewStudentsDetails from "../drawers/ViewStudentDetails";
 
 const CustomViewButton = (data: any) => {
   return (
     <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
-      <ViewFeeDetailsModal regno={data.value.regno}>
+      <ViewFeeDetailsModal id={data.value.id} regno={data.value.regno}>
         {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
       </ViewFeeDetailsModal>
+    </div>
+  );
+};
+
+const CustomViewHistoryButton = (data: any) => {
+  return (
+    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
+      <ViewFeeDetailsModal id={data.value.id} regno={data.value.regno}>
+        {({ onOpen }) => <CiReceipt onClick={onOpen} />}
+      </ViewFeeDetailsModal>
+    </div>
+  );
+};
+
+const ProfileViewButton = (data: any) => {
+  return (
+    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
+      <ViewStudentsDetails regno={data.value.regno} id={data.value.id}>
+        {({ onOpen }) => <AiOutlineUser onClick={onOpen} />}
+      </ViewStudentsDetails>
     </div>
   );
 };
@@ -92,6 +115,69 @@ export const columns = [
     headerName: "View",
     width: "110px",
     cellRenderer: CustomViewButton,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+];
+
+
+export const feeSearchColumns = [
+  {
+    field: "regno",
+    headerName: "Reg No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    resizable: true,
+    suppressMovable: true,
+  },
+  {
+    field: "total1",
+    headerName: "Total Fee",
+    width: "180px",
+  },
+  {
+    field: "paid1",
+    headerName: "Paid",
+    width: "170px",
+  },
+  {
+    field: "remaining1",
+    headerName: "Balance",
+    width: "170px",
+    resizable: true,
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    resizable: true,
+    filter: true,
+    width: "120px",
+    cellRenderer: StatusView,
+    valueGetter: (params: any) => {
+      return params.data.status;
+    },
+  },
+  {
+    field: "",
+    headerName: "Payment History",
+    width: "160px",
+    cellRenderer: CustomViewHistoryButton,
+    valueGetter: (params: any) => {
+      return params.data;
+    },
+  },
+  {
+    field: "",
+    headerName: "Profile",
+    width: "110px",
+    cellRenderer: ProfileViewButton,
     valueGetter: (params: any) => {
       return params.data;
     },
@@ -188,12 +274,12 @@ export const columnsForNonUpdate = [
   },
   {
     field: "paid1",
-    headerName: "Paid",
+    headerName: "Paid Amount",
     width: "170px",
   },
   {
     field: "remaining1",
-    headerName: "Balance",
+    headerName: "Balance Amount",
     width: "170px",
     resizable: true,
   },

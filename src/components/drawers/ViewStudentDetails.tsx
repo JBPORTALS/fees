@@ -14,12 +14,20 @@ import IDrawer from "../ui/utils/IDrawer";
 import { Field, Formik, useFormik } from "formik";
 import * as Yup from "yup";
 import { useAppSelector } from "@/store";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useParams, useRouter } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { AiOutlineUserDelete } from "react-icons/ai";
-import { fetchFeeDetails } from "@/store/fees.slice";
+import {
+  fetchFeeDetails,
+  fetchSelectedFeeSearchDetails,
+} from "@/store/fees.slice";
 import { useAppDispatch } from "@/hooks";
 
 const Schema = Yup.object().shape({
@@ -65,26 +73,28 @@ const Categories = [
   },
 ];
 
-export default function ViewStudentsDetails() {
-  const params = useParams();
+export default function ViewStudentsDetails({
+  id,
+  children,
+  regno,
+}: {
+  id: string;
+  regno: string;
+  children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
+}) {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
   const [isDeleting, setIsDeleting] = useState(false);
-  const data = useAppSelector((state) => {
-    if (state.fees.all_fee.data.length > 0)
-      return state.fees.all_fee.data.filter(
-        (vlaue: any) => vlaue.regno == params.regno
-      );
-    else
-      return state.fees.search_by_mode.data.filter(
-        (vlaue: any) => vlaue.regno == params.regno
-      );
-  });
 
-  const dispatch = useAppDispatch();
+  const data = useAppSelector((state) => state.fees.selected_fee.data);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchparams = useSearchParams();
 
-  const initialState = {
+  console.log(pathname);
+
+  let initialState = {
     id: data[0]?.id ?? "",
     usn: data[0]?.regno ?? "",
     name: data[0]?.name ?? "",
@@ -94,7 +104,33 @@ export default function ViewStudentsDetails() {
     category: data[0]?.category ?? "",
   };
 
+  const dispatch = useAppDispatch();
+  const { onOpen, isOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    console.log(id);
+    if (id && isOpen && regno) {
+      dispatch(fetchSelectedFeeSearchDetails({ id, regno }));
+    }
+  }, [id, isOpen, regno, dispatch]);
+
+  const {
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    values,
+    isSubmitting,
+  } = useFormik({
+    initialValues: initialState,
+    onSubmit: async (values) => await updateStudent(values),
+    validationSchema: Schema,
+    enableReinitialize: true,
+  });
+
   const updateStudent = useCallback(async (values: typeof initialState) => {
+    console.log(`updateID`, values.id);
     try {
       const formData = new FormData();
       formData.append("id", values.id);
@@ -115,14 +151,14 @@ export default function ViewStudentsDetails() {
         throw Error("Something went wrong !");
       toast.success("Updated successfully", { position: "top-right" });
       dispatch(fetchFeeDetails({ branch: values.branch, year: data[0].year }));
-      router.back();
-      router.replace("/students");
+      router.refresh();
+      onClose();
     } catch (e: any) {
-      toast.error(e.response?.data?.msg);
+      e.response.data?.msg && toast.error(e.response.data?.msg);
     }
   }, []);
 
-  const deleteStudent = useCallback(async () => {
+  const deleteStudent = useCallback(async (values: typeof initialState) => {
     setIsDeleting(true);
     try {
       const formData = new FormData();
@@ -138,29 +174,13 @@ export default function ViewStudentsDetails() {
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
       toast.success("Deleted successfully", { position: "top-right" });
-      router.back();
-      router.replace("/students");
+      router.refresh();
+      onClose();
     } catch (e: any) {
-      toast.error(e.response?.data?.msg);
+      e.response.data?.msg && toast.error(e.response.data?.msg);
     }
     setIsDeleting(false);
   }, []);
-
-  const {
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    values,
-    isSubmitting,
-  } = useFormik({
-    initialValues: initialState,
-    onSubmit: async (values) => await updateStudent(values),
-    validationSchema: Schema,
-  });
-
-  const router = useRouter();
 
   return (
     <>
@@ -171,10 +191,8 @@ export default function ViewStudentsDetails() {
           handleSubmit();
         }}
         buttonTitle="Save"
-        onClose={() => {
-          router.back();
-        }}
-        isOpen={true}
+        onClose={onClose}
+        isOpen={isOpen}
         heading="Student Details"
       >
         <VStack
@@ -187,6 +205,7 @@ export default function ViewStudentsDetails() {
           position={"relative"}
         >
           <>
+            {/* <pre>{JSON.stringify(values)}</pre> */}
             <FormControl
               isInvalid={!!errors.usn?.length && touched.usn}
               px={"5"}
@@ -270,8 +289,8 @@ export default function ViewStudentsDetails() {
                 onBlur={handleBlur}
               >
                 <option value={""}>Select Branch</option>
-                {branch_list.map((branch: any) => (
-                  <option key={branch} value={branch.branch}>
+                {branch_list.map((branch: any, key) => (
+                  <option key={branch + key} value={branch.branch}>
                     {branch.branch}
                   </option>
                 ))}
@@ -296,8 +315,8 @@ export default function ViewStudentsDetails() {
                 onBlur={handleBlur}
               >
                 <option value={""}>Select Branch</option>
-                {Categories.map((category) => (
-                  <option key={category.value} value={category.value}>
+                {Categories.map((category, key) => (
+                  <option key={category.value + key} value={category.value}>
                     {category.option}
                   </option>
                 ))}
@@ -310,7 +329,7 @@ export default function ViewStudentsDetails() {
               px={"5"}
             >
               <FormLabel flex={1}>
-                <Text>Total</Text>
+                <Text>Total Amount</Text>
               </FormLabel>
               <Input
                 name="total"
@@ -326,7 +345,7 @@ export default function ViewStudentsDetails() {
 
             <FormControl isReadOnly px={"5"}>
               <FormLabel flex={1}>
-                <Text>Paid</Text>
+                <Text>Paid Amount</Text>
               </FormLabel>
               <Input
                 isReadOnly
@@ -343,7 +362,7 @@ export default function ViewStudentsDetails() {
 
             <FormControl isReadOnly px={"5"}>
               <FormLabel flex={1}>
-                <Text>Balance</Text>
+                <Text>Balance Amount</Text>
               </FormLabel>
               <Input
                 isReadOnly
@@ -381,18 +400,21 @@ export default function ViewStudentsDetails() {
             w={"full"}
             p={"5"}
           >
-            <Button
-              isLoading={isDeleting}
-              onClick={deleteStudent}
-              w={"full"}
-              colorScheme="red"
-              leftIcon={<AiOutlineUserDelete />}
-            >
-              Remove
-            </Button>
+            {values.id && (
+              <Button
+                isLoading={isDeleting}
+                onClick={() => deleteStudent(values)}
+                w={"full"}
+                colorScheme="red"
+                leftIcon={<AiOutlineUserDelete />}
+              >
+                Remove
+              </Button>
+            )}
           </HStack>
         </VStack>
       </IDrawer>
+      {children({ onOpen })}
     </>
   );
 }

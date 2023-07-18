@@ -6,7 +6,6 @@ import "../globals.css";
 
 export default async function DashboardRootLayout(props: {
   children: React.ReactNode;
-  drawers: React.ReactNode;
 }) {
   const { auth } = createServerComponentSupabaseClient({
     headers,
@@ -16,7 +15,6 @@ export default async function DashboardRootLayout(props: {
   if (data.session == null) redirect("/signin");
   return (
     <HeaderLayoutProvider>
-      {props?.drawers}
       {props?.children}
     </HeaderLayoutProvider>
   );

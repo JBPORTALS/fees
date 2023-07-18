@@ -36,7 +36,7 @@ export default function IDrawer({
   size,
 }: IDrawerProps) {
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} size={size}>
+    <Drawer  isOpen={isOpen} onClose={onClose} size={size}>
       <DrawerOverlay
         bg={"rgba(246,246,246,0.2)"}
         className={"backdrop-blur-sm"}

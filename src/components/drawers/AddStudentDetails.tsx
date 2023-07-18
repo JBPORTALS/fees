@@ -97,7 +97,7 @@ export default function AddStudentsDetails({ children }: props) {
       );
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
-      toast.success("Student Added", { position: "top-right" });
+      toast.success("Student Added successfully", { position: "top-right" });
       onClose();
     } catch (e: any) {
       toast.error(e.response?.data?.msg);
@@ -269,7 +269,7 @@ export default function AddStudentsDetails({ children }: props) {
               pb={"5"}
             >
               <FormLabel flex={1}>
-                <Text>Total</Text>
+                <Text>Total Amount</Text>
               </FormLabel>
               <Input
                 name="total"
