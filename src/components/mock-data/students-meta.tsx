@@ -1,13 +1,14 @@
 import { Tooltip } from "@chakra-ui/react";
 import { AiOutlineEye } from "react-icons/ai";
 import Link from "next/link";
+import ViewStudentsDetails from "../drawers/ViewStudentDetails";
 
 const CustomViewButton = (data: any) => {
   return (
     <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
-      <Link href={`/v/${data.value}`}>
-       <AiOutlineEye/>
-      </Link>
+      <ViewStudentsDetails regno={data.value.regno} id={data.value.id}>
+        {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
+      </ViewStudentsDetails>
     </div>
   );
 };
@@ -85,7 +86,7 @@ export const StudentColumnDefs = [
     width: "110px",
     cellRenderer: CustomViewButton,
     valueGetter: (params: any) => {
-      return params.data.regno;
+      return params.data;
     },
   },
 ];

@@ -28,9 +28,10 @@ interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
   isForCoadmin?: boolean;
   regno: string;
+  id:string;
 }
 
-export default function ViewFeeDetailsModal({ children, regno }: props) {
+export default function ViewFeeDetailsModal({ children, regno,id }: props) {
   const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
   const {
     isOpen: isConfirmOpen,
@@ -64,7 +65,7 @@ export default function ViewFeeDetailsModal({ children, regno }: props) {
 
   const onOpen = () => {
     onModalOpen();
-    dispatch(fetchSelectedFeeDeatails({ regno }));
+    dispatch(fetchSelectedFeeDeatails({ regno,id}));
   };
 
   const findChallan = async () => {
@@ -91,7 +92,7 @@ export default function ViewFeeDetailsModal({ children, regno }: props) {
   useEffect(() => {
     setState((prev) => ({
       ...prev,
-      total: selectedFeeDetails[0]?.total.toString(),
+      total: selectedFeeDetails[0]?.total?.toString(),
     }));
   }, [selectedFeeDetails]);
 
@@ -161,7 +162,7 @@ export default function ViewFeeDetailsModal({ children, regno }: props) {
       >
         <VStack w={"full"} h={"full"} justifyContent={"space-between"}>
           <VStack spacing={0} w={"full"} h={"full"}>
-            {selectedFeeDetails[0]?.payment_history.map((history) => {
+            {selectedFeeDetails[0]?.payment_history?.map((history) => {
               return (
                 <HStack
                   key={history.paymentno}
@@ -252,7 +253,7 @@ export default function ViewFeeDetailsModal({ children, regno }: props) {
                 </HStack>
               </>
             )}
-            {selectedFeeDetails[0]?.payment_history.length && (
+            {selectedFeeDetails[0]?.payment_history?.length && (
               <HStack w={"full"}>
                 <Button
                   w={"full"}

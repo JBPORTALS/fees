@@ -201,6 +201,7 @@ export const fetchSelectedFeeDeatails = createAsyncThunk<
   SelectedFee[],
   {
     regno: string;
+    id: string;
   },
   {
     rejectValue: {
@@ -214,8 +215,41 @@ export const fetchSelectedFeeDeatails = createAsyncThunk<
     try {
       const formData = new FormData();
       formData.append("regno", payload.regno);
+      formData.append("id", payload.id);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feestudentview.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
+export const fetchSelectedFeeSearchDetails = createAsyncThunk<
+  SelectedFee[],
+  {
+    regno: string;
+    id: string;
+  },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/fees/fetchSelectedFeeSearchDeatails",
+  async (payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("id", payload.id);
+      formData.append("regno", payload.regno);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMIN_URL + "studentview.php",
         method: "POST",
         data: formData,
       });
@@ -262,7 +296,12 @@ export const updateFeeDetail = createAsyncThunk<
         data: formData,
       });
       data = response.data;
-      dispatch(fetchSelectedFeeDeatails({ regno: selectedFee[0].regno }));
+      dispatch(
+        fetchSelectedFeeDeatails({
+          regno: selectedFee[0].regno,
+          id: selectedFee[0].id,
+        })
+      );
       dispatch(
         fetchFeeDetails({
           branch: selectedFee[0].branch,
@@ -501,6 +540,19 @@ export const FeesSlice = createSlice({
       state.selected_fee.error = action.payload?.msg;
       toast.error(action.payload?.msg);
     },
+    [fetchSelectedFeeSearchDetails.pending.toString()]: (state, action) => {
+      state.selected_fee.pending = true;
+    },
+    [fetchSelectedFeeSearchDetails.fulfilled.toString()]: (state, action) => {
+      state.selected_fee.pending = false;
+      state.selected_fee.data = action.payload;
+    },
+    [fetchSelectedFeeSearchDetails.rejected.toString()]: (state, action) => {
+      state.selected_fee.pending = false;
+      state.selected_fee.error = action.payload?.msg;
+      toast.error(action.payload?.msg);
+    },
+
     [updateFeeDetail.pending.toString()]: (state, _action) => {
       state.selected_fee.pending = true;
     },
