@@ -83,7 +83,8 @@ export default function ViewStudentsDetails({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const data = useAppSelector((state) => state.fees.selected_fee.data);
-    
+  const router = useRouter();
+
   let initialState = {
     id: data[0]?.id ?? "",
     usn: data[0]?.regno ?? "",
@@ -120,7 +121,7 @@ export default function ViewStudentsDetails({
   });
 
   const updateStudent = useCallback(async (values: typeof initialState) => {
-    console.log(`updateID`,values.id)
+    console.log(`updateID`, values.id);
     try {
       const formData = new FormData();
       formData.append("id", values.id);
@@ -141,8 +142,10 @@ export default function ViewStudentsDetails({
         throw Error("Something went wrong !");
       toast.success("Updated successfully", { position: "top-right" });
       dispatch(fetchFeeDetails({ branch: values.branch, year: data[0].year }));
+      onClose();
+      router.refresh();
     } catch (e: any) {
-      toast.error("Check your network connection");
+      e.response.data?.msg && toast.error(e.response.data?.msg);
     }
   }, []);
 
@@ -162,8 +165,10 @@ export default function ViewStudentsDetails({
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
       toast.success("Deleted successfully", { position: "top-right" });
+      onClose();
+      router.refresh();
     } catch (e: any) {
-      toast.error("Check your network connection");
+      e.response.data?.msg && toast.error(e.response.data?.msg);
     }
     setIsDeleting(false);
   }, []);
@@ -315,7 +320,7 @@ export default function ViewStudentsDetails({
               px={"5"}
             >
               <FormLabel flex={1}>
-                <Text>Total</Text>
+                <Text>Total Amount</Text>
               </FormLabel>
               <Input
                 name="total"
@@ -331,7 +336,7 @@ export default function ViewStudentsDetails({
 
             <FormControl isReadOnly px={"5"}>
               <FormLabel flex={1}>
-                <Text>Paid</Text>
+                <Text>Paid Amount</Text>
               </FormLabel>
               <Input
                 isReadOnly
@@ -348,7 +353,7 @@ export default function ViewStudentsDetails({
 
             <FormControl isReadOnly px={"5"}>
               <FormLabel flex={1}>
-                <Text>Balance</Text>
+                <Text>Balance Amount</Text>
               </FormLabel>
               <Input
                 isReadOnly

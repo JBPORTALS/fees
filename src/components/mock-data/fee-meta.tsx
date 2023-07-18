@@ -274,12 +274,12 @@ export const columnsForNonUpdate = [
   },
   {
     field: "paid1",
-    headerName: "Paid",
+    headerName: "Paid Amount",
     width: "170px",
   },
   {
     field: "remaining1",
-    headerName: "Balance",
+    headerName: "Balance Amount",
     width: "170px",
     resizable: true,
   },

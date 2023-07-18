@@ -86,13 +86,13 @@ export default function BranchViewPage() {
                   datasets: [
                     {
                       data: branchFeeDetails?.map((value) => value.paid),
-                      label: "Paid Ammount",
+                      label: "Paid Amount",
                       backgroundColor: "rgba(33,191,91,0.7)",
                       barPercentage: 0.7,
                     },
                     {
                       data: branchFeeDetails?.map((value) => value.remaining),
-                      label: "Balance Ammount",
+                      label: "Balance Amount",
                       backgroundColor: "rgba(242,109,109,0.7)",
                       barPercentage: 0.7,
                     },

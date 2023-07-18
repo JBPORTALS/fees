@@ -1,6 +1,5 @@
 import { Tooltip } from "@chakra-ui/react";
 import { AiOutlineEye } from "react-icons/ai";
-import Link from "next/link";
 import ViewStudentsDetails from "../drawers/ViewStudentDetails";
 
 const CustomViewButton = (data: any) => {
@@ -55,17 +54,17 @@ export const StudentColumnDefs = [
   },
   {
     field: "total1",
-    headerName: "Total Fee",
+    headerName: "Total Amount",
     width: "180px",
   },
   {
     field: "paid1",
-    headerName: "Paid",
+    headerName: "Paid Amount",
     width: "170px",
   },
   {
     field: "remaining1",
-    headerName: "Balance",
+    headerName: "Balance Amount",
     width: "170px",
     resizable: true,
   },
