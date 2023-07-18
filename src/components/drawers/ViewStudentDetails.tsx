@@ -17,7 +17,12 @@ import { useAppSelector } from "@/store";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import {
   fetchFeeDetails,
@@ -85,9 +90,9 @@ export default function ViewStudentsDetails({
   const data = useAppSelector((state) => state.fees.selected_fee.data);
   const router = useRouter();
   const pathname = usePathname();
-  const searchparams = useSearchParams()
+  const searchparams = useSearchParams();
 
-  console.log(pathname)
+  console.log(pathname);
 
   let initialState = {
     id: data[0]?.id ?? "",
@@ -146,14 +151,14 @@ export default function ViewStudentsDetails({
         throw Error("Something went wrong !");
       toast.success("Updated successfully", { position: "top-right" });
       dispatch(fetchFeeDetails({ branch: values.branch, year: data[0].year }));
-      router.refresh()
+      router.refresh();
       onClose();
     } catch (e: any) {
       e.response.data?.msg && toast.error(e.response.data?.msg);
     }
   }, []);
 
-  const deleteStudent = useCallback(async () => {
+  const deleteStudent = useCallback(async (values: typeof initialState) => {
     setIsDeleting(true);
     try {
       const formData = new FormData();
@@ -169,7 +174,7 @@ export default function ViewStudentsDetails({
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
       toast.success("Deleted successfully", { position: "top-right" });
-      router.refresh()
+      router.refresh();
       onClose();
     } catch (e: any) {
       e.response.data?.msg && toast.error(e.response.data?.msg);
@@ -395,15 +400,17 @@ export default function ViewStudentsDetails({
             w={"full"}
             p={"5"}
           >
-            <Button
-              isLoading={isDeleting}
-              onClick={deleteStudent}
-              w={"full"}
-              colorScheme="red"
-              leftIcon={<AiOutlineUserDelete />}
-            >
-              Remove
-            </Button>
+            {values.id && (
+              <Button
+                isLoading={isDeleting}
+                onClick={() => deleteStudent(values)}
+                w={"full"}
+                colorScheme="red"
+                leftIcon={<AiOutlineUserDelete />}
+              >
+                Remove
+              </Button>
+            )}
           </HStack>
         </VStack>
       </IDrawer>
