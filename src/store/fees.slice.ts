@@ -105,7 +105,7 @@ export const fetchSearchByMode = createAsyncThunk<
     mode: string;
     fromDate: string;
     toDate: string;
-    feeType:string;
+    feeType: string;
   },
   {
     rejectValue: {
@@ -127,6 +127,37 @@ export const fetchSearchByMode = createAsyncThunk<
 
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feefilter.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
+export const fetchSearchRecord = createAsyncThunk<
+  any,
+  {
+    query: string;
+  },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/fees/fetchSearchBymode",
+  async (payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("searchdata", payload.query);
+
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMIN_URL + "feesearchsutdent.php",
         method: "POST",
         data: formData,
       });
@@ -219,6 +250,7 @@ export const updateFeeDetail = createAsyncThunk<
       const formData = new FormData();
       const state = getState() as RootState;
       const selectedFee = state.fees.selected_fee.data;
+      formData.append("id", selectedFee[0].id);
       formData.append("regno", selectedFee[0].regno);
       formData.append("name", selectedFee[0].name);
       formData.append("method", payload.method);
@@ -318,6 +350,7 @@ export interface YearFee extends Omit<BranchFee, "branch"> {
 }
 
 export interface Fee {
+  id: string;
   regno: string;
   name: string;
   branch: string;
@@ -326,8 +359,8 @@ export interface Fee {
   paid: number;
   remaining: number;
   status: "FULLY PAID" | "PARTIALLY PAID" | "NOT PAID";
-  category:string;
-  sem:string;
+  category: string;
+  sem: string;
 }
 
 export interface PaymentHistory {
@@ -441,6 +474,19 @@ export const FeesSlice = createSlice({
     [fetchFeeDetails.rejected.toString()]: (state, action) => {
       state.all_fee.pending = false;
       state.all_fee.error = action.payload?.msg;
+      toast.error(action.payload?.msg);
+    },
+    [fetchSearchRecord.pending.toString()]: (state, _action) => {
+      state.search_by_mode.pending = true;
+    },
+    [fetchSearchRecord.fulfilled.toString()]: (state, action) => {
+      state.search_by_mode.pending = false;
+      state.all_fee.data = [];
+      state.search_by_mode.data = action.payload;
+    },
+    [fetchSearchRecord.rejected.toString()]: (state, action) => {
+      state.search_by_mode.pending = false;
+      state.search_by_mode.error = action.payload?.msg;
       toast.error(action.payload?.msg);
     },
     [fetchSelectedFeeDeatails.pending.toString()]: (state, action) => {

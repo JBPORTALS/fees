@@ -2,10 +2,11 @@ import { redirect } from "next/navigation";
 import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { headers, cookies } from "next/headers";
 import HeaderLayoutProvider from "./HeaderLayout";
-import "../globals.css"
+import "../globals.css";
 
 export default async function DashboardRootLayout(props: {
   children: React.ReactNode;
+  drawers: React.ReactNode;
 }) {
   const { auth } = createServerComponentSupabaseClient({
     headers,
@@ -13,5 +14,10 @@ export default async function DashboardRootLayout(props: {
   });
   const { data } = await auth.getSession();
   if (data.session == null) redirect("/signin");
-  return <HeaderLayoutProvider>{props?.children}</HeaderLayoutProvider>;
+  return (
+    <HeaderLayoutProvider>
+      {props?.drawers}
+      {props?.children}
+    </HeaderLayoutProvider>
+  );
 }
