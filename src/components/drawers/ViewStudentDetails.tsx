@@ -92,6 +92,17 @@ export default function ViewStudentsDetails({
     total: data[0]?.total ?? "",
     category: data[0]?.category ?? "",
   };
+
+  const dispatch = useAppDispatch();
+  const { onOpen, isOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    console.log(id);
+    if (id && isOpen && regno) {
+      dispatch(fetchSelectedFeeSearchDetails({ id, regno }));
+    }
+  }, [id, isOpen, regno, dispatch]);
+
   const {
     errors,
     touched,
@@ -104,27 +115,8 @@ export default function ViewStudentsDetails({
     initialValues: initialState,
     onSubmit: async (values) => await updateStudent(values),
     validationSchema: Schema,
+    enableReinitialize: true,
   });
-
-  const dispatch = useAppDispatch();
-  const { onOpen, isOpen, onClose } = useDisclosure();
-
-  useEffect(() => {
-    console.log(id);
-    if (id && isOpen && regno) {
-      dispatch(fetchSelectedFeeSearchDetails({ id, regno }));
-      initialState = {
-        id: data[0]?.id ?? "",
-        usn: data[0]?.regno ?? "",
-        name: data[0]?.name ?? "",
-        sem: data[0]?.sem ?? "",
-        branch: data[0]?.branch ?? "",
-        total: data[0]?.total ?? "",
-        category: data[0]?.category ?? "",
-      };
-      console.log(initialState)
-    }
-  }, [id, isOpen, regno, dispatch]);
 
   const updateStudent = useCallback(async (values: typeof initialState) => {
     try {
