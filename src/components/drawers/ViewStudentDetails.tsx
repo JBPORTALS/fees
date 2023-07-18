@@ -83,6 +83,7 @@ export default function ViewStudentsDetails({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const data = useAppSelector((state) => state.fees.selected_fee.data);
+    
   let initialState = {
     id: data[0]?.id ?? "",
     usn: data[0]?.regno ?? "",
@@ -119,6 +120,7 @@ export default function ViewStudentsDetails({
   });
 
   const updateStudent = useCallback(async (values: typeof initialState) => {
+    console.log(`updateID`,values.id)
     try {
       const formData = new FormData();
       formData.append("id", values.id);
@@ -140,7 +142,7 @@ export default function ViewStudentsDetails({
       toast.success("Updated successfully", { position: "top-right" });
       dispatch(fetchFeeDetails({ branch: values.branch, year: data[0].year }));
     } catch (e: any) {
-      toast.error(e.response?.data?.msg);
+      toast.error("Check your network connection");
     }
   }, []);
 
@@ -161,7 +163,7 @@ export default function ViewStudentsDetails({
         throw Error("Something went wrong !");
       toast.success("Deleted successfully", { position: "top-right" });
     } catch (e: any) {
-      toast.error(e.response?.data?.msg);
+      toast.error("Check your network connection");
     }
     setIsDeleting(false);
   }, []);

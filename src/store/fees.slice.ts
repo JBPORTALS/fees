@@ -550,7 +550,6 @@ export const FeesSlice = createSlice({
     [fetchSelectedFeeSearchDetails.rejected.toString()]: (state, action) => {
       state.selected_fee.pending = false;
       state.selected_fee.error = action.payload?.msg;
-      toast.error(action.payload?.msg);
     },
 
     [updateFeeDetail.pending.toString()]: (state, _action) => {
