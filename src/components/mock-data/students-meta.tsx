@@ -5,7 +5,7 @@ import Link from "next/link";
 const CustomViewButton = (data: any) => {
   return (
     <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
-      <Link href={`/students/v/${data.value}`}>
+      <Link href={`/v/${data.value}`}>
        <AiOutlineEye/>
       </Link>
     </div>

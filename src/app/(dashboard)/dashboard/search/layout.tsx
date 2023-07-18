@@ -2,15 +2,15 @@
 
 import { useAppDispatch } from "@/hooks";
 import "../../../globals.css";
-import {useCallback,useEffect} from "react"
+import { useCallback, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { fetchSearchByMode } from "@/store/fees.slice";
+import { fetchSearchByMode, fetchSearchRecord } from "@/store/fees.slice";
+import { useSupabase } from "@/app/supabase-provider";
 
-export default function SearchViewLayout(props: {
-  children: React.ReactNode;
-}) {
+export default function SearchViewLayout(props: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const params = useSearchParams();
+  const user = useSupabase();
 
   const branch = params.get("branch");
   const sem = params.get("sem");
@@ -19,9 +19,19 @@ export default function SearchViewLayout(props: {
   const mode = params.get("mode");
   const hash = params.get("hash");
   const feeType = params.get("feeType");
+  const query = params.get("query");
 
   const fetchSearchResult = useCallback(() => {
-    if (branch && mode && fromDate && toDate && sem && hash && feeType)
+    if (
+      branch &&
+      mode !== "QUERY" &&
+      mode &&
+      fromDate &&
+      toDate &&
+      sem &&
+      hash &&
+      feeType
+    )
       dispatch(
         fetchSearchByMode({
           feeType,
@@ -32,7 +42,8 @@ export default function SearchViewLayout(props: {
           sem,
         })
       );
-  }, [branch, sem, toDate, mode, fromDate, hash, feeType,dispatch]);
+    else if (query) dispatch(fetchSearchRecord({ query }));
+  }, [branch, sem, toDate, mode, fromDate, hash, feeType, dispatch, query]);
 
   useEffect(() => {
     fetchSearchResult();

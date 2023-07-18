@@ -5,7 +5,6 @@ import { store } from "@/store";
 
 export default function DashboardRootLayout(props: {
   children: React.ReactNode;
-  drawers: React.ReactNode;
 }) {
   const branchList = store.getState().fees.all_fee.data;
 
@@ -13,7 +12,6 @@ export default function DashboardRootLayout(props: {
 
   return (
     <>
-      {props.drawers}
       {props?.children}
     </>
   );

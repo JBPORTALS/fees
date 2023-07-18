@@ -578,7 +578,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             </HStack>
           </HStack>
         </TabList>
-        <TabPanels px={"0"} h={"full"}>
+        <TabPanels px={"0"} w={"full"} h={"full"}>
           <TabPanel
             px={"5"}
             pb={"20"}
@@ -598,10 +598,10 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
           >
             {children}
           </TabPanel>
-          <TabPanel px={0} py={"0"} w={"100vw"} h={"88vh"}>
+          <TabPanel px={0} py={"0"} w={"full"} h={"88vh"}>
             {children}
           </TabPanel>
-          <TabPanel px={0} w={"100vw"} h={"88vh"} py={"0"}>
+          <TabPanel px={0} w={"full"} h={"88vh"} py={"0"}>
             {children}
           </TabPanel>
         </TabPanels>

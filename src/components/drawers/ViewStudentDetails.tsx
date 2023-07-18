@@ -71,13 +71,21 @@ export default function ViewStudentsDetails() {
     (state) => state.fees.branch_list.data
   ) as [];
   const [isDeleting, setIsDeleting] = useState(false);
-  const data = useAppSelector((state) =>
-    state.fees.all_fee.data.filter((vlaue: any) => vlaue.regno == params.regno)
-  );
+  const data = useAppSelector((state) => {
+    if (state.fees.all_fee.data.length > 0)
+      return state.fees.all_fee.data.filter(
+        (vlaue: any) => vlaue.regno == params.regno
+      );
+    else
+      return state.fees.search_by_mode.data.filter(
+        (vlaue: any) => vlaue.regno == params.regno
+      );
+  });
 
   const dispatch = useAppDispatch();
 
   const initialState = {
+    id: data[0]?.id ?? "",
     usn: data[0]?.regno ?? "",
     name: data[0]?.name ?? "",
     sem: data[0]?.sem ?? "",
@@ -89,6 +97,7 @@ export default function ViewStudentsDetails() {
   const updateStudent = useCallback(async (values: typeof initialState) => {
     try {
       const formData = new FormData();
+      formData.append("id", values.id);
       formData.append("usn", values.usn);
       formData.append("name", values.name);
       formData.append("category", values.category);
@@ -117,6 +126,7 @@ export default function ViewStudentsDetails() {
     setIsDeleting(true);
     try {
       const formData = new FormData();
+      formData.append("id", values.id);
       formData.append("usn", values.usn);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentdelete.php",
@@ -314,7 +324,7 @@ export default function ViewStudentsDetails() {
               <FormErrorMessage>{errors.total}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isReadOnly px={"5"} >
+            <FormControl isReadOnly px={"5"}>
               <FormLabel flex={1}>
                 <Text>Paid</Text>
               </FormLabel>
@@ -363,7 +373,14 @@ export default function ViewStudentsDetails() {
               />
             </FormControl>
           </>
-          <HStack position={"sticky"} className="backdrop-blur-sm" bg={"rgba(255,255,255,0.4)"} bottom={"0"} w={"full"} p={"5"}>
+          <HStack
+            position={"sticky"}
+            className="backdrop-blur-sm"
+            bg={"rgba(255,255,255,0.4)"}
+            bottom={"0"}
+            w={"full"}
+            p={"5"}
+          >
             <Button
               isLoading={isDeleting}
               onClick={deleteStudent}

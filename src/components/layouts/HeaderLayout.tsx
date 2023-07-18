@@ -4,6 +4,9 @@ import {
   Heading,
   HStack,
   IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
   Modal,
   ModalBody,
   ModalContent,
@@ -11,18 +14,20 @@ import {
   ModalOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import {
   AiOutlineDollarCircle,
   AiOutlineFieldTime,
   AiOutlineLogout,
   AiOutlineMail,
+  AiOutlineSearch,
   AiOutlineUser,
 } from "react-icons/ai";
 import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 import SideBar from "../ui/SideBar";
+import { useRouter } from "next/navigation";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -36,6 +41,9 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
   } = useDisclosure();
 
   const { user, supabase } = useSupabase();
+  const [query, setQuery] = useState("");
+
+  const router = useRouter();
 
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-[100vh]">
@@ -52,6 +60,43 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
         <HStack color={"blue.600"}>
           <AiOutlineDollarCircle className="text-3xl" />
           <Heading size={"md"}>Fee Manager</Heading>
+        </HStack>
+        <HStack>
+          <InputGroup rounded={"2xl"}>
+            <Input
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
+              size={"md"}
+              rounded={"lg"}
+              w={"96"}
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  router.push(
+                    `/dashboard/search?mode=QUERY&query=${query}&hash=${new Date(
+                      Date.now()
+                    ).getTime()}`
+                  );
+              }}
+              placeholder="Search Student Name or Student USN"
+            />
+            <InputRightElement>
+              <IconButton
+                onClick={async () => {
+                  router.push(
+                    `/dashboard/search?mode=QUERY&query=${query}&hash=${new Date(
+                      Date.now()
+                    ).getTime()}`
+                  );
+                }}
+                colorScheme="blue"
+                h={"full"}
+                w={"full"}
+                variant={"ghost"}
+                aria-label="search"
+                icon={<AiOutlineSearch className="text-lg" />}
+              />
+            </InputRightElement>
+          </InputGroup>
         </HStack>
         <HStack>
           <HStack>

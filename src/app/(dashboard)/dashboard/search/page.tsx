@@ -21,10 +21,11 @@ import { useAppDispatch } from "@/hooks";
 import { useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/store";
 import { AgGridReact } from "ag-grid-react";
-import { SearchColumns } from "@/components/mock-data/fee-meta";
+import { SearchColumns,  } from "@/components/mock-data/fee-meta";
 import { FcSearch } from "react-icons/fc";
 import { AiOutlineFileExcel } from "react-icons/ai";
 import { Link } from "@chakra-ui/next-js";
+import { StudentColumnDefs } from "@/components/mock-data/students-meta";
 
 export default function Home() {
   const params = useSearchParams();
@@ -35,6 +36,7 @@ export default function Home() {
   const fromDate = params.get("fromDate");
   const mode = params.get("mode");
   const feeType = params.get("feeType");
+  const query = params.get("query");
 
   const feeFilter = useAppSelector(
     (state) => state.fees.search_by_mode.data
@@ -68,7 +70,11 @@ export default function Home() {
         className="border-gray-300 border-b"
       >
         <HStack w={"full"}>
-          <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
+
+          {
+            mode !== "QUERY" ? (
+              <>
+                <Tag pl={"0"} borderRadius={"full"} colorScheme="facebook">
             <Tag borderRadius={"full"} colorScheme="facebook" variant={"solid"}>
               Branch
             </Tag>
@@ -118,6 +124,15 @@ export default function Home() {
           >
             Download Excel
           </Button>
+              </>
+            ):(
+              <>
+                <Heading size={"sm"} color={"gray.600"}>Search results for - `{query}`</Heading>
+                <Tag>Total {feeFilter.length} records found</Tag>
+              </>
+            )
+          }
+          
         </HStack>
       </HStack>
       {feeFilter.length > 0 ? (
@@ -125,7 +140,9 @@ export default function Home() {
           className="w-full h-full  pb-6 ag-theme-material"
           animateRows={true}
           rowData={feeFilter}
-          columnDefs={SearchColumns as any}
+          columnDefs={
+            mode !== "QUERY" ? (SearchColumns as any) : (StudentColumnDefs as any)
+          }
           alwaysShowHorizontalScroll
           onRowEditingStarted={(e) => {}}
         />
