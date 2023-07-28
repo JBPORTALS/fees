@@ -28,6 +28,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+import { useSupabase } from "@/app/supabase-provider";
 
 
 ChartJS.register(
@@ -52,9 +53,10 @@ export default function BranchViewPage() {
   const yearFeeDetails = useAppSelector(
     (state) => state.fees.year_fee.data
   ) as YearFee[];
+  const user = useSupabase().user
   
   const fetchYearVeiwMemo = useCallback((Ibranch:string)=>{
-    dispatch(fetchFeeYearView({branch:Ibranch}));
+    dispatch(fetchFeeYearView({branch:Ibranch,college:user?.college!}));
   },[dispatch])
 
   useEffect(() => {

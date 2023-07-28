@@ -40,9 +40,10 @@ export default function SearchViewLayout(props: { children: React.ReactNode }) {
           fromDate,
           toDate,
           sem,
+          college:user.user?.college!
         })
       );
-    else if (query) dispatch(fetchSearchRecord({ query }));
+    else if (query) dispatch(fetchSearchRecord({ query,college:user.user?.college!}));
   }, [branch, sem, toDate, mode, fromDate, hash, feeType, dispatch, query]);
 
   useEffect(() => {

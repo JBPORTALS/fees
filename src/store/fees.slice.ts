@@ -8,6 +8,7 @@ export const fetchFeeDetails = createAsyncThunk<
   {
     year: string;
     branch: string;
+    college: string;
   },
   {
     rejectValue: {
@@ -22,6 +23,7 @@ export const fetchFeeDetails = createAsyncThunk<
       const formData = new FormData();
       formData.append("branch", payload.branch);
       formData.append("year", payload.year);
+      formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeclassview.php",
         method: "POST",
@@ -37,7 +39,7 @@ export const fetchFeeDetails = createAsyncThunk<
 
 export const fetchBranchFeeDetails = createAsyncThunk<
   BranchFee[],
-  void,
+  { college: string },
   {
     rejectValue: {
       msg: string;
@@ -48,9 +50,12 @@ export const fetchBranchFeeDetails = createAsyncThunk<
   async (_payload, { fulfillWithValue, rejectWithValue }) => {
     var data;
     try {
+      const formData = new FormData();
+      formData.append("college",_payload.college)
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feebranchview.php",
         method: "POST",
+        data:formData
       });
       data = response.data;
       return fulfillWithValue(data);
@@ -62,7 +67,9 @@ export const fetchBranchFeeDetails = createAsyncThunk<
 
 export const fetchOverAllFee = createAsyncThunk<
   OverallFee[],
-  void,
+  {
+    college: string;
+  },
   {
     rejectValue: {
       msg: string;
@@ -73,9 +80,12 @@ export const fetchOverAllFee = createAsyncThunk<
   async (_payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
     var data;
     try {
+      const formData = new FormData();
+      formData.append("college",_payload.college)
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeoverall.php",
         method: "POST",
+        data:formData
       });
       data = response.data;
       return fulfillWithValue(data);
@@ -95,6 +105,7 @@ interface SearchResultProps {
   date: string;
   particulars: string;
   amount_paid1: string;
+  college: string;
 }
 
 export const fetchSearchByMode = createAsyncThunk<
@@ -106,6 +117,7 @@ export const fetchSearchByMode = createAsyncThunk<
     fromDate: string;
     toDate: string;
     feeType: string;
+    college: string;
   },
   {
     rejectValue: {
@@ -124,6 +136,7 @@ export const fetchSearchByMode = createAsyncThunk<
       formData.append("fromdate", payload.fromDate);
       formData.append("todate", payload.toDate);
       formData.append("type", payload.feeType);
+      formData.append("college", payload.college);
 
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feefilter.php",
@@ -142,6 +155,7 @@ export const fetchSearchRecord = createAsyncThunk<
   any,
   {
     query: string;
+    college: string;
   },
   {
     rejectValue: {
@@ -155,6 +169,7 @@ export const fetchSearchRecord = createAsyncThunk<
     try {
       const formData = new FormData();
       formData.append("searchdata", payload.query);
+      formData.append("college", payload.college);
 
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feesearchsutdent.php",
@@ -171,7 +186,7 @@ export const fetchSearchRecord = createAsyncThunk<
 
 export const fetchFeeYearView = createAsyncThunk<
   YearFee[],
-  { branch: string },
+  { branch: string; college: string },
   {
     rejectValue: {
       msg: string;
@@ -184,6 +199,7 @@ export const fetchFeeYearView = createAsyncThunk<
     try {
       const formData = new FormData();
       formData.append("branch", payload.branch);
+      formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeyearview.php",
         method: "POST",
@@ -202,6 +218,7 @@ export const fetchSelectedFeeDeatails = createAsyncThunk<
   {
     regno: string;
     id: string;
+    college: string;
   },
   {
     rejectValue: {
@@ -216,6 +233,7 @@ export const fetchSelectedFeeDeatails = createAsyncThunk<
       const formData = new FormData();
       formData.append("regno", payload.regno);
       formData.append("id", payload.id);
+      formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feestudentview.php",
         method: "POST",
@@ -234,6 +252,7 @@ export const fetchSelectedFeeSearchDetails = createAsyncThunk<
   {
     regno: string;
     id: string;
+    college: string;
   },
   {
     rejectValue: {
@@ -248,6 +267,7 @@ export const fetchSelectedFeeSearchDetails = createAsyncThunk<
       const formData = new FormData();
       formData.append("id", payload.id);
       formData.append("regno", payload.regno);
+      formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "studentview.php",
         method: "POST",
@@ -267,6 +287,7 @@ export const updateFeeDetail = createAsyncThunk<
     method: string;
     paid: string;
     challan_id: string;
+    college: string;
   },
   {
     rejectValue: {
@@ -290,6 +311,7 @@ export const updateFeeDetail = createAsyncThunk<
       formData.append("method", payload.method);
       formData.append("paid", payload.paid);
       formData.append("challan_id", payload.challan_id);
+      formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdate.php",
         method: "POST",
@@ -300,12 +322,14 @@ export const updateFeeDetail = createAsyncThunk<
         fetchSelectedFeeDeatails({
           regno: selectedFee[0].regno,
           id: selectedFee[0].id,
+          college: payload.college,
         })
       );
       dispatch(
         fetchFeeDetails({
           branch: selectedFee[0].branch,
           year: selectedFee[0].year,
+          college: payload.college,
         })
       );
       return fulfillWithValue(data);
@@ -320,6 +344,7 @@ export const updateUSN = createAsyncThunk<
   {
     challan_no: string;
     usn: string;
+    college: string;
   },
   {
     rejectValue: {
@@ -332,6 +357,7 @@ export const updateUSN = createAsyncThunk<
     const formData = new FormData();
     formData.append("challan_no", payload.challan_no);
     formData.append("usn", payload.usn);
+    formData.append("college", payload.college);
     const response = await axios({
       url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php",
       method: "POST",
@@ -346,7 +372,7 @@ export const updateUSN = createAsyncThunk<
 
 export const fetchBranchList = createAsyncThunk<
   { msg: string },
-  void,
+  { college: string },
   {
     rejectValue: {
       msg: string;
@@ -357,9 +383,12 @@ export const fetchBranchList = createAsyncThunk<
   async (payload, { fulfillWithValue, rejectWithValue }) => {
     var data;
     try {
+      const formData = new FormData();
+      formData.append("college",payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "retrievebranches.php",
         method: "POST",
+        data:formData
       });
       data = response.data;
       return fulfillWithValue(data);
@@ -380,6 +409,7 @@ export interface BranchFee {
   remaining1: string;
   paid_percentage: string;
   remaining_percentage: string;
+  college: string;
 }
 
 export interface OverallFee extends Omit<BranchFee, "branch"> {}
@@ -400,6 +430,7 @@ export interface Fee {
   status: "FULLY PAID" | "PARTIALLY PAID" | "NOT PAID";
   category: string;
   sem: string;
+  college: string;
 }
 
 export interface PaymentHistory {

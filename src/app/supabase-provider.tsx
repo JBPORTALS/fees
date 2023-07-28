@@ -14,7 +14,8 @@ type SupabaseContext = {
     last_login_at: string | undefined;
     username: string | undefined;
     session: AuthSession | null;
-    can_update_total:boolean
+    can_update_total: boolean;
+    college:string | undefined;
   } | null;
 };
 
@@ -29,9 +30,10 @@ export default function SupabaseProvider({
   const [user, setUser] = useState<{
     username: undefined | string;
     email: string | undefined;
-    last_login_at:string|undefined;
+    last_login_at: string | undefined;
     session: AuthSession | null;
-    can_update_total:boolean
+    can_update_total: boolean;
+    college: string | undefined;
   } | null>(null);
   const router = useRouter();
 
@@ -39,15 +41,17 @@ export default function SupabaseProvider({
     const { data } = await supabase.auth.getSession();
     const { data: User } = await supabase
       .from("profiles")
-      .select("username,last_login_at,can_update_total")
+      .select("username,last_login_at,can_update_total,college")
       .eq("id", data.session?.user.id)
       .single();
+      console.log(User)
     setUser({
       username: User?.username,
       email: data.session?.user.email,
-      last_login_at:User?.last_login_at,
+      last_login_at: User?.last_login_at,
       session: data.session,
-      can_update_total:User?.can_update_total
+      can_update_total: User?.can_update_total,
+      college: User?.college,
     });
   }
 

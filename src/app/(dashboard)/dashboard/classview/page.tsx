@@ -9,6 +9,7 @@ import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
+import { useSupabase } from "@/app/supabase-provider";
 
 export default function BranchViewPage() {
   const [state, setState] = useState({
@@ -18,10 +19,11 @@ export default function BranchViewPage() {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
+  const user = useSupabase().user;
   const dispatch = useAppDispatch();
   useEffect(() => {
     if (state.branch && state.year)
-      dispatch(fetchFeeDetails({ branch: state.branch, year: state.year }));
+      dispatch(fetchFeeDetails({ branch: state.branch, year: state.year ,college:user?.college!}));
   }, [state.branch, state.year, dispatch]);
 
   return (
