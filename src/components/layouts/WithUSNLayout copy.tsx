@@ -12,7 +12,7 @@ import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "@chakra-ui/next-js";
 import { usePathname } from "next/navigation";
-import { AiOutlineArrowLeft, AiOutlineCheck } from "react-icons/ai";
+import { AiOutlineCheck } from "react-icons/ai";
 
 interface GenerateRecieptLayoutProps {
   children: React.ReactNode;
@@ -119,7 +119,7 @@ export default function WithUSNLayout({
               <AiOutlineCheck className="text-md" />
             )}
           </Tab>
-        </TabList> 
+        </TabList>
       </HStack>
       <TabPanels
         px={"36"}

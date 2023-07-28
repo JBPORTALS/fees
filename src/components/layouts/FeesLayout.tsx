@@ -49,6 +49,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Link } from "@chakra-ui/next-js";
 import { shallowEqual } from "react-redux";
 import SideBar from "../ui/SideBar";
+import { useSupabase } from "@/app/supabase-provider";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -116,9 +117,10 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const [usn, setUSN] = useState("");
   const pathname = usePathname();
   const router = useRouter();
+  const user = useSupabase().user;
 
   const fetchBranchListCb = useCallback(() => {
-    dispatch(fetchBranchList());
+    dispatch(fetchBranchList({ college: user?.college! }));
   }, []);
 
   useEffect(() => {
@@ -330,6 +332,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                     updateUSN({
                                       challan_no: paymentData.challan_id,
                                       usn,
+                                      college:user?.college!
                                     })
                                   ).then(() => {
                                     onChallanFilter();
