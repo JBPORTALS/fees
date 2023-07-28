@@ -29,6 +29,7 @@ import {
   fetchSelectedFeeSearchDetails,
 } from "@/store/fees.slice";
 import { useAppDispatch } from "@/hooks";
+import { useSupabase } from "@/app/supabase-provider";
 
 const Schema = Yup.object().shape({
   name: Yup.string().required().min(2),
@@ -106,11 +107,12 @@ export default function ViewStudentsDetails({
 
   const dispatch = useAppDispatch();
   const { onOpen, isOpen, onClose } = useDisclosure();
+  const user = useSupabase().user;
 
   useEffect(() => {
     console.log(id);
     if (id && isOpen && regno) {
-      dispatch(fetchSelectedFeeSearchDetails({ id, regno }));
+      dispatch(fetchSelectedFeeSearchDetails({ id, regno ,college:user?.college!,}));
     }
   }, [id, isOpen, regno, dispatch]);
 
@@ -150,7 +152,7 @@ export default function ViewStudentsDetails({
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
       toast.success("Updated successfully", { position: "top-right" });
-      dispatch(fetchFeeDetails({ branch: values.branch, year: data[0].year }));
+      dispatch(fetchFeeDetails({ branch: values.branch, year: data[0].year,college:user?.college! }));
       router.refresh();
       onClose();
     } catch (e: any) {

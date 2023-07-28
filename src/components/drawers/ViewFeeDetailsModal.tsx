@@ -65,7 +65,7 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
 
   const onOpen = () => {
     onModalOpen();
-    dispatch(fetchSelectedFeeDeatails({ regno,id}));
+    dispatch(fetchSelectedFeeDeatails({ regno,id,college:user?.college!}));
   };
 
   const findChallan = async () => {
@@ -102,6 +102,7 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
         method: challanState!.method,
         paid: challanState!.amount_paid,
         challan_id: challanState!.challan_id,
+        college:user?.college!,
       })
     );
     onOpen();
@@ -124,6 +125,7 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
         fetchFeeDetails({
           branch: selectedFeeDetails[0].branch,
           year: selectedFeeDetails[0].year,
+          college:user?.college!,
         })
       );
     } catch (e: any) {

@@ -16,6 +16,7 @@ import moment from "moment";
 import { useParams } from "next/navigation";
 import { AiOutlineFileDone } from "react-icons/ai";
 import axios from "axios";
+import { useSupabase } from "@/app/supabase-provider";
 
 const initialValues = {
   usn: "", //✅
@@ -60,6 +61,8 @@ export default function WithoutUSNDynamicPage() {
   const toast = useToast({
     position: "bottom-left",
   });
+
+  const user = useSupabase().user;
 
   const params = useParams();
   const paymentType = params.paymentType as
@@ -710,7 +713,7 @@ export default function WithoutUSNDynamicPage() {
                           : Object.values(state)[index]
                       }`
                   )
-                  .join("&")}&paymentType=${paymentType}`
+                  .join("&")}&paymentType=${paymentType}&college=${user?.college}`
             );
             const link = document.createElement("a");
             link.href =
@@ -724,7 +727,7 @@ export default function WithoutUSNDynamicPage() {
                         : Object.values(state)[index]
                     }`
                 )
-                .join("&")}&paymentType=${paymentType}`;
+                .join("&")}&paymentType=${paymentType}&college=${user?.college}`;
             link.setAttribute("download", "Fee Reciept Offline.pdf");
             link.setAttribute("target", "_blank");
             document.body.appendChild(link);

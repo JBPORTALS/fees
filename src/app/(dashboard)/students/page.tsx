@@ -1,4 +1,5 @@
 "use client";
+import { useSupabase } from "@/app/supabase-provider";
 import AddStudentsDetails from "@/components/drawers/AddStudentDetails";
 import StudentDataGrid from "@/components/layouts/StudentDataGrid";
 import ISelect from "@/components/ui/utils/ISelect";
@@ -19,10 +20,11 @@ export default function Students() {
     (state) => state.fees.branch_list.data
   ) as [];
   const dispatch = useAppDispatch();
+  const user = useSupabase().user;
 
   useEffect(() => {
     if (state.branch && state.year)
-      dispatch(fetchFeeDetails({ branch: state.branch, year: state.year }));
+      dispatch(fetchFeeDetails({ branch: state.branch, year: state.year,college:user?.college! }));
   }, [state.branch, state.year, dispatch]);
 
   return (

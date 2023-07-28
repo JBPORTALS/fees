@@ -52,6 +52,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [isChecking, setIsChecking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const user = useSupabase().user;
   const [usn, setUsn] = useState("");
   const [challanState, setChallanState] = useState<
     | {
@@ -119,6 +120,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           if (branch && mode && fromDate && toDate && sem && feeType)
             dispatch(
               fetchSearchByMode({
+                college:user?.college!,
                 branch,
                 mode,
                 fromDate,
@@ -149,6 +151,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           if (branch && mode && fromDate && toDate && sem && feeType)
             dispatch(
               fetchSearchByMode({
+                college:user?.college!,
                 branch,
                 mode,
                 fromDate,
