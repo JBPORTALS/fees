@@ -16,7 +16,7 @@ function ClassDataGrid() {
   const { user } = useSupabase();
 
   return (
-    <VStack h={"78vh"} w={"98vw"}>
+    <VStack h={"78vh"} w={"full"}>
       {FeeDetails.length > 0 ? (
         <AgGridReact
           className="w-full h-full  pb-6 ag-theme-material"
