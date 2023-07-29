@@ -45,8 +45,8 @@ const Categories = [
     option: "SNQ",
   },
   {
-    value: "MGT",
-    option: "MGT",
+    value: "MANAGEMENT",
+    option: "MANAGEMENT",
   },
   {
     value: "COMEDK",
