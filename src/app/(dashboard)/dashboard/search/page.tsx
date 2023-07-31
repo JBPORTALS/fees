@@ -22,9 +22,11 @@ import { SearchColumns, feeSearchColumns,  } from "@/components/mock-data/fee-me
 import { FcSearch } from "react-icons/fc";
 import { AiOutlineFileExcel } from "react-icons/ai";
 import { Link } from "@chakra-ui/next-js";
+import { useSupabase } from "@/app/supabase-provider";
 
 export default function Home() {
   const params = useSearchParams();
+  const college = useSupabase().user?.college;
 
   const branch = params.get("branch");
   const sem = params.get("sem");
@@ -112,7 +114,7 @@ export default function Home() {
             target="_blank"
             href={
               process.env.NEXT_PUBLIC_ADMIN_URL +
-              `feedownloadexcel.php?branch=${branch}&sem=${sem}&mode=${mode}&type=${feeType}&fromdate=${fromDate}&todate=${toDate}`
+              `feedownloadexcel.php?branch=${branch}&sem=${sem}&mode=${mode}&type=${feeType}&fromdate=${fromDate}&todate=${toDate}$college=${college}`
             }
             size={"sm"}
             colorScheme="facebook"
