@@ -1,6 +1,6 @@
 "use client";
 import { Image } from "@chakra-ui/next-js";
-import Link from "next/link"
+import Link from "next/link";
 import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
 
 export default function Home() {
@@ -10,16 +10,18 @@ export default function Home() {
         justifyContent={"space-between"}
         className="backdrop-blur-sm"
         w={"full"}
-        bg={"whiteAlpha.300"}
         px={"16"}
+        py={"3"}
       >
-        <Image
-          alt={"ismart"}
-          src={"/iSmartLogo.png"}
-          className="object-scale-down aspect-auto"
-          width={120}
-          height={70}
-        />
+        <div className="relative h-10 w-32">
+          <Image
+            alt={"ismart"}
+            src={"/nexuss.png"}
+            priority
+            sizes="10vh"
+            fill
+          />
+        </div>
         <HStack>
           <Button
             size={"sm"}
@@ -34,10 +36,10 @@ export default function Home() {
       </HStack>
       <Center h={"full"}>
         <Card border={"1px"} shadow={"md"} p={"10"}>
-        <Heading color={"blue.600"}>Fee Manager</Heading>
-        <p className="mt-3 text-center">To manage fee details</p>
-        <Button
-        mt={"4"}
+          <Heading color={"blue.600"}>Fee Manager</Heading>
+          <p className="mt-3 text-center">To manage fee details</p>
+          <Button
+            mt={"4"}
             size={"md"}
             variant={"outline"}
             colorScheme="blue"
