@@ -6,7 +6,7 @@ import SupabaseProvider from "./supabase-provider";
 const inter = Inter({ subsets: ["greek"] });
 
 export const metadata = {
-  title:"Fee Manager"
+  title:"Nexus | Fee Master"
 }
 
 export default function RootLayout({

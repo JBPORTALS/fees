@@ -28,6 +28,7 @@ import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 import SideBar from "../ui/SideBar";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -58,8 +59,19 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
         className="bg-secondary border-b border-b-lightgray"
       >
         <HStack color={"blue.600"}>
-          <AiOutlineDollarCircle className="text-3xl" />
-          <Heading size={"md"}>Fee Manager</Heading>
+          <div className="relative flex h-8 w-28">
+            <Image
+              quality={100}
+              alt={"nexuss"}
+              src={"/nexuss.png"}
+              priority
+              sizes="10vh"
+              fill
+            />
+          </div>
+          <Heading size={"md"} position={"relative"} color={"gray.600"}>
+            | Fee Master
+          </Heading>
         </HStack>
         <HStack>
           <InputGroup rounded={"2xl"}>
