@@ -10,8 +10,8 @@ export default function Home() {
         justifyContent={"space-between"}
         className="backdrop-blur-sm"
         w={"full"}
-        bg={"whiteAlpha.300"}
         px={"16"}
+        py={"3"}
       >
         <div className="relative h-10 w-32">
           <Image
