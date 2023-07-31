@@ -114,7 +114,7 @@ export default function Home() {
             target="_blank"
             href={
               process.env.NEXT_PUBLIC_ADMIN_URL +
-              `feedownloadexcel.php?branch=${branch}&sem=${sem}&mode=${mode}&type=${feeType}&fromdate=${fromDate}&todate=${toDate}$college=${college}`
+              `feedownloadexcel.php?branch=${branch}&sem=${sem}&mode=${mode}&type=${feeType}&fromdate=${fromDate}&todate=${toDate}&college=${college}`
             }
             size={"sm"}
             colorScheme="facebook"
