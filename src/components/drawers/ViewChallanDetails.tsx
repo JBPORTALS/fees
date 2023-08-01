@@ -334,7 +334,9 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
               href={
                 process.env.NEXT_PUBLIC_ADMIN_URL +
                 "feedownloadreciept.php?challan_id=" +
-                challanState?.challan_id
+                challanState?.challan_id +
+                "&college=" +
+                user?.college
               }
               w={"full"}
               colorScheme="purple"
