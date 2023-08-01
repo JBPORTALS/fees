@@ -17,6 +17,7 @@ import { useParams } from "next/navigation";
 import { AiOutlineFileDone } from "react-icons/ai";
 import axios from "axios";
 import { useSupabase } from "@/app/supabase-provider";
+import { BANKS } from "@/components/mock-data/constants";
 
 const initialValues = {
   usn: "", //✅
@@ -153,16 +154,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: [
-        {
-          option: "Union",
-          value: "UNION",
-        },
-        {
-          option: "Axis",
-          value: "AXIS",
-        },
-      ],
+      options: BANKS,
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -319,16 +311,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: [
-        {
-          option: "Union",
-          value: "UNION",
-        },
-        {
-          option: "Axis",
-          value: "AXIS",
-        },
-      ],
+      options: BANKS,
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -410,16 +393,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: [
-        {
-          option: "Union",
-          value: "UNION",
-        },
-        {
-          option: "Axis",
-          value: "AXIS",
-        },
-      ],
+      options: BANKS,
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -492,16 +466,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: [
-        {
-          option: "Union",
-          value: "UNION",
-        },
-        {
-          option: "Axis",
-          value: "AXIS",
-        },
-      ],
+      options: BANKS,
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -574,16 +539,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: [
-        {
-          option: "Union",
-          value: "UNION",
-        },
-        {
-          option: "Axis",
-          value: "AXIS",
-        },
-      ],
+      options: BANKS,
       validateField: Yup.string().required("Fill the field !"),
     },
     {
