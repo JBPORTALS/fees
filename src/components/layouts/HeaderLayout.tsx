@@ -163,6 +163,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
                           .update({ last_login_at: new Date(Date.now()) })
                           .eq("id", user?.session?.user.id);
                         await supabase.auth.signOut();
+                        router.refresh();
                       }}
                       colorScheme="facebook"
                       w={"full"}

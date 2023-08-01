@@ -3,7 +3,7 @@ import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-next
 import { headers, cookies } from "next/headers";
 
 export const metadata = {
-  title:"Admission Matrix | Signin"
+  title:"Nexuss | Fee Master | Signin"
 }
 
 export default async function RootLayout({
