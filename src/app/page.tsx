@@ -5,7 +5,7 @@ import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
 
 export default function Home() {
   return (
-    <Flex className="bg-gradient-to-r from-gray-50 to-gray-100 flex h-[100vh] flex-col justify-start w-full">
+    <div className="h-[100vh] flex-col justify-start w-full">
       <HStack
         justifyContent={"space-between"}
         className="backdrop-blur-sm"
@@ -50,6 +50,6 @@ export default function Home() {
           </Button>
         </Card>
       </Center>
-    </Flex>
+    </div>
   );
 }
