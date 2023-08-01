@@ -77,29 +77,27 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
   const mode = params.get("mode");
   const feeType = params.get("feeType");
 
-  const findChallan = useCallback(
-    async () => {
-      setIsChecking(true);
-      try {
-        const formData = new FormData();
-        formData.append("challan_id", challan_id);
+  const findChallan = useCallback(async () => {
+    setIsChecking(true);
+    try {
+      const formData = new FormData();
+      formData.append("challan_id", challan_id);
+      formData.append("college", user?.college!);
 
-        const response = await axios(
-          process.env.NEXT_PUBLIC_ADMIN_URL + "feechallanfilter.php",
-          {
-            method: "POST",
-            data: formData,
-          }
-        );
-        setChallanState(response.data[0]);
-        setUsn(response.data[0]?.usn);
-      } catch (e: any) {
-        toast.error(e.response?.data?.msg);
-      }
-      setIsChecking(false);
-    },
-    [challan_id]
-  );
+      const response = await axios(
+        process.env.NEXT_PUBLIC_ADMIN_URL + "feechallanfilter.php",
+        {
+          method: "POST",
+          data: formData,
+        }
+      );
+      setChallanState(response.data[0]);
+      setUsn(response.data[0]?.usn);
+    } catch (e: any) {
+      toast.error(e.response?.data?.msg);
+    }
+    setIsChecking(false);
+  }, [challan_id]);
 
   useEffect(() => {
     isOpen && findChallan();
@@ -111,6 +109,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
       const formData = new FormData();
       formData.append("usn", usn);
       formData.append("challan_no", challan_id);
+      formData.append("college", user?.college!);
       axios
         .post(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php", formData)
         .then(async (res: any) => {
@@ -120,13 +119,13 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           if (branch && mode && fromDate && toDate && sem && feeType)
             dispatch(
               fetchSearchByMode({
-                college:user?.college!,
+                college: user?.college!,
                 branch,
                 mode,
                 fromDate,
                 toDate,
                 sem,
-                feeType
+                feeType,
               })
             );
         })
@@ -142,8 +141,12 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
       setIsDeleting(true);
       const formData = new FormData();
       formData.append("challan_id", challan_id);
+      formData.append("college", user?.college!);
       axios
-        .post(process.env.NEXT_PUBLIC_ADMIN_URL + "feedeletechallan.php", formData)
+        .post(
+          process.env.NEXT_PUBLIC_ADMIN_URL + "feedeletechallan.php",
+          formData
+        )
         .then(async (res: any) => {
           toast.success(res.data.msg);
           await findChallan();
@@ -151,13 +154,13 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           if (branch && mode && fromDate && toDate && sem && feeType)
             dispatch(
               fetchSearchByMode({
-                college:user?.college!,
+                college: user?.college!,
                 branch,
                 mode,
                 fromDate,
                 toDate,
                 sem,
-                feeType
+                feeType,
               })
             );
         })
