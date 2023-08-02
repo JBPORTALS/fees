@@ -132,6 +132,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
     try {
       const formData = new FormData();
       formData.append("date", moment(filterState.date).format("yyyy-MM-DD"));
+      formData.append("college", user?.college!);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL +
           `${
@@ -156,6 +157,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
     try {
       const formData = new FormData();
       formData.append("challan_id", filterState.challan_no);
+      formData.append("college", user?.college!);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "feechallanfilter.php",
         {
