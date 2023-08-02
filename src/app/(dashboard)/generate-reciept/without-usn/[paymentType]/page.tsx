@@ -17,7 +17,7 @@ import { useParams } from "next/navigation";
 import { AiOutlineFileDone } from "react-icons/ai";
 import axios from "axios";
 import { useSupabase } from "@/app/supabase-provider";
-import { BANKS } from "@/components/mock-data/constants";
+import { BANKS, CATS } from "@/components/mock-data/constants";
 
 const initialValues = {
   name: "", //✅
@@ -97,14 +97,16 @@ export default function WithoutUSNDynamicPage() {
       name: "sem",
       label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
-      placeholder: "Select Sem",
+      placeholder: "Select",
       validateField: Yup.string().required("Fill the field !"),
       options: [
         { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
+        ...new Array(user?.college == "KSPU" ? 2 : 8)
+          .fill(0)
+          .map((_value, index) => ({
+            value: (index + 1).toString(),
+            option: (index + 1).toString(),
+          })),
       ],
     },
     {
@@ -113,40 +115,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select Category",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        {
-          value: "SNQ",
-          option: "SNQ",
-        },
-        {
-          value: "MGT",
-          option: "MGT",
-        },
-        {
-          value: "COMEDK",
-          option: "COMEDK",
-        },
-        {
-          value: "GM",
-          option: "GM",
-        },
-        {
-          value: "SC",
-          option: "SC",
-        },
-        {
-          value: "ST",
-          option: "ST",
-        },
-        {
-          value: "CAT-I",
-          option: "CAT-I",
-        },
-        {
-          value: "DIP-LE",
-          option: "DIP-LE",
-        },
-      ],
+      options:CATS,
     },
     {
       name: "acadYear",
@@ -176,11 +145,12 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "vtuFee",
-      label: user?.college == "KSPT"
-      ? "Admission Fee"
-      : user?.college == "KSPU"
-      ? "PU Board Fee"
-      : "VTU/DTE/DDPI/GP.INS/ IRC Fee",
+      label:
+        user?.college == "KSPT"
+          ? "Admission Fee"
+          : user?.college == "KSPU"
+          ? "PU Board Fee"
+          : "VTU/DTE/DDPI/GP.INS/ IRC Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -189,7 +159,7 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "collegeFee",
-      label: "College Fee",
+      label: "College & Other Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -198,11 +168,12 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "labFee",
-      label: user?.college == "KSPT"
-      ? "Development Fee"
-      : user?.college == "KSPU"
-      ? "Exam Fee"
-      : "Skill Lab Fee",
+      label:
+        user?.college == "KSPT"
+          ? "Development Fee"
+          : user?.college == "KSPU"
+          ? "Exam Fee"
+          : "Skill Lab Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -833,10 +804,14 @@ export default function WithoutUSNDynamicPage() {
         onSubmit={async (state) => {
           try {
             const filename =
-              state.paymentMode == "ONLINE" && paymentType !== "MISCELLANEOUS"
+              state.paymentMode == "ONLINE" &&
+              paymentType !== "MISCELLANEOUS" &&
+              user?.college !== "KSPT"
                 ? "feegenerateonlinewithoutusn.php"
                 : paymentType == "MISCELLANEOUS"
                 ? "feegeneratemiscellaneouswithoutusn.php"
+                : user?.college == "KSPT"
+                ? "feekspreceipt.php"
                 : "feegeneraterecieptwithoutusn.php";
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
@@ -849,7 +824,9 @@ export default function WithoutUSNDynamicPage() {
                           : Object.values(state)[index]
                       }`
                   )
-                  .join("&")}&paymentType=${paymentType}&college=${user?.college}`
+                  .join("&")}&paymentType=${paymentType}&college=${
+                  user?.college
+                }`
             );
             const link = document.createElement("a");
             link.href =
@@ -863,7 +840,9 @@ export default function WithoutUSNDynamicPage() {
                         : Object.values(state)[index]
                     }`
                 )
-                .join("&")}&paymentType=${paymentType}&college=${user?.college}`;
+                .join("&")}&paymentType=${paymentType}&college=${
+                user?.college
+              }`;
             link.setAttribute("download", "Fee Reciept Offline.pdf");
             link.setAttribute("target", "_blank");
             document.body.appendChild(link);

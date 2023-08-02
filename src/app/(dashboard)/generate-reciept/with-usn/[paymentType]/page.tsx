@@ -172,7 +172,7 @@ export default function WithoutUSNDynamicPage() {
       name: "sem",
       label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
-      placeholder: "Select Sem",
+      placeholder: "Select",
       validateField: Yup.string().required("Fill the field !"),
       options: [
         { option: "New Admission", value: "NEW_ADMISSION" },
@@ -934,11 +934,15 @@ export default function WithoutUSNDynamicPage() {
         onSubmit={async (state) => {
           try {
             const filename =
-              state.paymentMode == "ONLINE" && paymentType !== "MISCELLANEOUS"
-                ? "feegenerateonlinewithusn.php"
+              state.paymentMode == "ONLINE" &&
+              paymentType !== "MISCELLANEOUS" &&
+              user?.college !== "KSPT"
+                ? "feegenerateonlinewithoutusn.php"
                 : paymentType == "MISCELLANEOUS"
-                ? "feegeneratemiscellaneouswithusn.php"
-                : "feegeneraterecieptwithusn.php";
+                ? "feegeneratemiscellaneouswithoutusn.php"
+                : user?.college == "KSPT"
+                ? "feekspreceipt.php"
+                : "feegeneraterecieptwithoutusn.php";
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
                 `${filename}?${Object.keys(state)

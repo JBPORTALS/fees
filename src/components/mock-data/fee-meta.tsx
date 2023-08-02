@@ -1,7 +1,6 @@
 import { Tooltip } from "@chakra-ui/react";
-import { AiOutlineEye, AiOutlineProfile, AiOutlineUser } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineUser } from "react-icons/ai";
 import { CiReceipt } from "react-icons/ci";
-import { ImProfile } from "react-icons/im";
 import ViewFeeDetailsModal from "../drawers/ViewFeeDetailsModal";
 import ViewChallanDetails from "../drawers/ViewChallanDetails";
 import ViewStudentsDetails from "../drawers/ViewStudentDetails";
@@ -68,7 +67,17 @@ const StatusView = (data: {
   );
 };
 
+
 export const columns = [
+  {
+    field: "sl_no",
+    headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width:"100px"
+  },
   {
     field: "regno",
     headerName: "Reg No.",
@@ -85,17 +94,17 @@ export const columns = [
   },
   {
     field: "total1",
-    headerName: "Total Fee",
+    headerName: "Total Amount",
     width: "180px",
   },
   {
     field: "paid1",
-    headerName: "Paid",
+    headerName: "Paid Amount",
     width: "170px",
   },
   {
     field: "remaining1",
-    headerName: "Balance",
+    headerName: "Balance Amount",
     width: "170px",
     resizable: true,
   },
@@ -139,17 +148,17 @@ export const feeSearchColumns = [
   },
   {
     field: "total1",
-    headerName: "Total Fee",
+    headerName: "Total Amount",
     width: "180px",
   },
   {
     field: "paid1",
-    headerName: "Paid",
+    headerName: "Paid Amount",
     width: "170px",
   },
   {
     field: "remaining1",
-    headerName: "Balance",
+    headerName: "Balance Amount",
     width: "170px",
     resizable: true,
   },
@@ -259,6 +268,15 @@ export const SearchColumns = [
 
 export const columnsForNonUpdate = [
   {
+    field: "sl_no",
+    headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width:"100px"
+  },
+  {
     field: "regno",
     headerName: "Reg No.",
     filter: true,
@@ -269,6 +287,12 @@ export const columnsForNonUpdate = [
   {
     field: "name",
     headerName: "Name",
+    resizable: true,
+    suppressMovable: true,
+  },
+  {
+    field: "total1",
+    headerName: "Total Amount",
     resizable: true,
     suppressMovable: true,
   },

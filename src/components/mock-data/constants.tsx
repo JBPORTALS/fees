@@ -11,6 +11,10 @@ export const BANKS = [
     option: "ICICI",
     value: "ICICI",
   },
+  {
+    option:"OFFICE",
+    value:"OFFICE"
+  }
 ];
 
 export const CATS = [
