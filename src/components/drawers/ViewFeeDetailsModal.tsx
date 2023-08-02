@@ -74,6 +74,7 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
       const formData = new FormData();
       formData.append("challan_id", challanId);
       formData.append("reg_no", regno);
+      formData.append("college", user?.college!);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "feesearchchallan.php",
         {
@@ -113,6 +114,7 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
     const formData = new FormData();
     formData.append("regno", selectedFeeDetails[0].regno);
     formData.append("total", state.total);
+    formData.append("college", user?.college!);
     try {
       await axios(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdatetotal.php", {
         method: "POST",
