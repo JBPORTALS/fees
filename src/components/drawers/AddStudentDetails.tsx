@@ -15,6 +15,7 @@ import { useAppSelector } from "@/store";
 import { useCallback, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useSupabase } from "@/app/supabase-provider";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -78,6 +79,7 @@ export default function AddStudentsDetails({ children }: props) {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
+  const user = useSupabase().user;
 
   const addStudent = useCallback(async (values: typeof initialState) => {
     try {
@@ -88,6 +90,7 @@ export default function AddStudentsDetails({ children }: props) {
       formData.append("sem", values.sem);
       formData.append("branch", values.branch);
       formData.append("total_fee", values.total);
+      formData.append("college", user?.college!);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentadd.php",
         {
