@@ -7,6 +7,7 @@ import {
   HStack,
   Input,
   Select,
+  SimpleGrid,
   Tag,
   Text,
   useDisclosure,
@@ -234,10 +235,11 @@ export default function ViewStudentsDetails({
       <IModal
         heading="Payment Updation"
         buttonTitle="Update"
+        size={"2xl"}
         isOpen={isPaymentOpen}
         onSubmit={paymentUpdate}
         onClose={onPaymentClose}
-        isDisabled={!amount || !method || amount == "0" || !challanId || !date}
+        isDisabled={!amount || !method || amount == "0" || !challanId || !date || !tid}
       >
         <VStack>
           <HStack>
@@ -254,10 +256,11 @@ export default function ViewStudentsDetails({
               {values.category}
             </Tag>
           </HStack>
-          <VStack>
+          <SimpleGrid columns={2} gap={"3"}>
             <FormControl>
               <FormLabel>Challan ID</FormLabel>
               <Input
+                bg={"white"}
                 value={challanId}
                 onChange={(e) => setChallanId(e.target.value)}
                 type="text"
@@ -266,6 +269,7 @@ export default function ViewStudentsDetails({
             <FormControl>
               <FormLabel>Amount</FormLabel>
               <Input
+                bg={"white"}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 type="number"
@@ -274,6 +278,7 @@ export default function ViewStudentsDetails({
             <FormControl>
               <FormLabel>Payment Method</FormLabel>
               <Select
+                bg={"white"}
                 value={method}
                 onChange={(e) => setMethod(e.target.value)}
               >
@@ -287,6 +292,7 @@ export default function ViewStudentsDetails({
             <FormControl>
               <FormLabel>Transaction ID</FormLabel>
               <Input
+                bg={"white"}
                 value={tid}
                 onChange={(e) => setTid(e.target.value)}
                 type="text"
@@ -295,12 +301,13 @@ export default function ViewStudentsDetails({
             <FormControl>
               <FormLabel>Payment Date</FormLabel>
               <Input
+                bg={"white"}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 type="date"
               />
             </FormControl>
-          </VStack>
+          </SimpleGrid>
         </VStack>
       </IModal>
       <IDrawer
