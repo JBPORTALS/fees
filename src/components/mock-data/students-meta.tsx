@@ -33,6 +33,10 @@ const StatusView = (data: {
 
 export const StudentColumnDefs = [
   {
+    field: "sl_no",
+    headerName: "Sl No.",
+  },
+  {
     field: "regno",
     headerName: "USN",
   },
