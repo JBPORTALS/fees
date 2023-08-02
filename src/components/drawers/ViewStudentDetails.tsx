@@ -79,7 +79,7 @@ export default function ViewStudentsDetails({
 
   useEffect(() => {
     console.log(id);
-    if (id && isOpen && regno) {
+    if (id && isOpen) {
       dispatch(
         fetchSelectedFeeSearchDetails({ id, regno, college: user?.college! })
       );
@@ -91,7 +91,7 @@ export default function ViewStudentsDetails({
         branch: data[0]?.branch ?? "",
         total: data[0]?.total ?? "",
         category: data[0]?.category ?? "",
-      }
+      };
     }
   }, [id, isOpen, regno, dispatch]);
 
@@ -105,13 +105,12 @@ export default function ViewStudentsDetails({
     isSubmitting,
   } = useFormik({
     initialValues: initialState,
-    onSubmit: async (values) => await updateStudent(values),
+    onSubmit: async () => await updateStudent(),
     validationSchema: Schema,
     enableReinitialize: true,
   });
 
-  const updateStudent = useCallback(async (values: typeof initialState) => {
-    console.log(`updateID`, values.id);
+  const updateStudent = async () => {
     try {
       const formData = new FormData();
       formData.append("id", values.id);
@@ -120,6 +119,7 @@ export default function ViewStudentsDetails({
       formData.append("category", values.category);
       formData.append("sem", values.sem);
       formData.append("branch", values.branch);
+      formData.append("college", user?.college!);
       formData.append("total_fee", values.total.toString());
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentupdate.php",
@@ -143,14 +143,15 @@ export default function ViewStudentsDetails({
     } catch (e: any) {
       e.response.data?.msg && toast.error(e.response.data?.msg);
     }
-  }, []);
+  };
 
-  const deleteStudent = useCallback(async (values: typeof initialState) => {
+  const deleteStudent = useCallback(async () => {
     setIsDeleting(true);
     try {
       const formData = new FormData();
       formData.append("id", values.id);
       formData.append("usn", values.usn);
+      formData.append("college", user?.college!);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentdelete.php",
         {
@@ -161,13 +162,21 @@ export default function ViewStudentsDetails({
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
       toast.success("Deleted successfully", { position: "top-right" });
+      dispatch(
+        fetchFeeDetails({
+          branch: values.branch,
+          year: data[0].year,
+          college: user?.college!,
+        })
+      );
       router.refresh();
+      onClose();
       onClose();
     } catch (e: any) {
       e.response.data?.msg && toast.error(e.response.data?.msg);
     }
     setIsDeleting(false);
-  }, []);
+  }, [values.id, values.usn,user?.college]);
 
   return (
     <>
@@ -390,7 +399,7 @@ export default function ViewStudentsDetails({
             {values.id && (
               <Button
                 isLoading={isDeleting}
-                onClick={() => deleteStudent(values)}
+                onClick={() => deleteStudent()}
                 w={"full"}
                 colorScheme="red"
                 leftIcon={<AiOutlineUserDelete />}
