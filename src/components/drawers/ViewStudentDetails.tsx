@@ -59,6 +59,7 @@ export default function ViewStudentsDetails({
   const data = useAppSelector((state) => state.fees.selected_fee.data);
   const router = useRouter();
   const pathname = usePathname();
+  const searchparams = useSearchParams();
 
   console.log(pathname);
 
@@ -78,10 +79,19 @@ export default function ViewStudentsDetails({
 
   useEffect(() => {
     console.log(id);
-    if (isOpen) {
+    if (id && isOpen && regno) {
       dispatch(
         fetchSelectedFeeSearchDetails({ id, regno, college: user?.college! })
       );
+      initialState = {
+        id: data[0]?.id ?? "",
+        usn: data[0]?.regno ?? "",
+        name: data[0]?.name ?? "",
+        sem: data[0]?.sem ?? "",
+        branch: data[0]?.branch ?? "",
+        total: data[0]?.total ?? "",
+        category: data[0]?.category ?? "",
+      }
     }
   }, [id, isOpen, regno, dispatch]);
 
@@ -100,79 +110,64 @@ export default function ViewStudentsDetails({
     enableReinitialize: true,
   });
 
-  const updateStudent = useCallback(
-    async (values: typeof initialState) => {
-      console.log(`updateID`, values.id);
-      try {
-        const formData = new FormData();
-        formData.append("id", values.id);
-        formData.append("usn", values.usn);
-        formData.append("name", values.name);
-        formData.append("category", values.category);
-        formData.append("sem", values.sem);
-        formData.append("branch", values.branch);
-        formData.append("total_fee", values.total.toString());
-        const response = await axios(
-          process.env.NEXT_PUBLIC_ADMIN_URL + "studentupdate.php",
-          {
-            method: "POST",
-            data: formData,
-          }
-        );
-        if (!response || response.status !== 201)
-          throw Error("Something went wrong !");
-        toast.success("Updated successfully", { position: "top-right" });
-        dispatch(
-          fetchFeeDetails({
-            branch: values.branch,
-            year: data[0].year,
-            college: user?.college!,
-          })
-        );
-        router.refresh();
-        onClose();
-      } catch (e: any) {
-        e.response.data?.msg && toast.error(e.response.data?.msg);
-      }
-    },
-    [
-      values.id,
-      values.usn,
-      values.name,
-      values.category,
-      values.sem,
-      values.branch,
-      values.total,
-      data[0].year,
-    ]
-  );
+  const updateStudent = useCallback(async (values: typeof initialState) => {
+    console.log(`updateID`, values.id);
+    try {
+      const formData = new FormData();
+      formData.append("id", values.id);
+      formData.append("usn", values.usn);
+      formData.append("name", values.name);
+      formData.append("category", values.category);
+      formData.append("sem", values.sem);
+      formData.append("branch", values.branch);
+      formData.append("total_fee", values.total.toString());
+      const response = await axios(
+        process.env.NEXT_PUBLIC_ADMIN_URL + "studentupdate.php",
+        {
+          method: "POST",
+          data: formData,
+        }
+      );
+      if (!response || response.status !== 201)
+        throw Error("Something went wrong !");
+      toast.success("Updated successfully", { position: "top-right" });
+      dispatch(
+        fetchFeeDetails({
+          branch: values.branch,
+          year: data[0].year,
+          college: user?.college!,
+        })
+      );
+      router.refresh();
+      onClose();
+    } catch (e: any) {
+      e.response.data?.msg && toast.error(e.response.data?.msg);
+    }
+  }, []);
 
-  const deleteStudent = useCallback(
-    async (values: typeof initialState) => {
-      setIsDeleting(true);
-      try {
-        const formData = new FormData();
-        formData.append("id", values.id);
-        formData.append("usn", values.usn);
-        const response = await axios(
-          process.env.NEXT_PUBLIC_ADMIN_URL + "studentdelete.php",
-          {
-            method: "POST",
-            data: formData,
-          }
-        );
-        if (!response || response.status !== 201)
-          throw Error("Something went wrong !");
-        toast.success("Deleted successfully", { position: "top-right" });
-        router.refresh();
-        onClose();
-      } catch (e: any) {
-        e.response.data?.msg && toast.error(e.response.data?.msg);
-      }
-      setIsDeleting(false);
-    },
-    [values.id, values.usn]
-  );
+  const deleteStudent = useCallback(async (values: typeof initialState) => {
+    setIsDeleting(true);
+    try {
+      const formData = new FormData();
+      formData.append("id", values.id);
+      formData.append("usn", values.usn);
+      const response = await axios(
+        process.env.NEXT_PUBLIC_ADMIN_URL + "studentdelete.php",
+        {
+          method: "POST",
+          data: formData,
+        }
+      );
+      if (!response || response.status !== 201)
+        throw Error("Something went wrong !");
+      toast.success("Deleted successfully", { position: "top-right" });
+      router.refresh();
+      onClose();
+    } catch (e: any) {
+      e.response.data?.msg && toast.error(e.response.data?.msg);
+    }
+    setIsDeleting(false);
+  }, []);
 
   return (
     <>
