@@ -2,25 +2,34 @@
 import {
   Button,
   HStack,
+  IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
   SimpleGrid,
-  Stack,
   VStack,
   useToast,
 } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
-import React, { useEffect } from "react";
-import { useAppSelector } from "@/store";
+import React, { useEffect, useState } from "react";
 import { Field } from "@/components/ui/Field";
 import moment from "moment";
 import { useParams } from "next/navigation";
-import { AiOutlineFileDone } from "react-icons/ai";
+import { AiOutlineFileDone, AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
 import { useSupabase } from "@/app/supabase-provider";
-import { BANKS } from "@/components/mock-data/constants";
+import { BANKS, CATS } from "@/components/mock-data/constants";
+import { toast } from "react-hot-toast";
+import { useAppSelector } from "@/store";
 
 const initialValues = {
   usn: "", //✅
+  name: "",
+  sem: "",
+  year: "",
+  branch: "",
+  college: "",
   category: "", //✅
   misc_category: "", //✅
   acadYear: "", //✅
@@ -42,6 +51,8 @@ const initialValues = {
 
 const FormikContextProvider = () => {
   const { values, setFieldValue } = useFormikContext<typeof initialValues>();
+  const [usn, setUsn] = useState("");
+  const user = useSupabase().user;
 
   useEffect(() => {
     setFieldValue(
@@ -55,13 +66,64 @@ const FormikContextProvider = () => {
     );
   }, [values.collegeFee, values.tuitionFee, values.vtuFee, values.labFee]);
 
-  return <React.Fragment></React.Fragment>;
+  async function findStudent() {
+    try {
+      const formData = new FormData();
+      formData.append("usn", usn);
+      formData.append("college", user?.college!);
+      const res = await axios(
+        process.env.NEXT_PUBLIC_ADMIN_URL + "retrievestudentdetails.php",
+        {
+          method: "POST",
+          data: formData,
+        }
+      );
+
+      if (res.status !== 402) {
+        setFieldValue("usn", res.data[0]?.usn);
+        setFieldValue("name", res.data[0]?.name);
+        setFieldValue("sem", res.data[0]?.sem);
+        setFieldValue("year", res.data[0]?.year);
+        setFieldValue("branch", res.data[0]?.branch);
+        setFieldValue("category", res.data[0]?.category);
+      }
+    } catch (e: any) {
+      toast.error(e.response.data?.msg, { position: "bottom-center" });
+    }
+  }
+
+  return (
+    <React.Fragment>
+      <InputGroup>
+        <Input
+          colorScheme="whiteAlpha"
+          bg={"white"}
+          onChange={(e) => setUsn(e.target.value)}
+          value={usn}
+          placeholder="Enter USN here to find the student..."
+        />
+        <InputRightElement>
+          <IconButton
+            onClick={findStudent}
+            aria-label="search"
+            colorScheme="blue"
+            variant={"ghost"}
+            icon={<AiOutlineSearch />}
+          />
+        </InputRightElement>
+      </InputGroup>
+    </React.Fragment>
+  );
 };
 
 export default function WithoutUSNDynamicPage() {
   const toast = useToast({
     position: "bottom-left",
   });
+
+  const branchList = useAppSelector((state) => state.fees.branch_list.data) as {
+    branch: string;
+  }[];
 
   const user = useSupabase().user;
 
@@ -77,7 +139,8 @@ export default function WithoutUSNDynamicPage() {
   const feeTemplate = [
     {
       name: "usn",
-      label: "USN",
+      label:
+        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
@@ -85,6 +148,49 @@ export default function WithoutUSNDynamicPage() {
           /^[Aa-zZ0-9]+$/i,
           "Only alphanumaric values are allowed for this field"
         ),
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: [
+        { option: "New Admission", value: "NEW_ADMISSION" },
+        ...new Array(user?.college == "KSPU" ? 2 : 8)
+          .fill(0)
+          .map((_value, index) => ({
+            value: (index + 1).toString(),
+            option: (index + 1).toString(),
+          })),
+      ],
+    },
+    {
+      name: "category",
+      label: "Category",
+      type: "select",
+      placeholder: "Select Category",
+      validateField: Yup.string().required("Fill the field !"),
+      options: CATS,
     },
     {
       name: "acadYear",
@@ -114,7 +220,12 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "vtuFee",
-      label: "VTU/DTE/DDPI/GP.INS/ IRC Fee",
+      label:
+        user?.college == "KSPT"
+          ? "Admission Fee"
+          : user?.college == "KSPU"
+          ? "PU Board Fee"
+          : "VTU/DTE/DDPI/GP.INS/ IRC Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -123,7 +234,7 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "collegeFee",
-      label: "College Fee",
+      label: "College & Other Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -132,7 +243,12 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "labFee",
-      label: "Lab Fee",
+      label:
+        user?.college == "KSPT"
+          ? "Development Fee"
+          : user?.college == "KSPU"
+          ? "Exam Fee"
+          : "Skill Lab Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -187,14 +303,47 @@ export default function WithoutUSNDynamicPage() {
   const miscellaneousTemplate = [
     {
       name: "usn",
-      label: "USN",
+      label: user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
       type: "text",
       validateField: Yup.string()
-        .required("Fill the field!")
+        .required("Field required !")
         .matches(
           /^[Aa-zZ0-9]+$/i,
           "Only alphanumaric values are allowed for this field"
         ),
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: [
+        { option: "New Admission", value: "NEW_ADMISSION" },
+        ...new Array(8).fill(0).map((_value, index) => ({
+          value: (index + 1).toString(),
+          option: (index + 1).toString(),
+        })),
+      ],
     },
     {
       name: "misc_category",
@@ -280,7 +429,7 @@ export default function WithoutUSNDynamicPage() {
   const busFeeTemplate = [
     {
       name: "usn",
-      label: "USN",
+      label: user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
@@ -288,6 +437,39 @@ export default function WithoutUSNDynamicPage() {
           /^[Aa-zZ0-9]+$/i,
           "Only alphanumaric values are allowed for this field"
         ),
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: [
+        { option: "New Admission", value: "NEW_ADMISSION" },
+        ...new Array(8).fill(0).map((_value, index) => ({
+          value: (index + 1).toString(),
+          option: (index + 1).toString(),
+        })),
+      ],
     },
     {
       name: "acadYear",
@@ -353,7 +535,7 @@ export default function WithoutUSNDynamicPage() {
   const excessFeeTemplate = [
     {
       name: "usn",
-      label: "USN",
+      label: user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
@@ -361,6 +543,39 @@ export default function WithoutUSNDynamicPage() {
           /^[Aa-zZ0-9]+$/i,
           "Only alphanumaric values are allowed for this field"
         ),
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: [
+        { option: "New Admission", value: "NEW_ADMISSION" },
+        ...new Array(8).fill(0).map((_value, index) => ({
+          value: (index + 1).toString(),
+          option: (index + 1).toString(),
+        })),
+      ],
     },
     {
       name: "acadYear",
@@ -426,7 +641,7 @@ export default function WithoutUSNDynamicPage() {
   const securityFeeTemplate = [
     {
       name: "usn",
-      label: "USN",
+      label: user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
@@ -434,6 +649,39 @@ export default function WithoutUSNDynamicPage() {
           /^[Aa-zZ0-9]+$/i,
           "Only alphanumaric values are allowed for this field"
         ),
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: [
+        { option: "New Admission", value: "NEW_ADMISSION" },
+        ...new Array(8).fill(0).map((_value, index) => ({
+          value: (index + 1).toString(),
+          option: (index + 1).toString(),
+        })),
+      ],
     },
     {
       name: "acadYear",
@@ -499,7 +747,7 @@ export default function WithoutUSNDynamicPage() {
   const hostelFeeTemplate = [
     {
       name: "usn",
-      label: "USN",
+      label: user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
       type: "text",
       validateField: Yup.string()
         .required("Field required !")
@@ -507,6 +755,39 @@ export default function WithoutUSNDynamicPage() {
           /^[Aa-zZ0-9]+$/i,
           "Only alphanumaric values are allowed for this field"
         ),
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: [
+        { option: "New Admission", value: "NEW_ADMISSION" },
+        ...new Array(8).fill(0).map((_value, index) => ({
+          value: (index + 1).toString(),
+          option: (index + 1).toString(),
+        })),
+      ],
     },
     {
       name: "acadYear",
@@ -669,7 +950,9 @@ export default function WithoutUSNDynamicPage() {
                           : Object.values(state)[index]
                       }`
                   )
-                  .join("&")}&paymentType=${paymentType}&college=${user?.college}`
+                  .join("&")}&paymentType=${paymentType}&college=${
+                  user?.college
+                }`
             );
             const link = document.createElement("a");
             link.href =
@@ -683,7 +966,9 @@ export default function WithoutUSNDynamicPage() {
                         : Object.values(state)[index]
                     }`
                 )
-                .join("&")}&paymentType=${paymentType}&college=${user?.college}`;
+                .join("&")}&paymentType=${paymentType}&college=${
+                user?.college
+              }`;
             link.setAttribute("download", "Fee Reciept Offline.pdf");
             link.setAttribute("target", "_blank");
             document.body.appendChild(link);

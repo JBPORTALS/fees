@@ -16,19 +16,20 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import {
-  AiOutlineDollarCircle,
   AiOutlineFieldTime,
   AiOutlineLogout,
   AiOutlineMail,
   AiOutlineSearch,
   AiOutlineUser,
 } from "react-icons/ai";
+import {HiOutlineOfficeBuilding} from "react-icons/hi"
 import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 import SideBar from "../ui/SideBar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { MdOutlineLocalPostOffice } from "react-icons/md";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -144,6 +145,12 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
                     <AiOutlineMail className="text-2xl" />
                     <Heading size={"sm"} fontWeight={"normal"}>
                       {user?.email}
+                    </Heading>
+                  </HStack>
+                  <HStack spacing={"3"} py={"2"}>
+                    <HiOutlineOfficeBuilding className="text-2xl" />
+                    <Heading size={"sm"} fontWeight={"normal"}>
+                      {user?.college}
                     </Heading>
                   </HStack>
                   <HStack spacing={"3"} py={"2"}>
