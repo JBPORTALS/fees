@@ -15,6 +15,9 @@ import { useAppSelector } from "@/store";
 import { useCallback, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useSupabase } from "@/app/supabase-provider";
+import { useAppDispatch } from "@/hooks";
+import { fetchFeeDetails } from "@/store/fees.slice";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -78,6 +81,24 @@ export default function AddStudentsDetails({ children }: props) {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
+  const user = useSupabase().user;
+  const dispatch = useAppDispatch();
+
+  const {
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    values,
+    isSubmitting,
+    handleReset,
+    ...props
+  } = useFormik({
+    initialValues: initialState,
+    onSubmit: async (values) => await addStudent(values),
+    validationSchema: Schema,
+  });
 
   const addStudent = useCallback(async (values: typeof initialState) => {
     try {
@@ -88,6 +109,7 @@ export default function AddStudentsDetails({ children }: props) {
       formData.append("sem", values.sem);
       formData.append("branch", values.branch);
       formData.append("total_fee", values.total);
+      formData.append("college", user?.college!);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentadd.php",
         {
@@ -98,26 +120,19 @@ export default function AddStudentsDetails({ children }: props) {
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
       toast.success("Student Added successfully", { position: "top-right" });
+      handleReset(values);
+      dispatch(
+        fetchFeeDetails({
+          branch: values.branch,
+          year: values.sem,
+          college: user?.college!,
+        })
+      );
       onClose();
     } catch (e: any) {
       toast.error(e.response?.data?.msg);
     }
   }, []);
-
-  const {
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    values,
-    isSubmitting,
-    ...props
-  } = useFormik({
-    initialValues: initialState,
-    onSubmit: async (values) => await addStudent(values),
-    validationSchema: Schema,
-  });
 
   return (
     <>

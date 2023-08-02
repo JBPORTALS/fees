@@ -8,7 +8,7 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails } from "@/store/fees.slice";
 import { Button, VStack } from "@chakra-ui/react";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export default function Students() {
   const [state, setState] = useState({
@@ -24,7 +24,13 @@ export default function Students() {
 
   useEffect(() => {
     if (state.branch && state.year)
-      dispatch(fetchFeeDetails({ branch: state.branch, year: state.year,college:user?.college! }));
+      dispatch(
+        fetchFeeDetails({
+          branch: state.branch,
+          year: state.year,
+          college: user?.college!,
+        })
+      );
   }, [state.branch, state.year, dispatch]);
 
   return (
@@ -81,9 +87,7 @@ export default function Students() {
           <VStack
             px={0}
             spacing={0}
-            className={
-              "justify-start items-start flex w-full h-full"
-            }
+            className={"justify-start items-start flex w-full h-full"}
           >
             {/* displaying admin childrens */}
             {state.branch && state.year && (

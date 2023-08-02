@@ -30,6 +30,7 @@ import {
 } from "@/store/fees.slice";
 import { useAppDispatch } from "@/hooks";
 import { useSupabase } from "@/app/supabase-provider";
+import { CATS } from "../mock-data/constants";
 
 const Schema = Yup.object().shape({
   name: Yup.string().required().min(2),
@@ -39,40 +40,7 @@ const Schema = Yup.object().shape({
   total: Yup.number().required().min(0).typeError("invalid number"),
 });
 
-const Categories = [
-  {
-    value: "SNQ",
-    option: "SNQ",
-  },
-  {
-    value: "MANAGEMENT",
-    option: "MANAGEMENT",
-  },
-  {
-    value: "COMEDK",
-    option: "COMEDK",
-  },
-  {
-    value: "GM",
-    option: "GM",
-  },
-  {
-    value: "SC",
-    option: "SC",
-  },
-  {
-    value: "ST",
-    option: "ST",
-  },
-  {
-    value: "CAT-I",
-    option: "CAT-I",
-  },
-  {
-    value: "DIP-LE",
-    option: "DIP-LE",
-  },
-];
+const Categories = CATS;
 
 export default function ViewStudentsDetails({
   id,
@@ -112,7 +80,18 @@ export default function ViewStudentsDetails({
   useEffect(() => {
     console.log(id);
     if (id && isOpen && regno) {
-      dispatch(fetchSelectedFeeSearchDetails({ id, regno ,college:user?.college!,}));
+      dispatch(
+        fetchSelectedFeeSearchDetails({ id, regno, college: user?.college! })
+      );
+      initialState = {
+        id: data[0]?.id ?? "",
+        usn: data[0]?.regno ?? "",
+        name: data[0]?.name ?? "",
+        sem: data[0]?.sem ?? "",
+        branch: data[0]?.branch ?? "",
+        total: data[0]?.total ?? "",
+        category: data[0]?.category ?? "",
+      }
     }
   }, [id, isOpen, regno, dispatch]);
 
@@ -152,7 +131,13 @@ export default function ViewStudentsDetails({
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
       toast.success("Updated successfully", { position: "top-right" });
-      dispatch(fetchFeeDetails({ branch: values.branch, year: data[0].year,college:user?.college! }));
+      dispatch(
+        fetchFeeDetails({
+          branch: values.branch,
+          year: data[0].year,
+          college: user?.college!,
+        })
+      );
       router.refresh();
       onClose();
     } catch (e: any) {
