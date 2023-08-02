@@ -3,9 +3,11 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   HStack,
   Input,
   Select,
+  Tag,
   Text,
   useDisclosure,
   VStack,
@@ -31,6 +33,8 @@ import {
 import { useAppDispatch } from "@/hooks";
 import { useSupabase } from "@/app/supabase-provider";
 import { CATS } from "../mock-data/constants";
+import IModal from "../ui/utils/IModal";
+import moment from "moment";
 
 const Schema = Yup.object().shape({
   name: Yup.string().required().min(2),
@@ -75,6 +79,11 @@ export default function ViewStudentsDetails({
 
   const dispatch = useAppDispatch();
   const { onOpen, isOpen, onClose } = useDisclosure();
+  const {
+    onOpen: onPaymentOpen,
+    isOpen: isPaymentOpen,
+    onClose: onPaymentClose,
+  } = useDisclosure();
   const user = useSupabase().user;
 
   useEffect(() => {
@@ -176,10 +185,105 @@ export default function ViewStudentsDetails({
       e.response.data?.msg && toast.error(e.response.data?.msg);
     }
     setIsDeleting(false);
-  }, [values.id, values.usn,user?.college]);
+  }, [values.id, values.usn, user?.college]);
+
+  const [amount, setAmount] = useState("0");
+  const [method, setMethod] = useState("");
+  const [date, setDate] = useState("");
+
+  const paymentUpdate = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("id", values.id);
+      formData.append("regno", values.usn);
+      formData.append("paid", amount);
+      formData.append("method", method);
+      formData.append("college", user?.college!);
+      formData.append("date", moment(date).format("DD-MM-yyyy"));
+
+      const response = await axios(
+        process.env.NEXT_PUBLIC_ADMIN_URL + "studentupdatefee.php",
+        {
+          method: "POST",
+          data: formData,
+        }
+      );
+      if (!response || response.status !== 201)
+        throw Error("Something went wrong !");
+      toast.success("Updated successfully", { position: "top-right" });
+      dispatch(
+        fetchFeeDetails({
+          branch: values.branch,
+          year: data[0].year,
+          college: user?.college!,
+        })
+      );
+      router.refresh();
+      onPaymentClose();
+    } catch (e: any) {
+      e.response.data?.msg && toast.error(e.response.data?.msg);
+    }
+  };
 
   return (
     <>
+      <IModal
+        heading="Payment Updation"
+        buttonTitle="Update"
+        isOpen={isPaymentOpen}
+        onSubmit={paymentUpdate}
+        onClose={onPaymentClose}
+        isDisabled={!amount || !method || amount == "0"}
+      >
+        <VStack>
+          <HStack>
+            <Heading size={"md"}>{values.name}</Heading>
+            <Heading size={"md"} color={"gray.500"}>
+              {values.usn}
+            </Heading>
+          </HStack>
+          <HStack>
+            <Tag colorScheme="purple" size={"lg"}>
+              {values.branch} - {values.sem} Sem
+            </Tag>
+            <Tag colorScheme="purple" size={"lg"}>
+              {values.category}
+            </Tag>
+          </HStack>
+          <VStack>
+            <FormControl>
+              <FormLabel>Amount</FormLabel>
+              <Input
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                type="number"
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Payment Method</FormLabel>
+              <Select
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+              >
+                <option value={""}>Select</option>
+                <option value={"UPI SCAN"}>UPI Scan</option>
+                <option value={"MANUAL"}>MANUAL</option>
+                <option value={"RECIEPT/EASYPAY PAYMENT"}>
+                  RECIEPT/EASYPAY PAYMENT
+                </option>
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Payment Date</FormLabel>
+              <Input
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                type="date"
+              />
+            </FormControl>
+          </VStack>
+        </VStack>
+      </IModal>
       <IDrawer
         isLoading={isSubmitting}
         isDisabled={!!Object.keys(errors).length}
@@ -210,7 +314,6 @@ export default function ViewStudentsDetails({
                 <Text>USN</Text>
               </FormLabel>
               <Input
-                isReadOnly
                 name="usn"
                 bg={"white"}
                 variant={"filled"}
@@ -388,7 +491,7 @@ export default function ViewStudentsDetails({
               />
             </FormControl>
           </>
-          <HStack
+          <VStack
             position={"sticky"}
             className="backdrop-blur-sm"
             bg={"rgba(255,255,255,0.4)"}
@@ -397,17 +500,22 @@ export default function ViewStudentsDetails({
             p={"5"}
           >
             {values.id && (
-              <Button
-                isLoading={isDeleting}
-                onClick={() => deleteStudent()}
-                w={"full"}
-                colorScheme="red"
-                leftIcon={<AiOutlineUserDelete />}
-              >
-                Remove
-              </Button>
+              <>
+                <Button onClick={onPaymentOpen} w={"full"} colorScheme="purple">
+                  Update Payment
+                </Button>
+                <Button
+                  isLoading={isDeleting}
+                  onClick={() => deleteStudent()}
+                  w={"full"}
+                  colorScheme="red"
+                  leftIcon={<AiOutlineUserDelete />}
+                >
+                  Remove
+                </Button>
+              </>
             )}
-          </HStack>
+          </VStack>
         </VStack>
       </IDrawer>
       {children({ onOpen })}
