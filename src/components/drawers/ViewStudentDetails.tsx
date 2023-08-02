@@ -190,6 +190,7 @@ export default function ViewStudentsDetails({
   const [amount, setAmount] = useState("0");
   const [method, setMethod] = useState("");
   const [challanId, setChallanId] = useState("");
+  const [tid, setTid] = useState("");
   const [date, setDate] = useState("");
 
   const paymentUpdate = async () => {
@@ -201,6 +202,7 @@ export default function ViewStudentsDetails({
       formData.append("method", method);
       formData.append("college", user?.college!);
       formData.append("challan_id", challanId);
+      formData.append("tid", tid);
       formData.append("date", moment(date).format("DD-MM-yyyy"));
 
       const response = await axios(
@@ -258,7 +260,7 @@ export default function ViewStudentsDetails({
               <Input
                 value={challanId}
                 onChange={(e) => setChallanId(e.target.value)}
-                type="number"
+                type="text"
               />
             </FormControl>
             <FormControl>
@@ -279,7 +281,16 @@ export default function ViewStudentsDetails({
                 <option value={"UPI_SCAN"}>UPI SCAN</option>
                 <option value={"MANUAL_RECIEPT"}>MANUAL RECIEPT</option>
                 <option value={"EASYPAY_PAYMENT"}>EASYPAY PAYMENT</option>
+                <option value={"OTHERS"}>OTHERS</option>
               </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Transaction ID</FormLabel>
+              <Input
+                value={tid}
+                onChange={(e) => setTid(e.target.value)}
+                type="text"
+              />
             </FormControl>
             <FormControl>
               <FormLabel>Payment Date</FormLabel>
