@@ -1,7 +1,6 @@
 import { Tooltip } from "@chakra-ui/react";
-import { AiOutlineEye, AiOutlineProfile, AiOutlineUser } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineUser } from "react-icons/ai";
 import { CiReceipt } from "react-icons/ci";
-import { ImProfile } from "react-icons/im";
 import ViewFeeDetailsModal from "../drawers/ViewFeeDetailsModal";
 import ViewChallanDetails from "../drawers/ViewChallanDetails";
 import ViewStudentsDetails from "../drawers/ViewStudentDetails";
@@ -67,6 +66,7 @@ const StatusView = (data: {
     </Tooltip>
   );
 };
+
 
 export const columns = [
   {
