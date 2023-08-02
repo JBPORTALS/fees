@@ -70,6 +70,15 @@ const StatusView = (data: {
 
 export const columns = [
   {
+    field: "sl_no",
+    headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width:"100px"
+  },
+  {
     field: "regno",
     headerName: "Reg No.",
     filter: true,
@@ -259,6 +268,15 @@ export const SearchColumns = [
 
 export const columnsForNonUpdate = [
   {
+    field: "sl_no",
+    headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width:"100px"
+  },
+  {
     field: "regno",
     headerName: "Reg No.",
     filter: true,
@@ -269,6 +287,12 @@ export const columnsForNonUpdate = [
   {
     field: "name",
     headerName: "Name",
+    resizable: true,
+    suppressMovable: true,
+  },
+  {
+    field: "total1",
+    headerName: "Total",
     resizable: true,
     suppressMovable: true,
   },

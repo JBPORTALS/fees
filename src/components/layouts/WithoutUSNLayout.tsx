@@ -47,6 +47,7 @@ export default function WithoutUSNLayout({
       variant={"soft-rounded"}
       h={"fit-content"}
       position={"relative"}
+      zIndex={"sticky"}
     >
       <HStack px={"36"}>
         <TabList

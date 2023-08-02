@@ -172,7 +172,7 @@ export default function WithoutUSNDynamicPage() {
       name: "sem",
       label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
-      placeholder: "Select Sem",
+      placeholder: "Select",
       validateField: Yup.string().required("Fill the field !"),
       options: [
         { option: "New Admission", value: "NEW_ADMISSION" },

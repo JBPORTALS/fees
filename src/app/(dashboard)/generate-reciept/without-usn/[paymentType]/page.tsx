@@ -97,11 +97,11 @@ export default function WithoutUSNDynamicPage() {
       name: "sem",
       label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
-      placeholder: "Select Sem",
+      placeholder: "Select",
       validateField: Yup.string().required("Fill the field !"),
       options: [
         { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
+        ...new Array(user?.college == "KSPU" ? 2 : 8).fill(0).map((_value, index) => ({
           value: (index + 1).toString(),
           option: (index + 1).toString(),
         })),
@@ -189,7 +189,7 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "collegeFee",
-      label: "College Fee",
+      label: "College & Other Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
