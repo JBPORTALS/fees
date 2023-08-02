@@ -94,17 +94,17 @@ export const columns = [
   },
   {
     field: "total1",
-    headerName: "Total Fee",
+    headerName: "Total Amount",
     width: "180px",
   },
   {
     field: "paid1",
-    headerName: "Paid",
+    headerName: "Paid Amount",
     width: "170px",
   },
   {
     field: "remaining1",
-    headerName: "Balance",
+    headerName: "Balance Amount",
     width: "170px",
     resizable: true,
   },
@@ -148,17 +148,17 @@ export const feeSearchColumns = [
   },
   {
     field: "total1",
-    headerName: "Total Fee",
+    headerName: "Total Amount",
     width: "180px",
   },
   {
     field: "paid1",
-    headerName: "Paid",
+    headerName: "Paid Amount",
     width: "170px",
   },
   {
     field: "remaining1",
-    headerName: "Balance",
+    headerName: "Balance Amount",
     width: "170px",
     resizable: true,
   },
@@ -292,7 +292,7 @@ export const columnsForNonUpdate = [
   },
   {
     field: "total1",
-    headerName: "Total",
+    headerName: "Total Amount",
     resizable: true,
     suppressMovable: true,
   },
