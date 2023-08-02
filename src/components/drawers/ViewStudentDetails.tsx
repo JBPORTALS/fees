@@ -189,6 +189,7 @@ export default function ViewStudentsDetails({
 
   const [amount, setAmount] = useState("0");
   const [method, setMethod] = useState("");
+  const [challanId, setChallanId] = useState("");
   const [date, setDate] = useState("");
 
   const paymentUpdate = async () => {
@@ -199,6 +200,7 @@ export default function ViewStudentsDetails({
       formData.append("paid", amount);
       formData.append("method", method);
       formData.append("college", user?.college!);
+      formData.append("challan_id", challanId);
       formData.append("date", moment(date).format("DD-MM-yyyy"));
 
       const response = await axios(
@@ -233,7 +235,7 @@ export default function ViewStudentsDetails({
         isOpen={isPaymentOpen}
         onSubmit={paymentUpdate}
         onClose={onPaymentClose}
-        isDisabled={!amount || !method || amount == "0"}
+        isDisabled={!amount || !method || amount == "0" || !challanId || !date}
       >
         <VStack>
           <HStack>
@@ -252,6 +254,14 @@ export default function ViewStudentsDetails({
           </HStack>
           <VStack>
             <FormControl>
+              <FormLabel>Challan ID</FormLabel>
+              <Input
+                value={challanId}
+                onChange={(e) => setChallanId(e.target.value)}
+                type="number"
+              />
+            </FormControl>
+            <FormControl>
               <FormLabel>Amount</FormLabel>
               <Input
                 value={amount}
@@ -266,11 +276,9 @@ export default function ViewStudentsDetails({
                 onChange={(e) => setMethod(e.target.value)}
               >
                 <option value={""}>Select</option>
-                <option value={"UPI SCAN"}>UPI Scan</option>
-                <option value={"MANUAL"}>MANUAL</option>
-                <option value={"RECIEPT/EASYPAY PAYMENT"}>
-                  RECIEPT/EASYPAY PAYMENT
-                </option>
+                <option value={"UPI_SCAN"}>UPI SCAN</option>
+                <option value={"MANUAL_RECIEPT"}>MANUAL RECIEPT</option>
+                <option value={"EASYPAY_PAYMENT"}>EASYPAY PAYMENT</option>
               </Select>
             </FormControl>
             <FormControl>
