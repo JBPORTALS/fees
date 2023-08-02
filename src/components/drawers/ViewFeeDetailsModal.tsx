@@ -28,10 +28,10 @@ interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
   isForCoadmin?: boolean;
   regno: string;
-  id:string;
+  id: string;
 }
 
-export default function ViewFeeDetailsModal({ children, regno,id }: props) {
+export default function ViewFeeDetailsModal({ children, regno, id }: props) {
   const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
   const {
     isOpen: isConfirmOpen,
@@ -65,7 +65,7 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
 
   const onOpen = () => {
     onModalOpen();
-    dispatch(fetchSelectedFeeDeatails({ regno,id,college:user?.college!}));
+    dispatch(fetchSelectedFeeDeatails({ regno, id, college: user?.college! }));
   };
 
   const findChallan = async () => {
@@ -103,7 +103,7 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
         method: challanState!.method,
         paid: challanState!.amount_paid,
         challan_id: challanState!.challan_id,
-        college:user?.college!,
+        college: user?.college!,
       })
     );
     onOpen();
@@ -127,7 +127,7 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
         fetchFeeDetails({
           branch: selectedFeeDetails[0].branch,
           year: selectedFeeDetails[0].year,
-          college:user?.college!,
+          college: user?.college!,
         })
       );
     } catch (e: any) {
@@ -180,7 +180,8 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
                     <HStack>
                       <h1 className="text-md">{history.paymentno}</h1>
                       <Tag
-                        size={"md"}
+                        size={"sm"}
+                        whiteSpace={"nowrap"}
                         variant={"outline"}
                         colorScheme={"teal"}
                         fontWeight={"bold"}
@@ -267,7 +268,9 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
                   href={
                     process.env.NEXT_PUBLIC_ADMIN_URL +
                     "feedownload.php?regno=" +
-                    selectedFeeDetails[0]?.regno
+                    selectedFeeDetails[0]?.regno +
+                    "&college=" +
+                    user?.college
                   }
                   colorScheme={"purple"}
                   leftIcon={<AiOutlineFileProtect className="text-xl" />}
