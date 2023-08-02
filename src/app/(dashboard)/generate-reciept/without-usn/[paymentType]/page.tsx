@@ -95,7 +95,7 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "sem",
-      label: "Sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
@@ -176,7 +176,11 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "vtuFee",
-      label: "VTU/DTE/DDPI/GP.INS/ IRC Fee",
+      label: user?.college == "KSPT"
+      ? "Admission Fee"
+      : user?.college == "KSPU"
+      ? "PU Board Fee"
+      : "VTU/DTE/DDPI/GP.INS/ IRC Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -194,7 +198,11 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "labFee",
-      label: "Lab Fee",
+      label: user?.college == "KSPT"
+      ? "Development Fee"
+      : user?.college == "KSPU"
+      ? "Exam Fee"
+      : "Skill Lab Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -268,7 +276,7 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "sem",
-      label: "Sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
@@ -383,7 +391,7 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "sem",
-      label: "Sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
@@ -478,7 +486,7 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "sem",
-      label: "Sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
@@ -573,7 +581,7 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "sem",
-      label: "Sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
@@ -668,7 +676,7 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "sem",
-      label: "Sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
