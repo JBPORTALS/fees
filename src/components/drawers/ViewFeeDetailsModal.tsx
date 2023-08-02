@@ -192,10 +192,10 @@ export default function ViewFeeDetailsModal({ children, regno,id }: props) {
                     <span className="text-sm">{history.date}</span>
                   </VStack>
                   <VStack flex={1} alignItems={"end"}>
-                    <h1 className="text-xl font-bold text-green-600">
+                    <h1 className="text-lg font-bold text-green-600">
                       ₹ {history.amount_paid}
                     </h1>
-                    <span className="text-md font-medium">
+                    <span className="text-sm font-medium">
                       <i>{history.method}</i>
                     </span>
                   </VStack>

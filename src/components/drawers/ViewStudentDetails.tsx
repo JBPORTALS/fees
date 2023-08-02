@@ -7,6 +7,7 @@ import {
   HStack,
   Input,
   Select,
+  SimpleGrid,
   Tag,
   Text,
   useDisclosure,
@@ -189,6 +190,8 @@ export default function ViewStudentsDetails({
 
   const [amount, setAmount] = useState("0");
   const [method, setMethod] = useState("");
+  const [challanId, setChallanId] = useState("");
+  const [tid, setTid] = useState("");
   const [date, setDate] = useState("");
 
   const paymentUpdate = async () => {
@@ -199,6 +202,8 @@ export default function ViewStudentsDetails({
       formData.append("paid", amount);
       formData.append("method", method);
       formData.append("college", user?.college!);
+      formData.append("challan_id", challanId);
+      formData.append("tid", tid);
       formData.append("date", moment(date).format("DD-MM-yyyy"));
 
       const response = await axios(
@@ -230,10 +235,11 @@ export default function ViewStudentsDetails({
       <IModal
         heading="Payment Updation"
         buttonTitle="Update"
+        size={"2xl"}
         isOpen={isPaymentOpen}
         onSubmit={paymentUpdate}
         onClose={onPaymentClose}
-        isDisabled={!amount || !method || amount == "0"}
+        isDisabled={!amount || !method || amount == "0" || !challanId || !date || !tid}
       >
         <VStack>
           <HStack>
@@ -250,10 +256,20 @@ export default function ViewStudentsDetails({
               {values.category}
             </Tag>
           </HStack>
-          <VStack>
+          <SimpleGrid columns={2} gap={"3"}>
+            <FormControl>
+              <FormLabel>Challan ID</FormLabel>
+              <Input
+                bg={"white"}
+                value={challanId}
+                onChange={(e) => setChallanId(e.target.value)}
+                type="text"
+              />
+            </FormControl>
             <FormControl>
               <FormLabel>Amount</FormLabel>
               <Input
+                bg={"white"}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 type="number"
@@ -262,26 +278,36 @@ export default function ViewStudentsDetails({
             <FormControl>
               <FormLabel>Payment Method</FormLabel>
               <Select
+                bg={"white"}
                 value={method}
                 onChange={(e) => setMethod(e.target.value)}
               >
                 <option value={""}>Select</option>
-                <option value={"UPI SCAN"}>UPI Scan</option>
-                <option value={"MANUAL"}>MANUAL</option>
-                <option value={"RECIEPT/EASYPAY PAYMENT"}>
-                  RECIEPT/EASYPAY PAYMENT
-                </option>
+                <option value={"UPI_SCAN"}>UPI SCAN</option>
+                <option value={"MANUAL_RECIEPT"}>MANUAL RECIEPT</option>
+                <option value={"EASYPAY_PAYMENT"}>EASYPAY PAYMENT</option>
+                <option value={"OTHERS"}>OTHERS</option>
               </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Transaction ID</FormLabel>
+              <Input
+                bg={"white"}
+                value={tid}
+                onChange={(e) => setTid(e.target.value)}
+                type="text"
+              />
             </FormControl>
             <FormControl>
               <FormLabel>Payment Date</FormLabel>
               <Input
+                bg={"white"}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 type="date"
               />
             </FormControl>
-          </VStack>
+          </SimpleGrid>
         </VStack>
       </IModal>
       <IDrawer
