@@ -584,6 +584,7 @@ export const FeesSlice = createSlice({
     },
 
     [updateFeeDetail.pending.toString()]: (state, _action) => {
+      state.selected_fee.error = null;
       state.selected_fee.pending = true;
     },
     [updateFeeDetail.fulfilled.toString()]: (state, action) => {
