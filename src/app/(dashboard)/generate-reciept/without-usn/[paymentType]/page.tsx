@@ -17,7 +17,7 @@ import { useParams } from "next/navigation";
 import { AiOutlineFileDone } from "react-icons/ai";
 import axios from "axios";
 import { useSupabase } from "@/app/supabase-provider";
-import { BANKS, CATS } from "@/components/mock-data/constants";
+import { BANKS,CATS } from "@/components/mock-data/constants";
 
 const initialValues = {
   name: "", //✅
@@ -195,7 +195,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -396,7 +396,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -500,7 +500,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -595,7 +595,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -690,7 +690,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
