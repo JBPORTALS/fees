@@ -270,7 +270,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -493,7 +493,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -608,7 +608,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -714,7 +714,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
@@ -820,7 +820,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Bank",
       type: "select",
       placeholder: "Select Bank",
-      options: BANKS,
+      options: BANKS(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
     {
