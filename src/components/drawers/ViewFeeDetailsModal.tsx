@@ -41,9 +41,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
   const selectedFeeDetails = useAppSelector(
     (state) => state.fees.selected_fee.data
   ) as SelectedFee[];
-  const error = useAppSelector(
-    (state) => state.fees.selected_fee.error
-  );
+  const error = useAppSelector((state) => state.fees.selected_fee.error);
   const isLoading = useAppSelector(
     (state) => state.fees.selected_fee.pending
   ) as boolean;
@@ -108,9 +106,9 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
         challan_id: challanState!.challan_id,
         college: user?.college!,
       })
-    ).then(()=>{
-      if(!error) onConfirmClose();
-    })
+    ).then(() => {
+      if (!error) onConfirmClose();
+    });
     onOpen();
   };
 
@@ -272,13 +270,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
                   target={"_blank"}
                   href={
                     process.env.NEXT_PUBLIC_ADMIN_URL +
-                    `${
-                      user?.college == "KSPT"
-                        ? "feekspreceiptdownload"
-                        : "feedownload"
-                    }.php?college=${user?.college}&id=${
-                      selectedFeeDetails[0]?.id
-                    }`
+                    `feedownload.php?college=${user?.college}&id=${selectedFeeDetails[0]?.id}`
                   }
                   colorScheme={"purple"}
                   leftIcon={<AiOutlineFileProtect className="text-xl" />}
