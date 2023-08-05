@@ -331,13 +331,14 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             <Button
               as={Link}
               target="_blank"
-              href={
-                process.env.NEXT_PUBLIC_ADMIN_URL +
-                "feedownloadreciept.php?challan_id=" +
-                challanState?.challan_id +
-                "&college=" +
-                user?.college
-              }
+              href={`${process.env.NEXT_PUBLIC_ADMIN_URL}
+                ${
+                  user?.college == "KSPT"
+                    ? "feekspreceiptdownload"
+                    : "feedownloadreciept"
+                }.php?challan_id=
+                ${challanState?.challan_id}
+                &college=${user?.college}`}
               w={"full"}
               colorScheme="purple"
               leftIcon={<AiOutlineFilePdf className={"text-xl"} />}
