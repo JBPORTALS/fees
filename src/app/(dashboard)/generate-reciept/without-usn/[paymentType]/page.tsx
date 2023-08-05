@@ -813,6 +813,7 @@ export default function WithoutUSNDynamicPage() {
                 : user?.college == "KSPT"
                 ? "feekspreceipt.php"
                 : "feegeneraterecieptwithoutusn.php";
+                
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
                 `${filename}?${Object.keys(state)

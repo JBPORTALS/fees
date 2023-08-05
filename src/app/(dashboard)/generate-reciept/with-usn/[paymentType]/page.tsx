@@ -29,7 +29,6 @@ const initialValues = {
   sem: "",
   year: "",
   branch: "",
-  college: "",
   category: "", //✅
   misc_category: "", //✅
   acadYear: "", //✅
@@ -937,12 +936,12 @@ export default function WithoutUSNDynamicPage() {
               state.paymentMode == "ONLINE" &&
               paymentType !== "MISCELLANEOUS" &&
               user?.college !== "KSPT"
-                ? "feegenerateonlinewithoutusn.php"
+                ? "feegenerateonlinewithusn.php"
                 : paymentType == "MISCELLANEOUS"
-                ? "feegeneratemiscellaneouswithoutusn.php"
+                ? "feegeneratemiscellaneouswithusn.php"
                 : user?.college == "KSPT"
                 ? "feekspreceipt.php"
-                : "feegeneraterecieptwithoutusn.php";
+                : "feegeneraterecieptwithusn.php";
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
                 `${filename}?${Object.keys(state)
