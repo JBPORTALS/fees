@@ -5,6 +5,10 @@ export const BANKS = (college: string | undefined) => {
         option: "ICICI",
         value: "ICICI",
       },
+      {
+        option: "UNION",
+        value: "UNION",
+      },
     ];
   else if (college == "KSPT")
     return [
