@@ -21,6 +21,7 @@ export default function Students() {
     (state) => state.fees.branch_list.data
   ) as [];
   const dispatch = useAppDispatch();
+  const yearList = useAppSelector((state) => state.fees.year_list);
   const user = useSupabase().user;
 
   useEffect(() => {
@@ -57,25 +58,25 @@ export default function Students() {
               onChange={(value) =>
                 setState((prev) => ({ ...prev, year: value as string }))
               }
-              options={[
-                { value: "1", option: "1" },
-                { value: "2", option: "2" },
-                { value: "3", option: "3" },
-                { value: "4", option: "4" },
-              ]}
+              options={yearList.map((option: any) => ({
+                value: option.year,
+                option: option.year,
+              }))}
             />
           ) : null}
         </div>
         <HStack>
-          <Button
-            size={"sm"}
-            colorScheme={"whatsapp"}
-            target={"_blank"}
-            as={Link}
-            href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}`}
-          >
-            Download Excel
-          </Button>
+          {state.branch && state.year && (
+            <Button
+              size={"sm"}
+              colorScheme={"whatsapp"}
+              target={"_blank"}
+              as={Link}
+              href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}`}
+            >
+              Download Excel
+            </Button>
+          )}
           <AddStudentsDetails>
             {({ onOpen }) => (
               <Button

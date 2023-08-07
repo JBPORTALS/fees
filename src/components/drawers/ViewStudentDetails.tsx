@@ -64,7 +64,6 @@ export default function ViewStudentsDetails({
   const data = useAppSelector((state) => state.fees.selected_fee.data);
   const router = useRouter();
   const pathname = usePathname();
-  const searchparams = useSearchParams();
 
   console.log(pathname);
 
@@ -75,6 +74,9 @@ export default function ViewStudentsDetails({
     sem: data[0]?.sem ?? "",
     branch: data[0]?.branch ?? "",
     total: data[0]?.total ?? "",
+    status: data[0]?.status ?? "",
+    paid: data[0]?.paid ?? "",
+    remaining: data[0]?.remaining ?? "",
     category: data[0]?.category ?? "",
   };
 
@@ -101,6 +103,9 @@ export default function ViewStudentsDetails({
         branch: data[0]?.branch ?? "",
         total: data[0]?.total ?? "",
         category: data[0]?.category ?? "",
+        status: data[0]?.status ?? "",
+        paid: data[0]?.paid ?? "",
+        remaining: data[0]?.remaining ?? "",
       };
     }
   }, [id, isOpen, regno, dispatch]);
@@ -108,17 +113,36 @@ export default function ViewStudentsDetails({
   const {
     errors,
     touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
+    setFieldValue,
     values,
     isSubmitting,
+    isValid,
+    handleBlur,
+    handleChange,
+    handleSubmit,
   } = useFormik({
     initialValues: initialState,
     onSubmit: async () => await updateStudent(),
     validationSchema: Schema,
     enableReinitialize: true,
   });
+
+  function changeStateValue() {
+    console.log("changing...");
+    setFieldValue(
+      "remaining",
+      parseInt(values.total.toString()) - parseInt(values.paid.toString())
+    );
+    if (values.total == values.paid) setFieldValue("status", "FULLY PAID");
+    else if (values.paid < values.total && values.paid > 0)
+      setFieldValue("status", "PARTIALLY PAID");
+    else if (values.remaining == values.total)
+      setFieldValue("status", "NOT PAID");
+  }
+
+  useEffect(() => {
+    changeStateValue();
+  }, [values.total]);
 
   const updateStudent = async () => {
     try {
@@ -131,6 +155,9 @@ export default function ViewStudentsDetails({
       formData.append("branch", values.branch);
       formData.append("college", user?.college!);
       formData.append("total_fee", values.total.toString());
+      formData.append("status", values.status);
+      formData.append("paid", values.paid.toString());
+      formData.append("remaining", values.remaining.toString());
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentupdate.php",
         {
@@ -239,7 +266,9 @@ export default function ViewStudentsDetails({
         isOpen={isPaymentOpen}
         onSubmit={paymentUpdate}
         onClose={onPaymentClose}
-        isDisabled={!amount || !method || amount == "0" || !challanId || !date || !tid}
+        isDisabled={
+          !amount || !method || amount == "0" || !challanId || !date || !tid
+        }
       >
         <VStack>
           <HStack>
@@ -478,7 +507,7 @@ export default function ViewStudentsDetails({
                 bg={"white"}
                 variant={"filled"}
                 flex={"1.5"}
-                value={data[0]?.paid}
+                value={values.paid}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
@@ -495,7 +524,7 @@ export default function ViewStudentsDetails({
                 bg={"white"}
                 variant={"filled"}
                 flex={"1.5"}
-                value={data[0]?.remaining}
+                value={values.remaining}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
@@ -511,7 +540,7 @@ export default function ViewStudentsDetails({
                 bg={"white"}
                 variant={"filled"}
                 flex={"1.5"}
-                value={data[0]?.status}
+                value={values.status}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
@@ -527,7 +556,7 @@ export default function ViewStudentsDetails({
           >
             {values.id && (
               <>
-                <Button onClick={onPaymentOpen} w={"full"} colorScheme="purple">
+                <Button isDisabled={!isValid} onClick={onPaymentOpen} w={"full"} colorScheme="purple">
                   Update Payment
                 </Button>
                 <Button

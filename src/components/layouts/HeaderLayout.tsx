@@ -14,7 +14,7 @@ import {
   ModalOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AiOutlineFieldTime,
   AiOutlineLogout,
@@ -22,7 +22,7 @@ import {
   AiOutlineSearch,
   AiOutlineUser,
 } from "react-icons/ai";
-import {HiOutlineOfficeBuilding} from "react-icons/hi"
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
@@ -30,6 +30,8 @@ import SideBar from "../ui/SideBar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdOutlineLocalPostOffice } from "react-icons/md";
+import { useAppDispatch } from "@/hooks";
+import { fetchYearList } from "@/store/fees.slice";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -46,6 +48,12 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
   const [query, setQuery] = useState("");
 
   const router = useRouter();
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchYearList({ college: user?.college! }));
+  }, []);
 
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-[100vh]">

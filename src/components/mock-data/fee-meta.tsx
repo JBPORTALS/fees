@@ -89,6 +89,8 @@ export const columns = [
   {
     field: "name",
     headerName: "Name",
+    filter: true,
+    pinned: "left",
     resizable: true,
     suppressMovable: true,
   },
@@ -287,6 +289,8 @@ export const columnsForNonUpdate = [
   {
     field: "name",
     headerName: "Name",
+    filter: true,
+    pinned: "left",
     resizable: true,
     suppressMovable: true,
   },
