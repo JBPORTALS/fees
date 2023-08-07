@@ -21,9 +21,17 @@ export default function BranchViewPage() {
   ) as [];
   const user = useSupabase().user;
   const dispatch = useAppDispatch();
+  const yearList = useAppSelector((state) => state.fees.year_list);
+
   useEffect(() => {
     if (state.branch && state.year)
-      dispatch(fetchFeeDetails({ branch: state.branch, year: state.year ,college:user?.college!}));
+      dispatch(
+        fetchFeeDetails({
+          branch: state.branch,
+          year: state.year,
+          college: user?.college!,
+        })
+      );
   }, [state.branch, state.year, dispatch]);
 
   return (
@@ -48,12 +56,10 @@ export default function BranchViewPage() {
             onChange={(value) =>
               setState((prev) => ({ ...prev, year: value as string }))
             }
-            options={[
-              { value: "1", option: "1" },
-              { value: "2", option: "2" },
-              { value: "3", option: "3" },
-              { value: "4", option: "4" },
-            ]}
+            options={yearList.map((option: any) => ({
+              value: option.year,
+              option: option.year,
+            }))}
           />
         ) : null}
       </div>

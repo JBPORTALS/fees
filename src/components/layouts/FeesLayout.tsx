@@ -48,7 +48,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { usePathname, useRouter } from "next/navigation";
 import { Link } from "@chakra-ui/next-js";
 import { shallowEqual } from "react-redux";
-import SideBar from "../ui/SideBar";
 import { useSupabase } from "@/app/supabase-provider";
 
 interface AttendanceLayoutProps {
@@ -68,6 +67,7 @@ ChartJS.register(
 export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const dispatch = useAppDispatch();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const yearList = useAppSelector((state) => state.fees.year_list);
 
   const [state, setState] = useState({
     branch: "",
@@ -76,14 +76,14 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
 
   const [modeFilterState, setModeFilterState] = useState<{
     branch: string;
-    sem: string;
+    year: string;
     mode: string;
     fromDate: Date | null;
     toDate: Date | null;
     type: string;
   }>({
     branch: "ALL",
-    sem: "ALL",
+    year: "ALL",
     mode: "ALL",
     fromDate: new Date(),
     toDate: new Date(),
@@ -182,8 +182,8 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const onModeFilter = async () => {
     setIsPushing(true);
     router.replace(
-      `/dashboard/search?branch=${modeFilterState.branch}&sem=${
-        modeFilterState.sem
+      `/dashboard/search?branch=${modeFilterState.branch}&year=${
+        modeFilterState.year
       }&mode=${modeFilterState.mode}&feeType=${
         modeFilterState.type
       }&fromDate=${moment(modeFilterState.fromDate).format(
@@ -395,9 +395,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         }
                       >
                         <option value={""}>Select Year</option>
-                        {Array.from({ length: 4 }).map((_v, i) => (
-                          <option key={i + 1} value={i + 1}>
-                            {i + 1}
+                        {yearList.map((option: any) => (
+                          <option value={option?.year} key={option?.year}>
+                            {option?.year}
                           </option>
                         ))}
                       </Select>
@@ -411,7 +411,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         as={Link}
                         href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}`}
                       >
-                        Download Excell
+                        Download Excel
                       </Button>
                     </FormControl>
                   </VStack>
@@ -504,28 +504,25 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                   </option>
                                 ))}
                               </Select>
-                              <FormLabel>Select Sem</FormLabel>
+                              <FormLabel>Select Year</FormLabel>
                               <Select
                                 onChange={(e) =>
                                   setModeFilterState((prev) => ({
                                     ...prev,
-                                    sem: e.target.value,
+                                    year: e.target.value,
                                   }))
                                 }
-                                value={modeFilterState.sem}
+                                value={modeFilterState.year}
                               >
                                 <option value={"ALL"}>All</option>
-                                <option value={"NEW_ADMISSION"}>
-                                  New Admission
-                                </option>
-                                <option value={"1"}>1</option>
-                                <option value={"2"}>2</option>
-                                <option value={"3"}>3</option>
-                                <option value={"4"}>4</option>
-                                <option value={"5"}>5</option>
-                                <option value={"6"}>6</option>
-                                <option value={"7"}>7</option>
-                                <option value={"8"}>8</option>
+                                {yearList.map((option: any) => (
+                                  <option
+                                    value={option?.year}
+                                    key={option?.year}
+                                  >
+                                    {option?.year}
+                                  </option>
+                                ))}
                               </Select>
                               <FormLabel>Select Fee Type</FormLabel>
                               <Select

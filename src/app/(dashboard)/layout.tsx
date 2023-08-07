@@ -3,6 +3,7 @@ import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-next
 import { headers, cookies } from "next/headers";
 import HeaderLayoutProvider from "./HeaderLayout";
 import "../globals.css";
+import { useAppDispatch } from "@/hooks";
 
 export default async function DashboardRootLayout(props: {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ export default async function DashboardRootLayout(props: {
     cookies,
   });
   const { data } = await auth.getSession();
+
   if (data.session == null) redirect("/signin");
   return (
     <HeaderLayoutProvider>

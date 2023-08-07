@@ -38,10 +38,6 @@ export const BANKS = (college: string | undefined) => {
         option: "AXIS",
         value: "AXIS",
       },
-      {
-        option: "UPI SCAN",
-        value: "UPI SCAN",
-      },
     ];
   else if (college == "KSIT" || college == "KSSEM" || college == "KSSA")
     return [
@@ -109,3 +105,48 @@ export const CATS = [
     option: "DIP-LE",
   },
 ];
+
+export const PAYMENTMODES = (college:string|undefined)=>{
+  if(college == "KSSEM")
+  return [
+    {
+      option: "Online",
+      value: "ONLINE",
+    },
+    {
+      option: "Cash",
+      value: "CASH",
+    },
+    {
+      option: "Cheque",
+      value: "CHEQUE",
+    },
+    {
+      option: "DD",
+      value: "DD",
+    },
+    {
+      option: "UPI SCAN",
+      value: "UPI SCAN",
+    },
+  ]
+  else 
+  return [
+    {
+      option: "Online",
+      value: "ONLINE",
+    },
+    {
+      option: "Cash",
+      value: "CASH",
+    },
+    {
+      option: "Cheque",
+      value: "CHEQUE",
+    },
+    {
+      option: "DD",
+      value: "DD",
+    },
+  ]
+}

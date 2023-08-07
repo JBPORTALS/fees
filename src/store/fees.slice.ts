@@ -51,11 +51,11 @@ export const fetchBranchFeeDetails = createAsyncThunk<
     var data;
     try {
       const formData = new FormData();
-      formData.append("college",_payload.college)
+      formData.append("college", _payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feebranchview.php",
         method: "POST",
-        data:formData
+        data: formData,
       });
       data = response.data;
       return fulfillWithValue(data);
@@ -81,11 +81,11 @@ export const fetchOverAllFee = createAsyncThunk<
     var data;
     try {
       const formData = new FormData();
-      formData.append("college",_payload.college)
+      formData.append("college", _payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeoverall.php",
         method: "POST",
-        data:formData
+        data: formData,
       });
       data = response.data;
       return fulfillWithValue(data);
@@ -112,7 +112,7 @@ export const fetchSearchByMode = createAsyncThunk<
   SearchResultProps[],
   {
     branch: string;
-    sem: string;
+    year: string;
     mode: string;
     fromDate: string;
     toDate: string;
@@ -131,7 +131,7 @@ export const fetchSearchByMode = createAsyncThunk<
     try {
       const formData = new FormData();
       formData.append("branch", payload.branch);
-      formData.append("sem", payload.sem);
+      formData.append("year", payload.year);
       formData.append("mode", payload.mode);
       formData.append("fromdate", payload.fromDate);
       formData.append("todate", payload.toDate);
@@ -384,11 +384,39 @@ export const fetchBranchList = createAsyncThunk<
     var data;
     try {
       const formData = new FormData();
-      formData.append("college",payload.college);
+      formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "retrievebranches.php",
         method: "POST",
-        data:formData
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
+export const fetchYearList = createAsyncThunk<
+  { msg: string },
+  { college: string },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/fees/fetchYearList",
+  async (payload, { fulfillWithValue, rejectWithValue }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("college", payload.college);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMIN_URL + "retrieveyears.php",
+        method: "POST",
+        data: formData,
       });
       data = response.data;
       return fulfillWithValue(data);
@@ -446,6 +474,7 @@ export interface SelectedFee extends Fee {
 }
 
 interface FeesIntialState {
+  year_list: [];
   all_fee: {
     data: Fee[];
     pending: boolean;
@@ -488,6 +517,7 @@ interface FeesIntialState {
 }
 
 const initialState: FeesIntialState = {
+  year_list: [],
   all_fee: {
     data: [],
     error: null,
@@ -656,6 +686,9 @@ export const FeesSlice = createSlice({
     },
     [fetchSearchByMode.pending.toString()]: (state, action) => {
       state.search_by_mode.pending = true;
+    },
+    [fetchYearList.fulfilled.toString()]: (state, action) => {
+      state.year_list = action.payload;
     },
     [fetchSearchByMode.fulfilled.toString()]: (state, action) => {
       state.search_by_mode.pending = false;

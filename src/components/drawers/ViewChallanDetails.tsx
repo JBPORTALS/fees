@@ -71,7 +71,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
   const params = useSearchParams();
   const dispatch = useAppDispatch();
   const branch = params.get("branch");
-  const sem = params.get("sem");
+  const year = params.get("year");
   const toDate = params.get("toDate");
   const fromDate = params.get("fromDate");
   const mode = params.get("mode");
@@ -116,7 +116,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           toast.success(res.data.msg);
           await findChallan();
           setIsChecking(false);
-          if (branch && mode && fromDate && toDate && sem && feeType)
+          if (branch && mode && fromDate && toDate && year && feeType)
             dispatch(
               fetchSearchByMode({
                 college: user?.college!,
@@ -124,7 +124,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
                 mode,
                 fromDate,
                 toDate,
-                sem,
+                year,
                 feeType,
               })
             );
@@ -151,7 +151,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           toast.success(res.data.msg);
           await findChallan();
           setIsDeleting(false);
-          if (branch && mode && fromDate && toDate && sem && feeType)
+          if (branch && mode && fromDate && toDate && year && feeType)
             dispatch(
               fetchSearchByMode({
                 college: user?.college!,
@@ -159,7 +159,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
                 mode,
                 fromDate,
                 toDate,
-                sem,
+                year,
                 feeType,
               })
             );
@@ -331,7 +331,13 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             <Button
               as={Link}
               target="_blank"
-              href={`${process.env.NEXT_PUBLIC_ADMIN_URL}${user?.college == "KSPT"? "feekspreceiptdownload": "feedownloadreciept"}.php?challan_id=${challanState?.challan_id}&college=${user?.college}`}
+              href={`${process.env.NEXT_PUBLIC_ADMIN_URL}${
+                user?.college == "KSPT"
+                  ? "feekspreceiptdownload"
+                  : "feedownloadreciept"
+              }.php?challan_id=${challanState?.challan_id}&college=${
+                user?.college
+              }`}
               w={"full"}
               colorScheme="purple"
               leftIcon={<AiOutlineFilePdf className={"text-xl"} />}

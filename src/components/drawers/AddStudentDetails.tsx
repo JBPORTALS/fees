@@ -12,7 +12,7 @@ import IDrawer from "../ui/utils/IDrawer";
 import { Field, Formik, useFormik } from "formik";
 import * as Yup from "yup";
 import { useAppSelector } from "@/store";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useSupabase } from "@/app/supabase-provider";
@@ -93,6 +93,7 @@ export default function AddStudentsDetails({ children }: props) {
     values,
     isSubmitting,
     handleReset,
+    setFieldValue,
     ...props
   } = useFormik({
     initialValues: initialState,
@@ -133,6 +134,8 @@ export default function AddStudentsDetails({ children }: props) {
       toast.error(e.response?.data?.msg);
     }
   }, []);
+
+  
 
   return (
     <>
@@ -220,8 +223,8 @@ export default function AddStudentsDetails({ children }: props) {
                 <option value={"4"}>4</option>
                 <option value={"5"}>5</option>
                 <option value={"6"}>6</option>
-                <option value={"7"}>6</option>
-                <option value={"8"}>6</option>
+                <option value={"7"}>7</option>
+                <option value={"8"}>8</option>
               </Select>
               <FormErrorMessage>{errors.sem}</FormErrorMessage>
             </FormControl>

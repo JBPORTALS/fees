@@ -17,7 +17,7 @@ import { useParams } from "next/navigation";
 import { AiOutlineFileDone } from "react-icons/ai";
 import axios from "axios";
 import { useSupabase } from "@/app/supabase-provider";
-import { BANKS,CATS } from "@/components/mock-data/constants";
+import { BANKS,CATS, PAYMENTMODES } from "@/components/mock-data/constants";
 
 const initialValues = {
   name: "", //✅
@@ -203,24 +203,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Payment Mode",
       type: "select",
       placeholder: "Select Payment Mode",
-      options: [
-        {
-          option: "Online",
-          value: "ONLINE",
-        },
-        {
-          option: "Cash",
-          value: "CASH",
-        },
-        {
-          option: "Cheque",
-          value: "CHEQUE",
-        },
-        {
-          option: "DD",
-          value: "DD",
-        },
-      ],
+      options: PAYMENTMODES(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
   ];
@@ -413,24 +396,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Payment Mode",
       type: "select",
       placeholder: "Select Payment Mode",
-      options: [
-        {
-          option: "Online",
-          value: "ONLINE",
-        },
-        {
-          option: "Cash",
-          value: "CASH",
-        },
-        {
-          option: "Cheque",
-          value: "CHEQUE",
-        },
-        {
-          option: "DD",
-          value: "DD",
-        },
-      ],
+      options: PAYMENTMODES(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
   ];
@@ -508,24 +474,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Payment Mode",
       type: "select",
       placeholder: "Select Payment Mode",
-      options: [
-        {
-          option: "Online",
-          value: "ONLINE",
-        },
-        {
-          option: "Cash",
-          value: "CASH",
-        },
-        {
-          option: "Cheque",
-          value: "CHEQUE",
-        },
-        {
-          option: "DD",
-          value: "DD",
-        },
-      ],
+      options: PAYMENTMODES(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
   ];
@@ -603,24 +552,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Payment Mode",
       type: "select",
       placeholder: "Select Payment Mode",
-      options: [
-        {
-          option: "Online",
-          value: "ONLINE",
-        },
-        {
-          option: "Cash",
-          value: "CASH",
-        },
-        {
-          option: "Cheque",
-          value: "CHEQUE",
-        },
-        {
-          option: "DD",
-          value: "DD",
-        },
-      ],
+      options: PAYMENTMODES(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
   ];
@@ -698,24 +630,7 @@ export default function WithoutUSNDynamicPage() {
       label: "Payment Mode",
       type: "select",
       placeholder: "Select Payment Mode",
-      options: [
-        {
-          option: "Online",
-          value: "ONLINE",
-        },
-        {
-          option: "Cash",
-          value: "CASH",
-        },
-        {
-          option: "Cheque",
-          value: "CHEQUE",
-        },
-        {
-          option: "DD",
-          value: "DD",
-        },
-      ],
+      options: PAYMENTMODES(user?.college),
       validateField: Yup.string().required("Fill the field !"),
     },
   ];
@@ -869,6 +784,8 @@ export default function WithoutUSNDynamicPage() {
               : paymentMode == "CASH"
               ? cashTemplate
               : paymentMode == "ONLINE"
+              ? onlineTemplate
+              : paymentMode == "UPI SCAN"
               ? onlineTemplate
               : paymentMode == "DD"
               ? ddTemplate

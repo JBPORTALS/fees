@@ -35,21 +35,32 @@ export const StudentColumnDefs = [
   {
     field: "sl_no",
     headerName: "Sl No.",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
+    width:"140px"
   },
   {
     field: "regno",
     headerName: "USN",
+    filter: true,
+    pinned: "left",
+    resizable: true,
+    suppressMovable: true,
   },
   {
     field: "name",
     headerName: "Name",
     resizable: true,
     suppressMovable: true,
+    filter: true,
+    pinned: "left",
   },
   {
     field: "category",
     headerName: "Category",
-    width: "130px",
+    width: "160px",
   },
   {
     field: "sem",

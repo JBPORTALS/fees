@@ -13,7 +13,7 @@ export default function SearchViewLayout(props: { children: React.ReactNode }) {
   const user = useSupabase();
 
   const branch = params.get("branch");
-  const sem = params.get("sem");
+  const year = params.get("year");
   const toDate = params.get("toDate");
   const fromDate = params.get("fromDate");
   const mode = params.get("mode");
@@ -28,7 +28,7 @@ export default function SearchViewLayout(props: { children: React.ReactNode }) {
       mode &&
       fromDate &&
       toDate &&
-      sem &&
+      year &&
       hash &&
       feeType
     )
@@ -39,12 +39,13 @@ export default function SearchViewLayout(props: { children: React.ReactNode }) {
           mode,
           fromDate,
           toDate,
-          sem,
-          college:user.user?.college!
+          year,
+          college: user.user?.college!,
         })
       );
-    else if (query) dispatch(fetchSearchRecord({ query,college:user.user?.college!}));
-  }, [branch, sem, toDate, mode, fromDate, hash, feeType, dispatch, query]);
+    else if (query)
+      dispatch(fetchSearchRecord({ query, college: user.user?.college! }));
+  }, [branch, year, toDate, mode, fromDate, hash, feeType, dispatch, query]);
 
   useEffect(() => {
     fetchSearchResult();
