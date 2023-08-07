@@ -69,6 +69,11 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const dispatch = useAppDispatch();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
+  const [state, setState] = useState({
+    branch: "",
+    year: "",
+  });
+
   const [modeFilterState, setModeFilterState] = useState<{
     branch: string;
     sem: string;
@@ -334,7 +339,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                     updateUSN({
                                       challan_no: paymentData.challan_id,
                                       usn,
-                                      college:user?.college!
+                                      college: user?.college!,
                                     })
                                   ).then(() => {
                                     onChallanFilter();
@@ -350,6 +355,68 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                       })}
                 </VStack>
               </IModal>
+              <Menu>
+                <MenuButton position={"sticky"} zIndex={"popover"}>
+                  <Button
+                    as={"view"}
+                    size={"sm"}
+                    shadow={"md"}
+                    colorScheme={"green"}
+                  >
+                    Download Class
+                  </Button>
+                </MenuButton>
+                <MenuList zIndex={"popover"} pos={"sticky"}>
+                  <VStack px={"4"}>
+                    <FormControl>
+                      <Select
+                        onChange={(e) =>
+                          setState((prev) => ({
+                            ...prev,
+                            branch: e.target.value,
+                          }))
+                        }
+                      >
+                        <option value={""}>Select Branch</option>
+                        {branchList.map((option: any) => (
+                          <option key={option?.branch} value={option?.branch}>
+                            {option?.branch}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl>
+                      <Select
+                        onChange={(e) =>
+                          setState((prev) => ({
+                            ...prev,
+                            year: e.target.value,
+                          }))
+                        }
+                      >
+                        <option value={""}>Select Year</option>
+                        {Array.from({ length: 4 }).map((_v, i) => (
+                          <option key={i + 1} value={i + 1}>
+                            {i + 1}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl w={"full"}>
+                      <Button
+                        w={"full"}
+                        target={"_blank"}
+                        isDisabled={!state.branch || !state.year}
+                        colorScheme="blue"
+                        as={Link}
+                        href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}`}
+                      >
+                        Download Excell
+                      </Button>
+                    </FormControl>
+                  </VStack>
+                </MenuList>
+              </Menu>
               <Menu size={"lg"}>
                 <MenuButton position={"sticky"} zIndex={"popover"}>
                   <Button
@@ -362,6 +429,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                     Filter
                   </Button>
                 </MenuButton>
+
                 <MenuList zIndex={"popover"} pos={"sticky"}>
                   <VStack px={"4"}>
                     <FormControl>

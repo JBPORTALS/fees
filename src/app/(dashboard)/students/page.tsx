@@ -7,7 +7,8 @@ import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails } from "@/store/fees.slice";
-import { Button, VStack } from "@chakra-ui/react";
+import { Button, HStack, VStack } from "@chakra-ui/react";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function Students() {
@@ -65,18 +66,29 @@ export default function Students() {
             />
           ) : null}
         </div>
-        <AddStudentsDetails>
-          {({ onOpen }) => (
-            <Button
-              onClick={onOpen}
-              marginLeft={"auto"}
-              size={"sm"}
-              colorScheme="purple"
-            >
-              Add Student
-            </Button>
-          )}
-        </AddStudentsDetails>
+        <HStack>
+          <Button
+            size={"sm"}
+            colorScheme={"whatsapp"}
+            target={"_blank"}
+            as={Link}
+            href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}`}
+          >
+            Download Excel
+          </Button>
+          <AddStudentsDetails>
+            {({ onOpen }) => (
+              <Button
+                onClick={onOpen}
+                marginLeft={"auto"}
+                size={"sm"}
+                colorScheme="purple"
+              >
+                Add Student
+              </Button>
+            )}
+          </AddStudentsDetails>
+        </HStack>
       </div>
       <VStack className="w-full h-[82vh]" spacing={0}>
         {!state.branch ? (
