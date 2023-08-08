@@ -3,7 +3,6 @@ import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-next
 import { headers, cookies } from "next/headers";
 import HeaderLayoutProvider from "./HeaderLayout";
 import "../globals.css";
-import { useAppDispatch } from "@/hooks";
 
 export default async function DashboardRootLayout(props: {
   children: React.ReactNode;
