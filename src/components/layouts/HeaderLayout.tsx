@@ -53,7 +53,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
 
   useEffect(() => {
     dispatch(fetchYearList({ college: user?.college! }));
-  }, []);
+  }, [user?.college,dispatch]);
 
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-[100vh]">
