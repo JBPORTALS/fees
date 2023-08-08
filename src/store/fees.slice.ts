@@ -690,6 +690,9 @@ export const FeesSlice = createSlice({
     [fetchYearList.fulfilled.toString()]: (state, action) => {
       state.year_list = action.payload;
     },
+    [fetchYearList.pending.toString()]: (state, action) => {
+      state.year_list = [];
+    },
     [fetchSearchByMode.fulfilled.toString()]: (state, action) => {
       state.search_by_mode.pending = false;
       state.search_by_mode.data = action.payload;
