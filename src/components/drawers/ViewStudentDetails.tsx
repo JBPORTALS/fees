@@ -497,7 +497,7 @@ export default function ViewStudentsDetails({
               <FormErrorMessage>{errors.total}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isReadOnly px={"5"}>
+            <FormControl px={"5"}>
               <FormLabel flex={1}>
                 <Text>Paid Amount</Text>
               </FormLabel>
@@ -513,7 +513,7 @@ export default function ViewStudentsDetails({
               <FormErrorMessage>{errors.total}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isReadOnly px={"5"}>
+            <FormControl px={"5"}>
               <FormLabel flex={1}>
                 <Text>Balance Amount</Text>
               </FormLabel>
