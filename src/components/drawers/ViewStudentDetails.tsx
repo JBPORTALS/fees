@@ -142,7 +142,7 @@ export default function ViewStudentsDetails({
 
   useEffect(() => {
     changeStateValue();
-  }, [values.total]);
+  }, [values.total, values.paid]);
 
   const updateStudent = async () => {
     try {
@@ -554,7 +554,12 @@ export default function ViewStudentsDetails({
           >
             {values.id && (
               <>
-                <Button isDisabled={!isValid} onClick={onPaymentOpen} w={"full"} colorScheme="purple">
+                <Button
+                  isDisabled={!isValid}
+                  onClick={onPaymentOpen}
+                  w={"full"}
+                  colorScheme="purple"
+                >
                   Update Payment
                 </Button>
                 <Button
