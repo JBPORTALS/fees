@@ -502,7 +502,6 @@ export default function ViewStudentsDetails({
                 <Text>Paid Amount</Text>
               </FormLabel>
               <Input
-                isReadOnly
                 name="paid"
                 bg={"white"}
                 variant={"filled"}
@@ -519,7 +518,6 @@ export default function ViewStudentsDetails({
                 <Text>Balance Amount</Text>
               </FormLabel>
               <Input
-                isReadOnly
                 name="remaining"
                 bg={"white"}
                 variant={"filled"}
