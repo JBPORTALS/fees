@@ -1,26 +1,11 @@
 import { useAppDispatch } from "@/hooks";
-import { useAppSelector } from "@/store";
-import {
-  fetchFeeDetails,
-  fetchSearchByMode,
-  fetchSelectedFeeDeatails,
-  SelectedFee,
-  updateFeeDetail,
-} from "@/store/fees.slice";
+import { fetchFeeDetails, fetchSearchByMode } from "@/store/fees.slice";
 import {
   Button,
-  Center,
   FormControl,
   FormLabel,
-  Heading,
   HStack,
   Input,
-  InputGroup,
-  InputRightAddon,
-  Select,
-  Tag,
-  TagLabel,
-  TagLeftIcon,
   Text,
   useDisclosure,
   VStack,
@@ -28,17 +13,10 @@ import {
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import {
-  AiOutlineCheckCircle,
-  AiOutlineDelete,
-  AiOutlineFilePdf,
-  AiOutlineFileProtect,
-} from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineFilePdf } from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
-import IModal from "../ui/utils/IModal";
 import { useSupabase } from "@/app/supabase-provider";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useRouter as useNavigation } from "next/router";
+import { useSearchParams } from "next/navigation";
 import { Link } from "@chakra-ui/next-js";
 
 interface props {
@@ -128,6 +106,14 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
                 feeType,
               })
             );
+          if (branch && year)
+            dispatch(
+              fetchFeeDetails({
+                branch,
+                year,
+                college: user?.college!,
+              })
+            );
         })
         .catch((e) => {
           toast.error(e.response?.data?.msg);
@@ -161,6 +147,14 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
                 toDate,
                 year,
                 feeType,
+              })
+            );
+          if (branch && year)
+            dispatch(
+              fetchFeeDetails({
+                branch,
+                year,
+                college: user?.college!,
               })
             );
         })

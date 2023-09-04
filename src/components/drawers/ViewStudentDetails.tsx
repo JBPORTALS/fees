@@ -43,6 +43,7 @@ const Schema = Yup.object().shape({
   category: Yup.string().required("Year is required"),
   branch: Yup.string().required("Branch is required"),
   total: Yup.number().required().min(0).typeError("invalid number"),
+  paid: Yup.number().required().min(0).typeError("invalid number"),
 });
 
 const Categories = CATS;
