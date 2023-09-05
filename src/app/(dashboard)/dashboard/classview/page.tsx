@@ -24,7 +24,7 @@ export default function BranchViewPage() {
   const yearList = useAppSelector((state) => state.fees.year_list);
 
   useEffect(() => {
-    if (state.branch && state.year)
+    if (state.branch && state.year && user?.college)
       dispatch(
         fetchFeeDetails({
           branch: state.branch,
@@ -32,7 +32,7 @@ export default function BranchViewPage() {
           college: user?.college!,
         })
       );
-  }, [state.branch, state.year, dispatch]);
+  }, [state.branch, state.year, user?.college, dispatch]);
 
   return (
     <>

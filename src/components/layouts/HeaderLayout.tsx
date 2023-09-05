@@ -29,7 +29,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import SideBar from "../ui/SideBar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { MdOutlineLocalPostOffice } from "react-icons/md";
 import { useAppDispatch } from "@/hooks";
 import { fetchYearList } from "@/store/fees.slice";
 
@@ -53,7 +52,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
 
   useEffect(() => {
     dispatch(fetchYearList({ college: user?.college! }));
-  }, [user?.college,dispatch]);
+  }, [user?.college, dispatch]);
 
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-[100vh]">
