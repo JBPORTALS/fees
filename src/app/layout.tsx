@@ -1,13 +1,12 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
-import SupabaseProvider from "./supabase-provider";
 
 const inter = Inter({ subsets: ["greek"] });
 
 export const metadata = {
-  title:"Nexus | Fee Master"
-}
+  title: "Nexus | Fee Master",
+};
 
 export default function RootLayout({
   children,
@@ -16,10 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} overflow-hidden h-[100vh] w-[100vw]`}>
-      <SupabaseProvider>
+      <body
+        className={`${inter.className} overflow-hidden h-[100vh] w-[100vw]`}
+      >
         <Providers>{children}</Providers>
-      </SupabaseProvider>
       </body>
     </html>
   );
