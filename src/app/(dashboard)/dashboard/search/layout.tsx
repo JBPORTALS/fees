@@ -45,7 +45,7 @@ export default function SearchViewLayout(props: { children: React.ReactNode }) {
       );
     else if (query)
       dispatch(fetchSearchRecord({ query, college: user?.college! }));
-  }, [branch, year, toDate, mode, fromDate, hash, feeType, dispatch, query]);
+  }, [branch, year, toDate, mode, fromDate, hash, feeType, dispatch, query,user?.college]);
 
   useEffect(() => {
     fetchSearchResult();
