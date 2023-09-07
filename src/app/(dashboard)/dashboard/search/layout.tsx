@@ -5,12 +5,12 @@ import "../../../globals.css";
 import { useCallback, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { fetchSearchByMode, fetchSearchRecord } from "@/store/fees.slice";
-import { useSupabase } from "@/app/supabase-provider";
+import { useAppSelector } from "@/store";
 
 export default function SearchViewLayout(props: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const params = useSearchParams();
-  const user = useSupabase();
+  const user = useAppSelector(state => state.fees.user)
 
   const branch = params.get("branch");
   const year = params.get("year");
@@ -40,11 +40,11 @@ export default function SearchViewLayout(props: { children: React.ReactNode }) {
           fromDate,
           toDate,
           year,
-          college: user.user?.college!,
+          college: user?.college!,
         })
       );
     else if (query)
-      dispatch(fetchSearchRecord({ query, college: user.user?.college! }));
+      dispatch(fetchSearchRecord({ query, college: user?.college! }));
   }, [branch, year, toDate, mode, fromDate, hash, feeType, dispatch, query]);
 
   useEffect(() => {

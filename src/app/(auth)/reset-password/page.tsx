@@ -1,5 +1,5 @@
 "use client";
-import { useSupabase } from "@/app/supabase-provider";
+import { SC } from "@/utils/supabase";
 import {
   FormControl,
   Input,
@@ -15,7 +15,7 @@ import { toast } from "react-hot-toast";
 export default function Home() {
   const [isLoading, setisLoading] = useState(false);
   const [password, setPassword] = useState("");
-  const { supabase } = useSupabase();
+  const supabase = SC();
   const router = useRouter();
 
   const onPasswordChange = async () => {

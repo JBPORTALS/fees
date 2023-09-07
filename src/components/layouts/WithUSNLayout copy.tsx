@@ -1,7 +1,5 @@
 import {
   HStack,
-  Heading,
-  IconButton,
   Tab,
   TabList,
   TabPanel,
@@ -31,16 +29,16 @@ export default function WithUSNLayout({
         pathname == "/generate-reciept/with-usn/FEE"
           ? 0
           : pathname === "/generate-reciept/with-usn/MISCELLANEOUS"
-          ? 1
-          : pathname === "/generate-reciept/with-usn/BUS_FEE"
-          ? 2
-          : pathname === "/generate-reciept/with-usn/EXCESS_FEE"
-          ? 3
-          : pathname === "/generate-reciept/with-usn/SECURITY_DEPOSIT"
-          ? 4
-          : pathname === "/generate-reciept/with-usn/HOSTEL_FEE"
-          ? 5
-          : -1
+            ? 1
+            : pathname === "/generate-reciept/with-usn/BUS_FEE"
+              ? 2
+              : pathname === "/generate-reciept/with-usn/EXCESS_FEE"
+                ? 3
+                : pathname === "/generate-reciept/with-usn/SECURITY_DEPOSIT"
+                  ? 4
+                  : pathname === "/generate-reciept/with-usn/HOSTEL_FEE"
+                    ? 5
+                    : -1
       }
       colorScheme={"purple"}
       size={"md"}
