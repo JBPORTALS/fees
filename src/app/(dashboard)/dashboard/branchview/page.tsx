@@ -17,7 +17,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { AiOutlineAim } from "react-icons/ai";
-import { Pie} from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,18 +28,17 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import { useSupabase } from "@/app/supabase-provider";
 
 
 ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement
-  );
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
 export default function BranchViewPage() {
   const [branch, setBranch] = useState<string>("All");
@@ -53,16 +52,16 @@ export default function BranchViewPage() {
   const yearFeeDetails = useAppSelector(
     (state) => state.fees.year_fee.data
   ) as YearFee[];
-  const user = useSupabase().user
-  
-  const fetchYearVeiwMemo = useCallback((Ibranch:string)=>{
-    dispatch(fetchFeeYearView({branch:Ibranch,college:user?.college!}));
-  },[dispatch])
+  const user = useAppSelector(state => state.fees.user)
+
+  const fetchYearVeiwMemo = useCallback((Ibranch: string) => {
+    dispatch(fetchFeeYearView({ branch: Ibranch, college: user?.college! }));
+  }, [dispatch])
 
   useEffect(() => {
     fetchYearVeiwMemo(branch)
   }, [branch]);
-  
+
 
   return (
     <div className={"h-fit w-full"}>
@@ -77,7 +76,7 @@ export default function BranchViewPage() {
           }))}
         />
       </div>
-      <VStack p={"5"}  h={"fit"}>
+      <VStack p={"5"} h={"fit"}>
         {branch == "All" || !branch ? (
           <HStack>
             <Card width={"450px"} height={"450px"} p={"5"}>

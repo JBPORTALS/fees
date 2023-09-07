@@ -4,7 +4,6 @@ import { useAppSelector } from "@/store";
 import { AgGridReact } from "ag-grid-react";
 import { columns, columnsForNonUpdate } from "../mock-data/fee-meta";
 import { Center, Heading, VStack } from "@chakra-ui/react";
-import { useSupabase } from "@/app/supabase-provider";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 
@@ -13,7 +12,7 @@ function ClassDataGrid() {
   const Error = useAppSelector((state) => state.fees.all_fee.error) as
     | null
     | string;
-  const { user } = useSupabase();
+  const user = useAppSelector(state => state.fees.user);
 
   return (
     <VStack h={"78vh"} w={"full"}>
@@ -26,7 +25,7 @@ function ClassDataGrid() {
             user?.can_update_total ? (columns as any) : (columnsForNonUpdate as any)
           }
           alwaysShowHorizontalScroll
-          onRowEditingStarted={(e) => {}}
+          onRowEditingStarted={(e) => { }}
         />
       ) : FeeDetails.length == 0 && Error ? (
         <Center h={"80%"}>

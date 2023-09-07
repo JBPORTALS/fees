@@ -22,7 +22,6 @@ import { toast } from "react-hot-toast";
 import { AiOutlineCheckCircle, AiOutlineFileProtect } from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
-import { useSupabase } from "@/app/supabase-provider";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -50,17 +49,17 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
   const [state, setState] = useState({ total: "" });
   const [isUpdating, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-  const { user } = useSupabase();
+  const user = useAppSelector((state) => state.fees.user)
   const [challanState, setChallanState] = useState<
     | {
-        challan_id: string;
-        usn: string;
-        name: string;
-        date: string;
-        method: string;
-        amount_paid: string;
-        amount_paid1: string;
-      }
+      challan_id: string;
+      usn: string;
+      name: string;
+      date: string;
+      method: string;
+      amount_paid: string;
+      amount_paid1: string;
+    }
     | undefined
   >(undefined);
 

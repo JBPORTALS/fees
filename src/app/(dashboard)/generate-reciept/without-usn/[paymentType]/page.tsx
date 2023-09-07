@@ -16,8 +16,7 @@ import moment from "moment";
 import { useParams } from "next/navigation";
 import { AiOutlineFileDone } from "react-icons/ai";
 import axios from "axios";
-import { useSupabase } from "@/app/supabase-provider";
-import { BANKS,CATS, PAYMENTMODES } from "@/components/mock-data/constants";
+import { BANKS, CATS, PAYMENTMODES } from "@/components/mock-data/constants";
 
 const initialValues = {
   name: "", //✅
@@ -68,7 +67,7 @@ export default function WithoutUSNDynamicPage() {
     position: "bottom-left",
   });
 
-  const user = useSupabase().user;
+  const user = useAppSelector(state => state.fees.user);
 
   const params = useParams();
   const paymentType = params.paymentType;
@@ -115,7 +114,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select Category",
       validateField: Yup.string().required("Fill the field !"),
-      options:CATS,
+      options: CATS,
     },
     {
       name: "acadYear",
@@ -149,8 +148,8 @@ export default function WithoutUSNDynamicPage() {
         user?.college == "KSPT"
           ? "Admission Fee"
           : user?.college == "KSPU"
-          ? "PU Board Fee"
-          : "VTU/DTE/DDPI/GP.INS/ IRC Fee",
+            ? "PU Board Fee"
+            : "VTU/DTE/DDPI/GP.INS/ IRC Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -172,8 +171,8 @@ export default function WithoutUSNDynamicPage() {
         user?.college == "KSPT"
           ? "Development Fee"
           : user?.college == "KSPU"
-          ? "Exam Fee"
-          : "Skill Lab Fee",
+            ? "Exam Fee"
+            : "Skill Lab Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -720,29 +719,27 @@ export default function WithoutUSNDynamicPage() {
           try {
             const filename =
               state.paymentMode == "ONLINE" &&
-              paymentType !== "MISCELLANEOUS" &&
-              user?.college !== "KSPT"
+                paymentType !== "MISCELLANEOUS" &&
+                user?.college !== "KSPT"
                 ? "feegenerateonlinewithoutusn.php"
                 : paymentType == "MISCELLANEOUS"
-                ? "feegeneratemiscellaneouswithoutusn.php"
-                : user?.college == "KSPT"
-                ? "feekspreceipt.php"
-                : "feegeneraterecieptwithoutusn.php";
-                
+                  ? "feegeneratemiscellaneouswithoutusn.php"
+                  : user?.college == "KSPT"
+                    ? "feekspreceipt.php"
+                    : "feegeneraterecieptwithoutusn.php";
+
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
-                `${filename}?${Object.keys(state)
-                  .map(
-                    (key, index) =>
-                      `${key}=${
-                        key == "date"
-                          ? moment(state[key]).format("yyyy-MM-DD")
-                          : Object.values(state)[index]
-                      }`
-                  )
-                  .join("&")}&paymentType=${paymentType}&college=${
-                  user?.college
-                }`
+              `${filename}?${Object.keys(state)
+                .map(
+                  (key, index) =>
+                    `${key}=${key == "date"
+                      ? moment(state[key]).format("yyyy-MM-DD")
+                      : Object.values(state)[index]
+                    }`
+                )
+                .join("&")}&paymentType=${paymentType}&college=${user?.college
+              }`
             );
             const link = document.createElement("a");
             link.href =
@@ -750,14 +747,12 @@ export default function WithoutUSNDynamicPage() {
               `${filename}?${Object.keys(state)
                 .map(
                   (key, index) =>
-                    `${key}=${
-                      key == "date"
-                        ? moment(state[key]).format("yyyy-MM-DD")
-                        : Object.values(state)[index]
+                    `${key}=${key == "date"
+                      ? moment(state[key]).format("yyyy-MM-DD")
+                      : Object.values(state)[index]
                     }`
                 )
-                .join("&")}&paymentType=${paymentType}&college=${
-                user?.college
+                .join("&")}&paymentType=${paymentType}&college=${user?.college
               }`;
             link.setAttribute("download", "Fee Reciept Offline.pdf");
             link.setAttribute("target", "_blank");
@@ -782,29 +777,29 @@ export default function WithoutUSNDynamicPage() {
             paymentMode == "CHEQUE"
               ? chequeTemplate
               : paymentMode == "CASH"
-              ? cashTemplate
-              : paymentMode == "ONLINE"
-              ? onlineTemplate
-              : paymentMode == "UPI SCAN"
-              ? onlineTemplate
-              : paymentMode == "DD"
-              ? ddTemplate
-              : undefined;
+                ? cashTemplate
+                : paymentMode == "ONLINE"
+                  ? onlineTemplate
+                  : paymentMode == "UPI SCAN"
+                    ? onlineTemplate
+                    : paymentMode == "DD"
+                      ? ddTemplate
+                      : undefined;
 
           const checkOnPaymentType =
             paymentType == "FEE"
               ? feeTemplate
               : paymentType == "MISCELLANEOUS"
-              ? miscellaneousTemplate
-              : paymentType == "BUS_FEE"
-              ? busFeeTemplate
-              : paymentType == "EXCESS_FEE"
-              ? excessFeeTemplate
-              : paymentType == "SECURITY_DEPOSIT"
-              ? securityFeeTemplate
-              : paymentType == "HOSTEL_FEE"
-              ? hostelFeeTemplate
-              : undefined;
+                ? miscellaneousTemplate
+                : paymentType == "BUS_FEE"
+                  ? busFeeTemplate
+                  : paymentType == "EXCESS_FEE"
+                    ? excessFeeTemplate
+                    : paymentType == "SECURITY_DEPOSIT"
+                      ? securityFeeTemplate
+                      : paymentType == "HOSTEL_FEE"
+                        ? hostelFeeTemplate
+                        : undefined;
 
           return (
             <React.Fragment>

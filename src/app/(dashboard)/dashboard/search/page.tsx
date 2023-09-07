@@ -25,11 +25,10 @@ import {
 import { FcSearch } from "react-icons/fc";
 import { AiOutlineFileExcel } from "react-icons/ai";
 import { Link } from "@chakra-ui/next-js";
-import { useSupabase } from "@/app/supabase-provider";
 
 export default function Home() {
   const params = useSearchParams();
-  const college = useSupabase().user?.college;
+  const college = useAppSelector(state => state.fees.user)?.college;
 
   const branch = params.get("branch");
   const year = params.get("year");
@@ -169,7 +168,7 @@ export default function Home() {
               : (feeSearchColumns as any)
           }
           alwaysShowHorizontalScroll
-          onRowEditingStarted={(e) => {}}
+          onRowEditingStarted={(e) => { }}
         />
       ) : feeFilter.length == 0 && Error ? (
         <Center h={"100%"} pb={"20"} flexDir={"column"}>

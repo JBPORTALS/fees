@@ -15,7 +15,6 @@ import { useAppSelector } from "@/store";
 import { useCallback, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useSupabase } from "@/app/supabase-provider";
 import { useAppDispatch } from "@/hooks";
 import { fetchFeeDetails } from "@/store/fees.slice";
 
@@ -81,7 +80,7 @@ export default function AddStudentsDetails({ children }: props) {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
-  const user = useSupabase().user;
+  const user = useAppSelector(state => state.fees.user);
   const dispatch = useAppDispatch();
 
   const {
@@ -135,7 +134,7 @@ export default function AddStudentsDetails({ children }: props) {
     }
   }, []);
 
-  
+
 
   return (
     <>

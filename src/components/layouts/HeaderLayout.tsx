@@ -23,7 +23,6 @@ import {
   AiOutlineUser,
 } from "react-icons/ai";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
-import { useSupabase } from "@/app/supabase-provider";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 import SideBar from "../ui/SideBar";
@@ -31,6 +30,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAppDispatch } from "@/hooks";
 import { fetchYearList } from "@/store/fees.slice";
+import { useAppSelector } from "@/store";
+import { SC } from "@/utils/supabase";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -43,16 +44,17 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
     onOpen: onProfileOpen,
   } = useDisclosure();
 
-  const { user, supabase } = useSupabase();
+  const supabase = SC();
+  const user = useAppSelector(state => state.fees.user)
   const [query, setQuery] = useState("");
 
   const router = useRouter();
 
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(fetchYearList({ college: user?.college! }));
-  }, [user?.college, dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchYearList({ college: user?.college! }));
+  // }, [user?.college, dispatch]);
 
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-[100vh]">

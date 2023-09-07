@@ -14,17 +14,15 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import IDrawer from "../ui/utils/IDrawer";
-import { Field, Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useAppSelector } from "@/store";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import {
-  useParams,
   usePathname,
   useRouter,
-  useSearchParams,
 } from "next/navigation";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import {
@@ -32,7 +30,6 @@ import {
   fetchSelectedFeeSearchDetails,
 } from "@/store/fees.slice";
 import { useAppDispatch } from "@/hooks";
-import { useSupabase } from "@/app/supabase-provider";
 import { CATS } from "../mock-data/constants";
 import IModal from "../ui/utils/IModal";
 import moment from "moment";
@@ -88,7 +85,7 @@ export default function ViewStudentsDetails({
     isOpen: isPaymentOpen,
     onClose: onPaymentClose,
   } = useDisclosure();
-  const user = useSupabase().user;
+  const user = useAppSelector(state => state.fees.user);
 
   useEffect(() => {
     console.log(id);

@@ -9,7 +9,6 @@ import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
-import { useSupabase } from "@/app/supabase-provider";
 
 export default function BranchViewPage() {
   const [state, setState] = useState({
@@ -19,7 +18,7 @@ export default function BranchViewPage() {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
-  const user = useSupabase().user;
+  const user = useAppSelector(state => state.fees.user);
   const dispatch = useAppDispatch();
   const yearList = useAppSelector((state) => state.fees.year_list);
 

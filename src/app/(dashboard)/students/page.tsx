@@ -1,5 +1,4 @@
 "use client";
-import { useSupabase } from "@/app/supabase-provider";
 import AddStudentsDetails from "@/components/drawers/AddStudentDetails";
 import StudentDataGrid from "@/components/layouts/StudentDataGrid";
 import ISelect from "@/components/ui/utils/ISelect";
@@ -22,7 +21,7 @@ export default function Students() {
   ) as [];
   const dispatch = useAppDispatch();
   const yearList = useAppSelector((state) => state.fees.year_list);
-  const user = useSupabase().user;
+  const user = useAppSelector(state => state.fees.user);
 
   useEffect(() => {
     if (state.branch && state.year)

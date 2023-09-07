@@ -2,6 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { RootState } from ".";
+import { AuthSession } from "@supabase/supabase-js";
+import { SC } from "@/utils/supabase";
 
 export const fetchFeeDetails = createAsyncThunk<
   Fee[],
@@ -125,7 +127,7 @@ export const fetchSearchByMode = createAsyncThunk<
     };
   }
 >(
-  "/fees/fetchSearchBymode",
+  "/fees/fetchsearchresults",
   async (payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
     var data;
     try {
@@ -371,7 +373,7 @@ export const updateUSN = createAsyncThunk<
 });
 
 export const fetchBranchList = createAsyncThunk<
-  { msg: string },
+  [],
   { college: string },
   {
     rejectValue: {
@@ -399,7 +401,7 @@ export const fetchBranchList = createAsyncThunk<
 );
 
 export const fetchYearList = createAsyncThunk<
-  { msg: string },
+  [],
   { college: string },
   {
     rejectValue: {
@@ -407,7 +409,7 @@ export const fetchYearList = createAsyncThunk<
     };
   }
 >(
-  "/fees/fetchYearList",
+  "/fees/fetchYears",
   async (payload, { fulfillWithValue, rejectWithValue }) => {
     var data;
     try {
@@ -425,6 +427,39 @@ export const fetchYearList = createAsyncThunk<
     }
   }
 );
+
+export const fetchUser = createAsyncThunk<
+  {
+    email: string | undefined;
+    last_login_at?: string;
+    username?: string;
+    session?: AuthSession | null;
+    can_update_total?: boolean;
+    college?: string;
+  } | null,
+  void,
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>("/fees/fetchUser", async (payload, { fulfillWithValue, rejectWithValue }) => {
+  try {
+    const { data } = await SC().auth.getSession();
+    const { data: User } = await SC()
+      .from("profiles")
+      .select("username,last_login_at,can_update_total,college")
+      .eq("id", data.session?.user.id)
+      .single();
+    return fulfillWithValue({
+      session: data.session,
+      ...User,
+      email: data.session?.user.email,
+    });
+  } catch (error: any) {
+    return rejectWithValue({ msg: error.response.data.msg });
+  }
+});
 
 export interface BranchFee {
   branch: string;
@@ -486,17 +521,17 @@ interface FeesIntialState {
     error: string | null;
   };
   branch_fee: {
-    data: [];
+    data: BranchFee[];
     pending: boolean;
     error: null | string;
   };
   year_fee: {
-    data: [];
+    data: YearFee[];
     pending: boolean;
     error: null | string;
   };
   overall_fee: {
-    data: [];
+    data: OverallFee[];
     pending: boolean;
     error: null | string;
   };
@@ -510,10 +545,18 @@ interface FeesIntialState {
     error: null | string;
   };
   search_by_mode: {
-    data: [];
+    data: SearchResultProps[];
     error: null | string;
     pending: boolean;
   };
+  user: {
+    email: string | undefined;
+    last_login_at?: string;
+    username?: string;
+    session?: AuthSession | null;
+    can_update_total?: boolean;
+    college?: string;
+  } | null;
 }
 
 const initialState: FeesIntialState = {
@@ -557,150 +600,175 @@ const initialState: FeesIntialState = {
     error: null,
     pending: false,
   },
+  user: null,
 };
 
 export const FeesSlice = createSlice({
   name: "fees",
   initialState,
   reducers: {},
-  extraReducers: {
-    [fetchFeeDetails.pending.toString()]: (state, _action) => {
-      state.all_fee.pending = true;
-    },
-    [fetchFeeDetails.fulfilled.toString()]: (state, action) => {
-      state.all_fee.pending = false;
-      state.all_fee.data = action.payload;
-    },
-    [fetchFeeDetails.rejected.toString()]: (state, action) => {
-      state.all_fee.pending = false;
-      state.all_fee.error = action.payload?.msg;
-      toast.error(action.payload?.msg);
-    },
-    [fetchSearchRecord.pending.toString()]: (state, _action) => {
-      state.search_by_mode.pending = true;
-    },
-    [fetchSearchRecord.fulfilled.toString()]: (state, action) => {
-      state.search_by_mode.pending = false;
-      state.all_fee.data = [];
-      state.search_by_mode.data = action.payload;
-    },
-    [fetchSearchRecord.rejected.toString()]: (state, action) => {
-      state.search_by_mode.pending = false;
-      state.search_by_mode.error = action.payload?.msg;
-      toast.error(action.payload?.msg);
-    },
-    [fetchSelectedFeeDeatails.pending.toString()]: (state, action) => {
-      state.selected_fee.pending = true;
-    },
-    [fetchSelectedFeeDeatails.fulfilled.toString()]: (state, action) => {
-      state.selected_fee.pending = false;
-      state.selected_fee.data = action.payload;
-    },
-    [fetchSelectedFeeDeatails.rejected.toString()]: (state, action) => {
-      state.selected_fee.pending = false;
-      state.selected_fee.error = action.payload?.msg;
-      toast.error(action.payload?.msg);
-    },
-    [fetchSelectedFeeSearchDetails.pending.toString()]: (state, action) => {
-      state.selected_fee.pending = true;
-    },
-    [fetchSelectedFeeSearchDetails.fulfilled.toString()]: (state, action) => {
-      state.selected_fee.pending = false;
-      state.selected_fee.data = action.payload;
-    },
-    [fetchSelectedFeeSearchDetails.rejected.toString()]: (state, action) => {
-      state.selected_fee.pending = false;
-      state.selected_fee.error = action.payload?.msg;
-    },
+  extraReducers(builder) {
+    builder
+      .addCase(fetchUser.pending, (state, _action) => {
+        state.user = null;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+      }),
+      builder
+        .addCase(fetchFeeDetails.pending, (state, _action) => {
+          state.all_fee.pending = true;
+        })
+        .addCase(fetchFeeDetails.fulfilled, (state, action) => {
+          state.all_fee.pending = false;
+          state.all_fee.data = action.payload;
+        })
+        .addCase(fetchFeeDetails.rejected, (state, action) => {
+          state.all_fee.pending = false;
+          state.all_fee.error = action.payload?.msg ?? null;
+          toast.error(action.payload?.msg ?? "");
+        }),
+      builder
+        .addCase(fetchSearchRecord.pending, (state, _action) => {
+          state.search_by_mode.pending = true;
+        })
+        .addCase(fetchSearchRecord.fulfilled, (state, action) => {
+          state.search_by_mode.pending = false;
+          state.all_fee.data = [];
+          state.search_by_mode.data = action.payload;
+        })
+        .addCase(fetchSearchRecord.rejected, (state, action) => {
+          state.search_by_mode.pending = false;
+          state.search_by_mode.error = action.payload?.msg ?? null;
+          toast.error(action.payload?.msg ?? "");
+        }),
+      builder
+        .addCase(fetchSelectedFeeDeatails.pending, (state, action) => {
+          state.selected_fee.pending = true;
+        })
+        .addCase(fetchSelectedFeeDeatails.fulfilled, (state, action) => {
+          state.selected_fee.pending = false;
+          state.selected_fee.data = action.payload;
+        })
+        .addCase(fetchSelectedFeeDeatails.rejected, (state, action) => {
+          state.selected_fee.pending = false;
+          state.selected_fee.error = action.payload?.msg ?? null;
+          toast.error(action.payload?.msg ?? "");
+        }),
+      builder
+        .addCase(fetchSelectedFeeSearchDetails.pending, (state, action) => {
+          state.selected_fee.pending = true;
+        })
+        .addCase(fetchSelectedFeeSearchDetails.fulfilled, (state, action) => {
+          state.selected_fee.pending = false;
+          state.selected_fee.data = action.payload;
+        })
+        .addCase(fetchSelectedFeeSearchDetails.rejected, (state, action) => {
+          state.selected_fee.pending = false;
+          state.selected_fee.error = action.payload?.msg ?? null;
+        }),
+      builder
+        .addCase(updateFeeDetail.pending, (state, _action) => {
+          state.selected_fee.error = null;
+          state.selected_fee.pending = true;
+        })
+        .addCase(updateFeeDetail.fulfilled, (state, action) => {
+          state.selected_fee.pending = false;
+          toast.success(action.payload?.msg);
+        })
+        .addCase(updateFeeDetail.rejected, (state, action) => {
+          state.selected_fee.pending = false;
+          state.selected_fee.error = action.payload?.msg ?? null;
+          toast.error(action.payload?.msg ?? "");
+        }),
+      builder
+        .addCase(updateUSN.pending, (state, _action) => {
+          state.update_usn.pending = true;
+        })
+        .addCase(updateUSN.fulfilled, (state, action) => {
+          state.update_usn.pending = false;
+          toast.success(action.payload?.msg);
+        })
+        .addCase(updateUSN.rejected, (state, action) => {
+          state.update_usn.pending = false;
+          toast.error(action.payload?.msg ?? "");
+        }),
+      builder
+        .addCase(fetchBranchFeeDetails.pending, (state, _action) => {
+          state.branch_fee.pending = true;
+        })
+        .addCase(fetchBranchFeeDetails.fulfilled, (state, action) => {
+          state.branch_fee.pending = false;
+          state.branch_fee.data = action.payload;
+        })
+        .addCase(fetchBranchFeeDetails.rejected, (state, action) => {
+          state.branch_fee.pending = false;
+          state.branch_fee.error = action.payload?.msg ?? null;
+          toast.error(action.payload?.msg ?? "");
+        }),
+      builder
+        .addCase(fetchOverAllFee.pending, (state, _action) => {
+          state.overall_fee.pending = true;
+        })
+        .addCase(fetchOverAllFee.fulfilled, (state, action) => {
+          state.overall_fee.pending = false;
+          state.overall_fee.data = action.payload;
+        })
+        .addCase(fetchOverAllFee.rejected, (state, action) => {
+          state.overall_fee.pending = false;
+          state.overall_fee.error = action.payload?.msg ?? null;
+          toast.error(action.payload?.msg ?? "");
+        }),
+      builder
+        .addCase(fetchFeeYearView.pending, (state, _action) => {
+          state.year_fee.pending = true;
+        })
+        .addCase(fetchFeeYearView.fulfilled, (state, action) => {
+          state.year_fee.pending = false;
+          state.year_fee.data = action.payload;
+        })
+        .addCase(fetchFeeYearView.rejected, (state, action) => {
+          state.year_fee.pending = false;
+          state.year_fee.error = action.payload?.msg ?? "";
+          toast.error(action.payload?.msg ?? "");
+        });
 
-    [updateFeeDetail.pending.toString()]: (state, _action) => {
-      state.selected_fee.error = null;
-      state.selected_fee.pending = true;
-    },
-    [updateFeeDetail.fulfilled.toString()]: (state, action) => {
-      state.selected_fee.pending = false;
-      toast.success(action.payload?.msg);
-    },
-    [updateFeeDetail.rejected.toString()]: (state, action) => {
-      state.selected_fee.pending = false;
-      state.selected_fee.error = action.payload?.msg;
-      toast.error(action.payload?.msg);
-    },
-    [updateUSN.pending.toString()]: (state, _action) => {
-      state.update_usn.pending = true;
-    },
-    [updateUSN.fulfilled.toString()]: (state, action) => {
-      state.update_usn.pending = false;
-      toast.success(action.payload?.msg);
-    },
-    [updateUSN.rejected.toString()]: (state, action) => {
-      state.update_usn.pending = false;
-      toast.error(action.payload?.msg);
-    },
-    [fetchBranchFeeDetails.pending.toString()]: (state, _action) => {
-      state.branch_fee.pending = true;
-    },
-    [fetchBranchFeeDetails.fulfilled.toString()]: (state, action) => {
-      state.branch_fee.pending = false;
-      state.branch_fee.data = action.payload;
-    },
-    [fetchBranchFeeDetails.rejected.toString()]: (state, action) => {
-      state.branch_fee.pending = false;
-      state.branch_fee.error = action.payload?.msg;
-      toast.error(action.payload?.msg);
-    },
-    [fetchOverAllFee.pending.toString()]: (state, _action) => {
-      state.overall_fee.pending = true;
-    },
-    [fetchOverAllFee.fulfilled.toString()]: (state, action) => {
-      state.overall_fee.pending = false;
-      state.overall_fee.data = action.payload;
-    },
-    [fetchOverAllFee.rejected.toString()]: (state, action) => {
-      state.overall_fee.pending = false;
-      state.overall_fee.error = action.payload?.msg;
-      toast.error(action.payload?.msg);
-    },
-    [fetchFeeYearView.pending.toString()]: (state, _action) => {
-      state.year_fee.pending = true;
-    },
-    [fetchFeeYearView.fulfilled.toString()]: (state, action) => {
-      state.year_fee.pending = false;
-      state.year_fee.data = action.payload;
-    },
-    [fetchFeeYearView.rejected.toString()]: (state, action) => {
-      state.year_fee.pending = false;
-      state.year_fee.error = action.payload?.msg;
-      toast.error(action.payload?.msg);
-    },
-    [fetchBranchList.pending.toString()]: (state, action) => {
-      state.branch_list.pending = true;
-    },
-    [fetchBranchList.fulfilled.toString()]: (state, action) => {
-      state.branch_list.pending = false;
-      state.branch_list.data = action.payload;
-    },
-    [fetchBranchList.rejected.toString()]: (state, action) => {
-      state.branch_list.pending = false;
-      state.branch_list.error = action.payload?.msg;
-    },
-    [fetchSearchByMode.pending.toString()]: (state, action) => {
-      state.search_by_mode.pending = true;
-    },
-    [fetchYearList.fulfilled.toString()]: (state, action) => {
-      state.year_list = action.payload;
-    },
-    [fetchYearList.pending.toString()]: (state, action) => {
-      state.year_list = [];
-    },
-    [fetchSearchByMode.fulfilled.toString()]: (state, action) => {
-      state.search_by_mode.pending = false;
-      state.search_by_mode.data = action.payload;
-    },
-    [fetchSearchByMode.rejected.toString()]: (state, action) => {
-      state.search_by_mode.data = [];
-      state.search_by_mode.pending = false;
-      state.search_by_mode.error = action.payload?.msg;
-    },
+    builder
+      .addCase(fetchBranchList.pending, (state, action) => {
+        state.branch_list.pending = true;
+      })
+      .addCase(fetchBranchList.fulfilled, (state, action) => {
+        state.branch_list.pending = false;
+        state.branch_list.data = action.payload;
+      })
+      .addCase(fetchBranchList.rejected, (state, action) => {
+        state.branch_list.pending = false;
+        state.branch_list.error = action.payload?.msg ?? null;
+      });
+
+    builder
+      .addCase(fetchYearList.pending, (state, action) => {
+        state.year_list = [];
+      })
+      .addCase(fetchYearList.fulfilled, (state, action) => {
+        state.year_list = action.payload;
+      })
+      .addCase(fetchYearList.rejected, (state, action) => {
+        state.year_list = [];
+      });
+
+    builder
+      .addCase(fetchSearchByMode.pending, (state, action) => {
+        state.search_by_mode.pending = true;
+      })
+      .addCase(fetchSearchByMode.fulfilled, (state, action) => {
+        state.search_by_mode.pending = false;
+        state.search_by_mode.data = action.payload;
+      })
+      .addCase(fetchSearchByMode.rejected, (state, action) => {
+        state.search_by_mode.data = [];
+        state.search_by_mode.pending = false;
+        state.search_by_mode.error = action.payload?.msg ?? null;
+      });
   },
 });
