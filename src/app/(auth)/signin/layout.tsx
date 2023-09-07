@@ -3,7 +3,7 @@ import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-next
 import { headers, cookies } from "next/headers";
 
 export const metadata = {
-  title:"Nexuss | Fee Master | Signin"
+  title: "Nexuss | Fee Master | Signin"
 }
 
 export default async function RootLayout({
@@ -18,6 +18,6 @@ export default async function RootLayout({
   const { data } = await auth.getSession();
   if (data.session !== null) redirect("/dashboard");
   return <>
-  
-  {children}</>;
+
+    {children}</>;
 }

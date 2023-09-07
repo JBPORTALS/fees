@@ -13,6 +13,7 @@ import { Link } from "@chakra-ui/next-js";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { SC } from "@/utils/supabase";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [state, setState] = useState({
@@ -23,13 +24,17 @@ export default function Home() {
 
   const onSignin = async () => {
     setIsLoading(true);
-    const { error} = await SC().auth.signInWithPassword({
+    const { error } = await SC().auth.signInWithPassword({
       email: state.email,
       password: state.password,
     });
+    const router = useRouter()
+
     if (error) {
       toast.error("Invalid credentials !")
       setIsLoading(false);
+    } else {
+      router.refresh()
     };
   };
 
