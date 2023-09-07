@@ -1,5 +1,5 @@
 "use client";
-import { useSupabase } from "@/app/supabase-provider";
+import { SC } from "@/utils/supabase";
 import {
   FormControl,
   Input,
@@ -8,14 +8,14 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-import {useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
-  const { supabase } = useSupabase();
+  const supabase = SC();
   const router = useRouter();
 
   const onReset = async () => {
