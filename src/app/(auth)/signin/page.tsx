@@ -21,6 +21,7 @@ export default function Home() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
 
   const onSignin = async () => {
     setIsLoading(true);
@@ -28,7 +29,6 @@ export default function Home() {
       email: state.email,
       password: state.password,
     });
-    const router = useRouter()
 
     if (error) {
       toast.error("Invalid credentials !")
