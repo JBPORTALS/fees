@@ -73,8 +73,8 @@ export const BANKS = (college: string | undefined) => {
 
 export const CATS = [
   {
-    value: "PET",
-    option: "PET",
+    value: "CET",
+    option: "CET",
   },
   {
     value: "SNQ",
