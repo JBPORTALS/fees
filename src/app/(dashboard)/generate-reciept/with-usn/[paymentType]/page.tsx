@@ -18,7 +18,7 @@ import moment from "moment";
 import { useParams } from "next/navigation";
 import { AiOutlineFileDone, AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
-import { BANKS, CATS, PAYMENTMODES } from "@/components/mock-data/constants";
+import { BANKS, CATS, PAYMENTMODES, SEMS } from "@/components/mock-data/constants";
 import { toast } from "react-hot-toast";
 import { useAppSelector } from "@/store";
 
@@ -172,15 +172,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(user?.college == "KSPU" ? 2 : 8)
-          .fill(0)
-          .map((_value, index) => ({
-            value: (index + 1).toString(),
-            option: (index + 1).toString(),
-          })),
-      ],
+      options: SEMS(user?.college),
     },
     {
       name: "category",
@@ -188,7 +180,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select Category",
       validateField: Yup.string().required("Fill the field !"),
-      options: CATS,
+      options: CATS(user?.college),
     },
     {
       name: "acadYear",
@@ -318,13 +310,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+      options: SEMS(user?.college),
     },
     {
       name: "misc_category",
@@ -444,13 +430,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+      options: SEMS(user?.college),
     },
     {
       name: "acadYear",
@@ -533,13 +513,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+      options: SEMS(user?.college),
     },
     {
       name: "acadYear",
@@ -622,13 +596,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+      options: SEMS(user?.college),
     },
     {
       name: "acadYear",
@@ -711,13 +679,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        { option: "New Admission", value: "NEW_ADMISSION" },
-        ...new Array(8).fill(0).map((_value, index) => ({
-          value: (index + 1).toString(),
-          option: (index + 1).toString(),
-        })),
-      ],
+      options: SEMS(user?.college),
     },
     {
       name: "acadYear",
