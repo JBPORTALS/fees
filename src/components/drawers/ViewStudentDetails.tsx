@@ -43,7 +43,7 @@ const Schema = Yup.object().shape({
   paid: Yup.number().required().min(0).typeError("invalid number"),
 });
 
-const Categories = CATS;
+
 
 export default function ViewStudentsDetails({
   id,
@@ -64,6 +64,8 @@ export default function ViewStudentsDetails({
   const pathname = usePathname();
 
   console.log(pathname);
+
+
 
   let initialState = {
     id: data[0]?.id ?? "",
@@ -86,6 +88,8 @@ export default function ViewStudentsDetails({
     onClose: onPaymentClose,
   } = useDisclosure();
   const user = useAppSelector(state => state.fees.user);
+
+  const Categories = CATS(user?.college);
 
   useEffect(() => {
     console.log(id);
