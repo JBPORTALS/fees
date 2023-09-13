@@ -73,6 +73,10 @@ export const BANKS = (college: string | undefined) => {
 
 export const CATS = [
   {
+    value: "PET",
+    option: "PET",
+  },
+  {
     value: "SNQ",
     option: "SNQ",
   },
@@ -104,49 +108,57 @@ export const CATS = [
     value: "DIP-LE",
     option: "DIP-LE",
   },
+  {
+    value: "DCET",
+    option: "DCET",
+  },
+  {
+    value: "OTHERS",
+    option: "OTHERS",
+  },
 ];
 
-export const PAYMENTMODES = (college:string|undefined)=>{
-  if(college == "KSSEM")
-  return [
-    {
-      option: "Online",
-      value: "ONLINE",
-    },
-    {
-      option: "Cash",
-      value: "CASH",
-    },
-    {
-      option: "Cheque",
-      value: "CHEQUE",
-    },
-    {
-      option: "DD",
-      value: "DD",
-    },
-    {
-      option: "UPI SCAN",
-      value: "UPI SCAN",
-    },
-  ]
-  else 
-  return [
-    {
-      option: "Online",
-      value: "ONLINE",
-    },
-    {
-      option: "Cash",
-      value: "CASH",
-    },
-    {
-      option: "Cheque",
-      value: "CHEQUE",
-    },
-    {
-      option: "DD",
-      value: "DD",
-    },
-  ]
+export const PAYMENTMODES = (college: string | undefined) => {
+  if (college == "KSSEM")
+    return [
+      {
+        option: "Online",
+        value: "ONLINE",
+      },
+      {
+        option: "Cash",
+        value: "CASH",
+      },
+      {
+        option: "Cheque",
+        value: "CHEQUE",
+      },
+      {
+        option: "DD",
+        value: "DD",
+      },
+      {
+        option: "UPI SCAN",
+        value: "UPI SCAN",
+      },
+    ]
+  else
+    return [
+      {
+        option: "Online",
+        value: "ONLINE",
+      },
+      {
+        option: "Cash",
+        value: "CASH",
+      },
+      {
+        option: "Cheque",
+        value: "CHEQUE",
+      },
+      {
+        option: "DD",
+        value: "DD",
+      },
+    ]
 }
