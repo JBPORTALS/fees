@@ -97,7 +97,51 @@ export const CATS = (college: string | undefined) => {
       },
       {
         value: "GMH", option: "GMH"
-      }
+      },
+      {
+        value: "CET",
+        option: "CET",
+      },
+      {
+        value: "SNQ",
+        option: "SNQ",
+      },
+      {
+        value: "MANAGEMENT",
+        option: "MANAGEMENT",
+      },
+      {
+        value: "COMEDK",
+        option: "COMEDK",
+      },
+      {
+        value: "GM",
+        option: "GM",
+      },
+      {
+        value: "SC",
+        option: "SC",
+      },
+      {
+        value: "ST",
+        option: "ST",
+      },
+      {
+        value: "CAT-I",
+        option: "CAT-I",
+      },
+      {
+        value: "DIP-LE",
+        option: "DIP-LE",
+      },
+      {
+        value: "DCET",
+        option: "DCET",
+      },
+      {
+        value: "OTHERS",
+        option: "OTHERS",
+      },
     ]
   else return [
     {
