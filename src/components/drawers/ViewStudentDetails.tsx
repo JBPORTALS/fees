@@ -30,7 +30,7 @@ import {
   fetchSelectedFeeSearchDetails,
 } from "@/store/fees.slice";
 import { useAppDispatch } from "@/hooks";
-import { CATS } from "../mock-data/constants";
+import { CATS, SEMS } from "../mock-data/constants";
 import IModal from "../ui/utils/IModal";
 import moment from "moment";
 
@@ -418,12 +418,9 @@ export default function ViewStudentsDetails({
                 onBlur={handleBlur}
               >
                 <option value={""}>Select Sem</option>
-                <option value={"1"}>1</option>
-                <option value={"2"}>2</option>
-                <option value={"3"}>3</option>
-                <option value={"4"}>4</option>
-                <option value={"5"}>5</option>
-                <option value={"6"}>6</option>
+                {
+                  SEMS(user?.college).map((value) => <option value={value.value} key={value.value}>{value.option}</option>)
+                }
               </Select>
               <FormErrorMessage>{errors.sem}</FormErrorMessage>
             </FormControl>
