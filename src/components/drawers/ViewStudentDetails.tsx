@@ -467,7 +467,7 @@ export default function ViewStudentsDetails({
                 onChange={handleChange}
                 onBlur={handleBlur}
               >
-                <option value={""}>Select Branch</option>
+                <option value={""}>Select Category</option>
                 {Categories.map((category, key) => (
                   <option key={category.value + key} value={category.value}>
                     {category.option}
