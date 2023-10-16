@@ -75,6 +75,12 @@ export const CATS = (college: string | undefined) => {
   if (college == "KSSA")
     return [
       {
+        value: "1G", option: "1G"
+      },
+      {
+        value: "2G", option: "2G"
+      },
+      {
         value: "2AG", option: "2AG"
       },
       {
@@ -85,9 +91,6 @@ export const CATS = (college: string | undefined) => {
       },
       {
         value: "3AGR", option: "3AGR"
-      },
-      {
-        value: "3BG", option: "3BG"
       },
       {
         value: "SCG", option: "SCG"
@@ -107,7 +110,7 @@ export const CATS = (college: string | undefined) => {
         option: "SNQ",
       },
       {
-        value: "MANAGEMENT",
+        value: "MANAGEMENT",  
         option: "MANAGEMENT",
       },
       {

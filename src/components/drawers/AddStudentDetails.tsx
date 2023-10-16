@@ -17,6 +17,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useAppDispatch } from "@/hooks";
 import { fetchFeeDetails } from "@/store/fees.slice";
+import { SEMS } from "../mock-data/constants";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -216,14 +217,11 @@ export default function AddStudentsDetails({ children }: props) {
                 onBlur={handleBlur}
               >
                 <option value={""}>Select Sem</option>
-                <option value={"1"}>1</option>
-                <option value={"2"}>2</option>
-                <option value={"3"}>3</option>
-                <option value={"4"}>4</option>
-                <option value={"5"}>5</option>
-                <option value={"6"}>6</option>
-                <option value={"7"}>7</option>
-                <option value={"8"}>8</option>
+                {
+                  SEMS(user?.college).map((value, index) => (
+                    <option key={value.value} value={value.value}>{value.option}</option>
+                  ))
+                }
               </Select>
               <FormErrorMessage>{errors.sem}</FormErrorMessage>
             </FormControl>
