@@ -274,6 +274,10 @@ export default function WithoutUSNDynamicPage() {
           value: "Duplicate Halltickets",
           option: "Duplicate Halltickets",
         },
+        {
+          value: "Others",
+          option: "Others",
+        },
       ],
     },
     {

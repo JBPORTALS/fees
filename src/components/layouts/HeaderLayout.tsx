@@ -50,8 +50,6 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
 
   const router = useRouter();
 
-  const dispatch = useAppDispatch();
-
 
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-[100vh]">
