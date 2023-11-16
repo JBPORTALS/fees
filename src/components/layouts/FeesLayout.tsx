@@ -391,7 +391,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         }
                       >
                         <option value={""}>Select Year</option>
-                        {yearList.map((option: any) => (
+                        {(user?.college == "KSIT" ? [{ year: 1 }, { year: 2 }, { year: 3 }, { year: 4 }] : yearList).map((option: any) => (
                           <option value={option?.year} key={option?.year}>
                             {option?.year}
                           </option>
@@ -511,7 +511,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                 value={modeFilterState.year}
                               >
                                 <option value={"ALL"}>All</option>
-                                {yearList.map((option: any) => (
+                                {(user?.college == "KSIT" ? [{ year: 1 }, { year: 2 }, { year: 3 }, { year: 4 }] : yearList).map((option: any) => (
                                   <option
                                     value={option?.year}
                                     key={option?.year}
