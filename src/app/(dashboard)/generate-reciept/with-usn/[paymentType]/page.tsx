@@ -1072,7 +1072,9 @@ export default function WithoutUSNDynamicPage() {
                     carefully.`}
                   </ModalBody>
                   <ModalFooter gap={3}>
-                    <Button variant={"ghost"}>Cancel</Button>
+                    <Button onClick={onClose} variant={"ghost"}>
+                      Cancel
+                    </Button>
                     <Button
                       colorScheme="facebook"
                       onClick={() => {
