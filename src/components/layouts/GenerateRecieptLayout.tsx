@@ -7,6 +7,8 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Tag,
+  Text,
 } from "@chakra-ui/react";
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
@@ -78,11 +80,16 @@ export default function GenerateRecieptLayout({
                 With USN
               </Tab>
               <Tab
-                as={Link}
-                href={"/generate-reciept/new-admission"}
+                // as={Link}
+                // href={"/generate-reciept/new-admission"}
                 _hover={{ textDecoration: "none" }}
+                // disabled
+                gap={2}
               >
-                New Admission
+                <Text>New Admission</Text>{" "}
+                <Tag colorScheme="teal" rounded={"full"}>
+                  Coming Soon
+                </Tag>
               </Tab>
             </HStack>
           </HStack>

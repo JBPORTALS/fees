@@ -45,11 +45,10 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
   } = useDisclosure();
 
   const supabase = SC();
-  const user = useAppSelector(state => state.fees.user)
+  const user = useAppSelector((state) => state.fees.user);
   const [query, setQuery] = useState("");
 
   const router = useRouter();
-
 
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-[100vh]">
@@ -74,8 +73,16 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
               fill
             />
           </div>
-          <Heading size={"md"} position={"relative"} color={"gray.600"}>
-            | Fee Master
+          <Heading
+            fontFamily={"sans-serif"}
+            size={"md"}
+            pt={1.5}
+            letterSpacing={1}
+            position={"relative"}
+            color={"gray.700"}
+            fontWeight={"semibold"}
+          >
+            • Fee Master
           </Heading>
         </HStack>
         <HStack>
