@@ -71,6 +71,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const [state, setState] = useState({
     branch: "",
     year: "",
+    status: "",
   });
 
   const [modeFilterState, setModeFilterState] = useState<{
@@ -366,6 +367,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                   <VStack px={"4"}>
                     <FormControl>
                       <Select
+                        value={state.branch}
                         onChange={(e) =>
                           setState((prev) => ({
                             ...prev,
@@ -383,6 +385,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                     </FormControl>
                     <FormControl>
                       <Select
+                        value={state.year}
                         onChange={(e) =>
                           setState((prev) => ({
                             ...prev,
@@ -398,6 +401,31 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         ))}
                       </Select>
                     </FormControl>
+                    <FormControl>
+                      <Select
+                        onChange={(e) =>
+                          setState((prev) => ({
+                            ...prev,
+                            status: e.target.value,
+                          }))
+                        }
+                        value={state.status}
+                      >
+                        <option value={""}>Select Status</option>
+                        <option value={"ALL"}>
+                          All
+                        </option>
+                        <option value={"NOT PAID"}>
+                          Not Paid
+                        </option>
+                        <option value={"PARTIALLY PAID"}>
+                          Partially Paid
+                        </option>
+                        <option value={"FULL PAID"}>
+                          Full Paid
+                        </option>
+                      </Select>
+                    </FormControl>
                     <FormControl w={"full"}>
                       <Button
                         w={"full"}
@@ -405,7 +433,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         isDisabled={!state.branch || !state.year}
                         colorScheme="blue"
                         as={Link}
-                        href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}`}
+                        href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}&status=${state.status}`}
                       >
                         Download Excel
                       </Button>

@@ -1,10 +1,20 @@
 "use client";
 import {
   Button,
+  FormControl,
+  FormLabel,
   HStack,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   SimpleGrid,
   Stack,
+  Switch,
   VStack,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
@@ -16,7 +26,13 @@ import moment from "moment";
 import { useParams } from "next/navigation";
 import { AiOutlineFileDone } from "react-icons/ai";
 import axios from "axios";
-import { BANKS, CATS, PAYMENTMODES, SEMS } from "@/components/mock-data/constants";
+import {
+  BANKS,
+  CATS,
+  PAYMENTMODES,
+  SEMS,
+} from "@/components/mock-data/constants";
+import { useState } from "react";
 
 const initialValues = {
   name: "", //✅
@@ -50,10 +66,17 @@ const FormikContextProvider = () => {
         +values.collegeFee +
         +values.tuitionFee +
         +values.vtuFee +
-        +values.labFee
+        +values.labFee +
+        +values.excessFee
       )
     );
-  }, [values.collegeFee, values.tuitionFee, values.vtuFee, values.labFee]);
+  }, [
+    values.collegeFee,
+    values.tuitionFee,
+    values.vtuFee,
+    values.labFee,
+    values.excessFee,
+  ]);
 
   return <React.Fragment></React.Fragment>;
 };
@@ -67,8 +90,9 @@ export default function WithoutUSNDynamicPage() {
     position: "bottom-left",
   });
 
-  const user = useAppSelector(state => state.fees.user);
-
+  const user = useAppSelector((state) => state.fees.user);
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [isMutable, setIsMustable] = useState(false);
   const params = useParams();
   const paymentType = params.paymentType;
 
@@ -140,8 +164,8 @@ export default function WithoutUSNDynamicPage() {
         user?.college == "KSPT"
           ? "Admission Fee"
           : user?.college == "KSPU"
-            ? "PU Board Fee"
-            : "VTU/DTE/DDPI/GP.INS/ IRC Fee",
+          ? "PU Board Fee"
+          : "VTU/DTE/DDPI/GP.INS/ IRC Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -163,8 +187,17 @@ export default function WithoutUSNDynamicPage() {
         user?.college == "KSPT"
           ? "Development Fee"
           : user?.college == "KSPU"
-            ? "Exam Fee"
-            : "Skill Lab Fee",
+          ? "Exam Fee"
+          : "Skill Lab Fee",
+      type: "text",
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
+    },
+    {
+      name: "excessFee",
+      label: "Excess Fee",
       type: "text",
       validateField: Yup.number()
         .typeError("invalid number")
@@ -225,7 +258,7 @@ export default function WithoutUSNDynamicPage() {
       type: "select",
       placeholder: "Select Sem",
       validateField: Yup.string().required("Fill the field !"),
-      options: SEMS(user?.college)
+      options: SEMS(user?.college),
     },
     {
       name: "misc_category",
@@ -373,78 +406,6 @@ export default function WithoutUSNDynamicPage() {
         .typeError("Invalid amount")
         .moreThan(0, "Amount should be more than 0")
         .required(),
-    },
-    {
-      name: "paymentMode",
-      label: "Payment Mode",
-      type: "select",
-      placeholder: "Select Payment Mode",
-      options: PAYMENTMODES(user?.college),
-      validateField: Yup.string().required("Fill the field !"),
-    },
-  ];
-
-  const excessFeeTemplate = [
-    {
-      name: "name",
-      label: "Name",
-      type: "text",
-      validateField: Yup.string()
-        .required("Field required !")
-        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
-    },
-    {
-      name: "branch",
-      label: "Branch",
-      type: "select",
-      placeholder: "Select Branch",
-      validateField: Yup.string().required("Fill the field !"),
-      options: branchList.map((value) => ({
-        value: value.branch,
-        option: value.branch,
-      })),
-    },
-    {
-      name: "sem",
-      label: user?.college == "KSPU" ? "Year" : "Sem",
-      type: "select",
-      placeholder: "Select Sem",
-      validateField: Yup.string().required("Fill the field !"),
-      options: SEMS(user?.college),
-    },
-    {
-      name: "acadYear",
-      label: "Academic Year",
-      type: "select",
-      placeholder: "Select Academic Year",
-      validateField: Yup.string().required("Fill the field !"),
-      options: [
-        {
-          value: "2023-24",
-          option: "2023-24",
-        },
-        {
-          value: "2022-23",
-          option: "2022-23",
-        },
-      ],
-    },
-    {
-      name: "excessFee",
-      label: "Total Excess Fee Amount",
-      type: "number",
-      validateField: Yup.number()
-        .typeError("Invalid amount")
-        .moreThan(0, "Amount should be more than 0")
-        .required(),
-    },
-    {
-      name: "bank",
-      label: "Bank",
-      type: "select",
-      placeholder: "Select Bank",
-      options: BANKS(user?.college),
-      validateField: Yup.string().required("Fill the field !"),
     },
     {
       name: "paymentMode",
@@ -685,27 +646,29 @@ export default function WithoutUSNDynamicPage() {
           try {
             const filename =
               state.paymentMode == "ONLINE" &&
-                paymentType !== "MISCELLANEOUS" &&
-                user?.college !== "KSPT"
+              paymentType !== "MISCELLANEOUS" &&
+              user?.college !== "KSPT"
                 ? "feegenerateonlinewithoutusn.php"
                 : paymentType == "MISCELLANEOUS"
-                  ? "feegeneratemiscellaneouswithoutusn.php"
-                  : user?.college == "KSPT"
-                    ? "feekspreceipt.php"
-                    : "feegeneraterecieptwithoutusn.php";
+                ? "feegeneratemiscellaneouswithoutusn.php"
+                : user?.college == "KSPT"
+                ? "feekspreceipt.php"
+                : "feegeneraterecieptwithoutusn.php";
 
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
-              `${filename}?${Object.keys(state)
-                .map(
-                  (key, index) =>
-                    `${key}=${key == "date"
-                      ? moment(state[key]).format("yyyy-MM-DD")
-                      : Object.values(state)[index]
-                    }`
-                )
-                .join("&")}&paymentType=${paymentType}&college=${user?.college
-              }`
+                `${filename}?${Object.keys(state)
+                  .map(
+                    (key, index) =>
+                      `${key}=${
+                        key == "date"
+                          ? moment(state[key]).format("yyyy-MM-DD")
+                          : Object.values(state)[index]
+                      }`
+                  )
+                  .join("&")}&paymentType=${paymentType}&college=${
+                  user?.college
+                }&mutable=${isMutable}`
             );
             const link = document.createElement("a");
             link.href =
@@ -713,13 +676,15 @@ export default function WithoutUSNDynamicPage() {
               `${filename}?${Object.keys(state)
                 .map(
                   (key, index) =>
-                    `${key}=${key == "date"
-                      ? moment(state[key]).format("yyyy-MM-DD")
-                      : Object.values(state)[index]
+                    `${key}=${
+                      key == "date"
+                        ? moment(state[key]).format("yyyy-MM-DD")
+                        : Object.values(state)[index]
                     }`
                 )
-                .join("&")}&paymentType=${paymentType}&college=${user?.college
-              }`;
+                .join("&")}&paymentType=${paymentType}&college=${
+                user?.college
+              }&mutable=${isMutable}`;
             link.setAttribute("download", "Fee Reciept Offline.pdf");
             link.setAttribute("target", "_blank");
             document.body.appendChild(link);
@@ -743,29 +708,27 @@ export default function WithoutUSNDynamicPage() {
             paymentMode == "CHEQUE"
               ? chequeTemplate
               : paymentMode == "CASH"
-                ? cashTemplate
-                : paymentMode == "ONLINE"
-                  ? onlineTemplate
-                  : paymentMode == "UPI SCAN"
-                    ? onlineTemplate
-                    : paymentMode == "DD"
-                      ? ddTemplate
-                      : undefined;
+              ? cashTemplate
+              : paymentMode == "ONLINE"
+              ? onlineTemplate
+              : paymentMode == "UPI SCAN"
+              ? onlineTemplate
+              : paymentMode == "DD"
+              ? ddTemplate
+              : undefined;
 
           const checkOnPaymentType =
             paymentType == "FEE"
               ? feeTemplate
               : paymentType == "MISCELLANEOUS"
-                ? miscellaneousTemplate
-                : paymentType == "BUS_FEE"
-                  ? busFeeTemplate
-                  : paymentType == "EXCESS_FEE"
-                    ? excessFeeTemplate
-                    : paymentType == "SECURITY_DEPOSIT"
-                      ? securityFeeTemplate
-                      : paymentType == "HOSTEL_FEE"
-                        ? hostelFeeTemplate
-                        : undefined;
+              ? miscellaneousTemplate
+              : paymentType == "BUS_FEE"
+              ? busFeeTemplate
+              : paymentType == "SECURITY_DEPOSIT"
+              ? securityFeeTemplate
+              : paymentType == "HOSTEL_FEE"
+              ? hostelFeeTemplate
+              : undefined;
 
           return (
             <React.Fragment>
@@ -825,10 +788,24 @@ export default function WithoutUSNDynamicPage() {
                 p={"4"}
                 className="border-t border-gray-300 backdrop-blur-sm"
               >
+                {/* <HStack>
+                  <FormControl display="flex" alignItems="center">
+                    <FormLabel htmlFor="fee-mutation" mb="0">
+                      Auto Fee Updation
+                    </FormLabel>
+                    <Switch id="fee-mutation" />
+                  </FormControl>
+                </HStack> */}
                 <Button
                   size={"lg"}
                   isLoading={isSubmitting || isValidating}
-                  onClick={() => handleSubmit()}
+                  onClick={() => {
+                    if (isMutable) {
+                      onOpen();
+                    } else {
+                      handleSubmit();
+                    }
+                  }}
                   isDisabled={
                     Object.keys(errors).length > 0 ||
                     isSubmitting ||
@@ -840,6 +817,29 @@ export default function WithoutUSNDynamicPage() {
                   Generate Reciept
                 </Button>
               </HStack>
+              <Modal onClose={onClose} isOpen={isOpen}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>📢 Are you sure?</ModalHeader>
+                  <ModalBody>
+                    Generating the receipt will permanently alter the student's
+                    total fee. Confirm only after reviewing the details
+                    carefully.
+                  </ModalBody>
+                  <ModalFooter gap={3}>
+                    <Button variant={"ghost"}>Cancel</Button>
+                    <Button
+                      colorScheme="facebook"
+                      onClick={() => {
+                        handleSubmit();
+                        onClose();
+                      }}
+                    >
+                      Yes, Generate
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
             </React.Fragment>
           );
         }}

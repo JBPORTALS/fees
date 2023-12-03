@@ -77,6 +77,13 @@ export default function GenerateRecieptLayout({
               >
                 With USN
               </Tab>
+              <Tab
+                as={Link}
+                href={"/generate-reciept/new-admission"}
+                _hover={{ textDecoration: "none" }}
+              >
+                New Admission
+              </Tab>
             </HStack>
           </HStack>
         </TabList>
@@ -84,11 +91,7 @@ export default function GenerateRecieptLayout({
           <TabPanel p={"0"} w={"full"} h={"fit-content"}>
             {children}
           </TabPanel>
-          <TabPanel
-            px={"5"}
-            w={"full"}
-            h={"full"}
-          >
+          <TabPanel px={"5"} w={"full"} h={"full"}>
             {children}
           </TabPanel>
         </TabPanels>

@@ -1,33 +1,20 @@
 "use client";
 import {
   Button,
-  FormControl,
-  FormHelperText,
-  FormLabel,
   HStack,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   SimpleGrid,
-  Switch,
+  Stack,
   VStack,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useAppSelector } from "@/store";
 import { Field } from "@/components/ui/Field";
 import moment from "moment";
 import { useParams } from "next/navigation";
-import { AiOutlineFileDone, AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineFileDone } from "react-icons/ai";
 import axios from "axios";
 import {
   BANKS,
@@ -35,18 +22,12 @@ import {
   PAYMENTMODES,
   SEMS,
 } from "@/components/mock-data/constants";
-import { toast } from "react-hot-toast";
-import { useAppSelector } from "@/store";
-import { FaInfoCircle } from "react-icons/fa";
 
 const initialValues = {
-  usn: "", //✅
-  name: "",
-  sem: "",
-  year: "",
-  branch: "",
+  name: "", //✅
+  branch: "", //✅
+  sem: "", //✅
   category: "", //✅
-  misc_category: "", //✅
   acadYear: "", //✅
   tuitionFee: 0, //✅
   collegeFee: 0, //✅
@@ -66,10 +47,6 @@ const initialValues = {
 
 const FormikContextProvider = () => {
   const { values, setFieldValue } = useFormikContext<typeof initialValues>();
-  const [usn, setUsn] = useState("");
-  const [isLoading, setIsloading] = useState(false);
-  const [isFound, setIsFound] = useState(false);
-  const user = useAppSelector((state) => state.fees.user);
 
   useEffect(() => {
     setFieldValue(
@@ -90,111 +67,24 @@ const FormikContextProvider = () => {
     values.excessFee,
   ]);
 
-  async function findStudent() {
-    setIsloading(true);
-    setIsFound(false);
-    try {
-      const formData = new FormData();
-      formData.append("usn", usn);
-      formData.append("college", user?.college!);
-      const res = await axios(
-        process.env.NEXT_PUBLIC_ADMIN_URL + "retrievestudentdetails.php",
-        {
-          method: "POST",
-          data: formData,
-        }
-      );
-
-      if (res.status !== 402) {
-        setFieldValue("usn", res.data[0]?.usn);
-        setFieldValue("name", res.data[0]?.name);
-        setFieldValue("sem", res.data[0]?.sem);
-        setFieldValue("year", res.data[0]?.year);
-        setFieldValue("branch", res.data[0]?.branch);
-        setFieldValue("category", res.data[0]?.category);
-        setIsFound(true);
-      }
-    } catch (e: any) {
-      toast.error(e.response.data?.msg, { position: "bottom-center" });
-      setIsFound(false);
-    }
-    setIsloading(false);
-  }
-
-  return (
-    <React.Fragment>
-      <InputGroup>
-        <Input
-          colorScheme="whiteAlpha"
-          bg={"white"}
-          onChange={(e) => setUsn(e.target.value)}
-          value={usn}
-          onKeyDown={(e) => e.key == "Enter" && findStudent()}
-          placeholder="Enter USN here to find the student..."
-        />
-        <InputRightElement>
-          <IconButton
-            {...{ isLoading }}
-            onClick={findStudent}
-            aria-label="search"
-            colorScheme="blue"
-            variant={"ghost"}
-            icon={<AiOutlineSearch />}
-          />
-        </InputRightElement>
-      </InputGroup>
-    </React.Fragment>
-  );
+  return <React.Fragment></React.Fragment>;
 };
 
 export default function WithoutUSNDynamicPage() {
+  const branchList = useAppSelector((state) => state.fees.branch_list.data) as {
+    branch: string;
+  }[];
+
   const toast = useToast({
     position: "bottom-left",
   });
 
-  const branchList = useAppSelector((state) => state.fees.branch_list.data) as {
-    branch: string;
-  }[];
-  const [isMutable, setIsMustable] = useState(false);
-
   const user = useAppSelector((state) => state.fees.user);
 
   const params = useParams();
-  const { isOpen, onClose, onOpen } = useDisclosure();
-  const paymentType = params.paymentType as
-    | "FEE"
-    | "MISCELLANEOUS"
-    | "BUS_FEE"
-    | "EXCESS_FEE"
-    | "SECURITY_DEPOSIT"
-    | "HOSTEL_FEE";
-
-  useEffect(() => {
-    if (isMutable)
-      toast({
-        colorScheme: "blue",
-        variant: "subtle",
-        position: "top",
-        icon: <FaInfoCircle />,
-        description:
-          "Notice: Automatic Fee Updation is enabled; student fees will be updated upon challan generation.",
-        title: "Automatic fee updation turned on",
-      });
-  }, [isMutable]);
+  const paymentType = params.paymentType;
 
   const feeTemplate = [
-    {
-      name: "usn",
-      label:
-        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
-      type: "text",
-      validateField: Yup.string()
-        .required("Field required !")
-        .matches(
-          /^[Aa-zZ0-9]+$/i,
-          "Only alphanumaric values are allowed for this field"
-        ),
-    },
     {
       name: "name",
       label: "Name",
@@ -332,18 +222,6 @@ export default function WithoutUSNDynamicPage() {
 
   const miscellaneousTemplate = [
     {
-      name: "usn",
-      label:
-        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
-      type: "text",
-      validateField: Yup.string()
-        .required("Field required !")
-        .matches(
-          /^[Aa-zZ0-9]+$/i,
-          "Only alphanumaric values are allowed for this field"
-        ),
-    },
-    {
       name: "name",
       label: "Name",
       type: "text",
@@ -457,18 +335,6 @@ export default function WithoutUSNDynamicPage() {
 
   const busFeeTemplate = [
     {
-      name: "usn",
-      label:
-        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
-      type: "text",
-      validateField: Yup.string()
-        .required("Field required !")
-        .matches(
-          /^[Aa-zZ0-9]+$/i,
-          "Only alphanumaric values are allowed for this field"
-        ),
-    },
-    {
       name: "name",
       label: "Name",
       type: "text",
@@ -539,103 +405,7 @@ export default function WithoutUSNDynamicPage() {
     },
   ];
 
-  const excessFeeTemplate = [
-    {
-      name: "usn",
-      label:
-        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
-      type: "text",
-      validateField: Yup.string()
-        .required("Field required !")
-        .matches(
-          /^[Aa-zZ0-9]+$/i,
-          "Only alphanumaric values are allowed for this field"
-        ),
-    },
-    {
-      name: "name",
-      label: "Name",
-      type: "text",
-      validateField: Yup.string()
-        .required("Field required !")
-        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
-    },
-    {
-      name: "branch",
-      label: "Branch",
-      type: "select",
-      placeholder: "Select Branch",
-      validateField: Yup.string().required("Fill the field !"),
-      options: branchList.map((value) => ({
-        value: value.branch,
-        option: value.branch,
-      })),
-    },
-    {
-      name: "sem",
-      label: user?.college == "KSPU" ? "Year" : "Sem",
-      type: "select",
-      placeholder: "Select Sem",
-      validateField: Yup.string().required("Fill the field !"),
-      options: SEMS(user?.college),
-    },
-    {
-      name: "acadYear",
-      label: "Academic Year",
-      type: "select",
-      placeholder: "Select Academic Year",
-      validateField: Yup.string().required("Fill the field !"),
-      options: [
-        {
-          value: "2023-24",
-          option: "2023-24",
-        },
-        {
-          value: "2022-23",
-          option: "2022-23",
-        },
-      ],
-    },
-    {
-      name: "excessFee",
-      label: "Total Excess Fee Amount",
-      type: "number",
-      validateField: Yup.number()
-        .typeError("Invalid amount")
-        .moreThan(0, "Amount should be more than 0")
-        .required(),
-    },
-    {
-      name: "bank",
-      label: "Bank",
-      type: "select",
-      placeholder: "Select Bank",
-      options: BANKS(user?.college),
-      validateField: Yup.string().required("Fill the field !"),
-    },
-    {
-      name: "paymentMode",
-      label: "Payment Mode",
-      type: "select",
-      placeholder: "Select Payment Mode",
-      options: PAYMENTMODES(user?.college),
-      validateField: Yup.string().required("Fill the field !"),
-    },
-  ];
-
   const securityFeeTemplate = [
-    {
-      name: "usn",
-      label:
-        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
-      type: "text",
-      validateField: Yup.string()
-        .required("Field required !")
-        .matches(
-          /^[Aa-zZ0-9]+$/i,
-          "Only alphanumaric values are allowed for this field"
-        ),
-    },
     {
       name: "name",
       label: "Name",
@@ -708,18 +478,6 @@ export default function WithoutUSNDynamicPage() {
   ];
 
   const hostelFeeTemplate = [
-    {
-      name: "usn",
-      label:
-        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
-      type: "text",
-      validateField: Yup.string()
-        .required("Field required !")
-        .matches(
-          /^[Aa-zZ0-9]+$/i,
-          "Only alphanumaric values are allowed for this field"
-        ),
-    },
     {
       name: "name",
       label: "Name",
@@ -878,12 +636,13 @@ export default function WithoutUSNDynamicPage() {
               state.paymentMode == "ONLINE" &&
               paymentType !== "MISCELLANEOUS" &&
               user?.college !== "KSPT"
-                ? "feegenerateonlinewithusn.php"
+                ? "feegenerateonlinewithoutusn.php"
                 : paymentType == "MISCELLANEOUS"
-                ? "feegeneratemiscellaneouswithusn.php"
+                ? "feegeneratemiscellaneouswithoutusn.php"
                 : user?.college == "KSPT"
                 ? "feekspreceipt.php"
-                : "feegeneraterecieptwithusn.php";
+                : "feegeneraterecieptwithoutusn.php";
+
             await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
                 `${filename}?${Object.keys(state)
@@ -897,7 +656,7 @@ export default function WithoutUSNDynamicPage() {
                   )
                   .join("&")}&paymentType=${paymentType}&college=${
                   user?.college
-                }&mutable=${isMutable}`
+                }`
             );
             const link = document.createElement("a");
             link.href =
@@ -913,7 +672,7 @@ export default function WithoutUSNDynamicPage() {
                 )
                 .join("&")}&paymentType=${paymentType}&college=${
                 user?.college
-              }&mutable=${isMutable}`;
+              }`;
             link.setAttribute("download", "Fee Reciept Offline.pdf");
             link.setAttribute("target", "_blank");
             document.body.appendChild(link);
@@ -953,8 +712,6 @@ export default function WithoutUSNDynamicPage() {
               ? miscellaneousTemplate
               : paymentType == "BUS_FEE"
               ? busFeeTemplate
-              : paymentType == "EXCESS_FEE"
-              ? excessFeeTemplate
               : paymentType == "SECURITY_DEPOSIT"
               ? securityFeeTemplate
               : paymentType == "HOSTEL_FEE"
@@ -1014,42 +771,15 @@ export default function WithoutUSNDynamicPage() {
               <HStack
                 position={"sticky"}
                 bottom={"0"}
-                justifyContent={
-                  params.paymentType === "FEE" && user?.college === "KSSEM"
-                    ? "space-between"
-                    : "end"
-                }
+                justifyContent={"end"}
                 w={"full"}
                 p={"4"}
-                zIndex={"modal"}
                 className="border-t border-gray-300 backdrop-blur-sm"
               >
-                {params.paymentType === "FEE" && user?.college === "KSSEM" && (
-                  <HStack>
-                    <FormControl display="flex" alignItems="center">
-                      <FormLabel htmlFor="fee-mutation" mb="0">
-                        Auto Fee Updation
-                      </FormLabel>
-                      <Switch
-                        isChecked={isMutable}
-                        onChange={(e) => {
-                          setIsMustable(!isMutable);
-                        }}
-                        id="fee-mutation"
-                      />
-                    </FormControl>
-                  </HStack>
-                )}
                 <Button
                   size={"lg"}
                   isLoading={isSubmitting || isValidating}
-                  onClick={() => {
-                    if (isMutable) {
-                      onOpen();
-                    } else {
-                      handleSubmit();
-                    }
-                  }}
+                  onClick={() => handleSubmit()}
                   isDisabled={
                     Object.keys(errors).length > 0 ||
                     isSubmitting ||
@@ -1061,29 +791,6 @@ export default function WithoutUSNDynamicPage() {
                   Generate Reciept
                 </Button>
               </HStack>
-              <Modal onClose={onClose} isOpen={isOpen}>
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>📢 Are you sure?</ModalHeader>
-                  <ModalBody>
-                    Generating the receipt will permanently alter the student's
-                    total fee. Confirm only after reviewing the details
-                    carefully.
-                  </ModalBody>
-                  <ModalFooter gap={3}>
-                    <Button variant={"ghost"}>Cancel</Button>
-                    <Button
-                      colorScheme="facebook"
-                      onClick={() => {
-                        handleSubmit();
-                        onClose();
-                      }}
-                    >
-                      Yes, Generate
-                    </Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
             </React.Fragment>
           );
         }}

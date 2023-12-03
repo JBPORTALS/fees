@@ -32,13 +32,11 @@ export default function WithUSNLayout({
             ? 1
             : pathname === "/generate-reciept/with-usn/BUS_FEE"
               ? 2
-              : pathname === "/generate-reciept/with-usn/EXCESS_FEE"
+              : pathname === "/generate-reciept/with-usn/SECURITY_DEPOSIT"
                 ? 3
-                : pathname === "/generate-reciept/with-usn/SECURITY_DEPOSIT"
+                : pathname === "/generate-reciept/with-usn/HOSTEL_FEE"
                   ? 4
-                  : pathname === "/generate-reciept/with-usn/HOSTEL_FEE"
-                    ? 5
-                    : -1
+                  : -1
       }
       colorScheme={"purple"}
       size={"md"}
@@ -85,16 +83,6 @@ export default function WithUSNLayout({
           >
             Bus Fee
             {pathname == "/generate-reciept/with-usn/BUS_FEE" && (
-              <AiOutlineCheck className="text-md" />
-            )}
-          </Tab>
-          <Tab
-            as={Link}
-            href={"/generate-reciept/with-usn/EXCESS_FEE"}
-            _hover={{ textDecoration: "none" }}
-          >
-            Excess Fee
-            {pathname == "/generate-reciept/with-usn/EXCESS_FEE" && (
               <AiOutlineCheck className="text-md" />
             )}
           </Tab>

@@ -31,16 +31,14 @@ export default function WithoutUSNLayout({
         pathname == "/generate-reciept/without-usn/FEE"
           ? 0
           : pathname === "/generate-reciept/without-usn/MISCELLANEOUS"
-          ? 1
-          : pathname === "/generate-reciept/without-usn/BUS_FEE"
-          ? 2
-          : pathname === "/generate-reciept/without-usn/EXCESS_FEE"
-          ? 3
-          : pathname === "/generate-reciept/without-usn/SECURITY_DEPOSIT"
-          ? 4
-          : pathname === "/generate-reciept/without-usn/HOSTEL_FEE"
-          ? 5
-          : -1
+            ? 1
+            : pathname === "/generate-reciept/without-usn/BUS_FEE"
+              ? 2
+              : pathname === "/generate-reciept/without-usn/SECURITY_DEPOSIT"
+                ? 3
+                : pathname === "/generate-reciept/without-usn/HOSTEL_FEE"
+                  ? 4
+                  : -1
       }
       colorScheme={"purple"}
       size={"md"}
@@ -87,16 +85,6 @@ export default function WithoutUSNLayout({
           >
             Bus Fee
             {pathname == "/generate-reciept/without-usn/BUS_FEE" && (
-              <AiOutlineCheck className="text-md" />
-            )}
-          </Tab>
-          <Tab
-            as={Link}
-            href={"/generate-reciept/without-usn/EXCESS_FEE"}
-            _hover={{ textDecoration: "none" }}
-          >
-            Excess Fee
-            {pathname == "/generate-reciept/without-usn/EXCESS_FEE" && (
               <AiOutlineCheck className="text-md" />
             )}
           </Tab>
