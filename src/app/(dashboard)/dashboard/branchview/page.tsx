@@ -2,7 +2,13 @@
 import ISelect from "@/components/ui/utils/ISelect";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import { BranchFee, YearFee, fetchBranchFeeDetails, fetchBranchList, fetchFeeYearView } from "@/store/fees.slice";
+import {
+  BranchFee,
+  YearFee,
+  fetchBranchFeeDetails,
+  fetchBranchList,
+  fetchFeeYearView,
+} from "@/store/fees.slice";
 import {
   Box,
   Card,
@@ -29,7 +35,6 @@ import {
   ArcElement,
 } from "chart.js";
 
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -52,16 +57,18 @@ export default function BranchViewPage() {
   const yearFeeDetails = useAppSelector(
     (state) => state.fees.year_fee.data
   ) as YearFee[];
-  const user = useAppSelector(state => state.fees.user)
+  const user = useAppSelector((state) => state.fees.user);
 
-  const fetchYearVeiwMemo = useCallback((Ibranch: string) => {
-    dispatch(fetchFeeYearView({ branch: Ibranch, college: user?.college! }));
-  }, [dispatch])
+  const fetchYearVeiwMemo = useCallback(
+    (Ibranch: string) => {
+      dispatch(fetchFeeYearView({ branch: Ibranch, college: user?.college! }));
+    },
+    [dispatch, user?.college]
+  );
 
   useEffect(() => {
-    fetchYearVeiwMemo(branch)
+    fetchYearVeiwMemo(branch);
   }, [branch]);
-
 
   return (
     <div className={"h-fit w-full"}>
