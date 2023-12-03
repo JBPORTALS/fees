@@ -68,7 +68,7 @@ export default function BranchViewPage() {
 
   useEffect(() => {
     fetchYearVeiwMemo(branch);
-  }, [branch]);
+  }, [branch, fetchYearVeiwMemo]);
 
   return (
     <div className={"h-fit w-full"}>

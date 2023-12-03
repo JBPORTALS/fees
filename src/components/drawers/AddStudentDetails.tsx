@@ -81,7 +81,7 @@ export default function AddStudentsDetails({ children }: props) {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
-  const user = useAppSelector(state => state.fees.user);
+  const user = useAppSelector((state) => state.fees.user);
   const dispatch = useAppDispatch();
 
   const {
@@ -134,8 +134,6 @@ export default function AddStudentsDetails({ children }: props) {
       toast.error(e.response?.data?.msg);
     }
   }, []);
-
-
 
   return (
     <>
@@ -217,11 +215,11 @@ export default function AddStudentsDetails({ children }: props) {
                 onBlur={handleBlur}
               >
                 <option value={""}>Select Sem</option>
-                {
-                  SEMS(user?.college).map((value, index) => (
-                    <option key={value.value} value={value.value}>{value.option}</option>
-                  ))
-                }
+                {SEMS(user?.college).map((value, index) => (
+                  <option key={value.value} value={value.value}>
+                    {value.option}
+                  </option>
+                ))}
               </Select>
               <FormErrorMessage>{errors.sem}</FormErrorMessage>
             </FormControl>

@@ -20,10 +20,7 @@ import { useAppSelector } from "@/store";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import {
-  usePathname,
-  useRouter,
-} from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import {
   fetchFeeDetails,
@@ -42,8 +39,6 @@ const Schema = Yup.object().shape({
   total: Yup.number().required().min(0).typeError("invalid number"),
   paid: Yup.number().required().min(0).typeError("invalid number"),
 });
-
-
 
 export default function ViewStudentsDetails({
   id,
@@ -65,8 +60,6 @@ export default function ViewStudentsDetails({
 
   console.log(pathname);
 
-
-
   let initialState = {
     id: data[0]?.id ?? "",
     usn: data[0]?.regno ?? "",
@@ -87,7 +80,7 @@ export default function ViewStudentsDetails({
     isOpen: isPaymentOpen,
     onClose: onPaymentClose,
   } = useDisclosure();
-  const user = useAppSelector(state => state.fees.user);
+  const user = useAppSelector((state) => state.fees.user);
 
   const Categories = CATS(user?.college);
 
@@ -215,7 +208,17 @@ export default function ViewStudentsDetails({
       e.response.data?.msg && toast.error(e.response.data?.msg);
     }
     setIsDeleting(false);
-  }, [values.id, values.usn, user?.college]);
+  }, [
+    values.id,
+    values.usn,
+    user?.college,
+    data,
+    dispatch,
+    router,
+    onClose,
+    router,
+    values.branch,
+  ]);
 
   const [amount, setAmount] = useState("0");
   const [method, setMethod] = useState("");
@@ -418,9 +421,11 @@ export default function ViewStudentsDetails({
                 onBlur={handleBlur}
               >
                 <option value={""}>Select Sem</option>
-                {
-                  SEMS(user?.college).map((value) => <option value={value.value} key={value.value}>{value.option}</option>)
-                }
+                {SEMS(user?.college).map((value) => (
+                  <option value={value.value} key={value.value}>
+                    {value.option}
+                  </option>
+                ))}
               </Select>
               <FormErrorMessage>{errors.sem}</FormErrorMessage>
             </FormControl>

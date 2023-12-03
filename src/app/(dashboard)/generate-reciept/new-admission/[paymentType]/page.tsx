@@ -65,6 +65,7 @@ const FormikContextProvider = () => {
     values.vtuFee,
     values.labFee,
     values.excessFee,
+    setFieldValue,
   ]);
 
   return <React.Fragment></React.Fragment>;

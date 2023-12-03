@@ -21,7 +21,7 @@ export default function Students() {
   ) as [];
   const dispatch = useAppDispatch();
   const yearList = useAppSelector((state) => state.fees.year_list);
-  const user = useAppSelector(state => state.fees.user);
+  const user = useAppSelector((state) => state.fees.user);
 
   useEffect(() => {
     if (state.branch && state.year)
@@ -32,7 +32,7 @@ export default function Students() {
           college: user?.college!,
         })
       );
-  }, [state.branch, state.year, dispatch]);
+  }, [state.branch, state.year, dispatch, user?.college]);
 
   return (
     <>

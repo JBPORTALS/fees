@@ -88,6 +88,7 @@ const FormikContextProvider = () => {
     values.vtuFee,
     values.labFee,
     values.excessFee,
+    setFieldValue,
   ]);
 
   async function findStudent() {
@@ -1066,9 +1067,9 @@ export default function WithoutUSNDynamicPage() {
                 <ModalContent>
                   <ModalHeader>📢 Are you sure?</ModalHeader>
                   <ModalBody>
-                    Generating the receipt will permanently alter the student's
+                    {`Generating the receipt will permanently alter the student's
                     total fee. Confirm only after reviewing the details
-                    carefully.
+                    carefully.`}
                   </ModalBody>
                   <ModalFooter gap={3}>
                     <Button variant={"ghost"}>Cancel</Button>

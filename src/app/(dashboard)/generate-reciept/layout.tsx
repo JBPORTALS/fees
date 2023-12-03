@@ -12,11 +12,11 @@ export default function GenerateRecieptRootLayout(props: {
 
   const fetchBranchListCb = useCallback(() => {
     store.dispatch(fetchBranchList({ college: user?.college! }));
-  }, [store.dispatch, user?.college]);
+  }, [user?.college]);
 
   useEffect(() => {
     fetchBranchListCb();
-  }, []);
+  }, [fetchBranchListCb]);
 
   return <GenerateRecieptLayout>{props?.children}</GenerateRecieptLayout>;
 }
