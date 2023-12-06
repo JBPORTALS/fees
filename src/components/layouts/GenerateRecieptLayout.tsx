@@ -51,16 +51,17 @@ export default function GenerateRecieptLayout({
             : -1
         }
         colorScheme={"facebook"}
-        size={"lg"}
-        variant={"line"}
+        size={"md"}
+        variant={"enclosed-colored"}
         h={"full"}
+        mt={3}
+        w={"full"}
       >
         <TabList
           zIndex={"sticky"}
           position={"sticky"}
           bg={"whiteAlpha.100"}
           backdropBlur={"sm"}
-          w={"100vw"}
           className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm flex justify-between"
         >
           <HStack justifyContent={"space-between"} w={"full"}>
@@ -79,26 +80,14 @@ export default function GenerateRecieptLayout({
               >
                 With USN
               </Tab>
-              <Tab
-                // as={Link}
-                // href={"/generate-reciept/new-admission"}
-                _hover={{ textDecoration: "none" }}
-                // disabled
-                gap={2}
-              >
-                <Text>New Admission</Text>{" "}
-                <Tag colorScheme="teal" rounded={"full"}>
-                  Coming Soon
-                </Tag>
-              </Tab>
             </HStack>
           </HStack>
         </TabList>
-        <TabPanels h={"fit"}>
+        <TabPanels h={"fit"} bg={"white"}>
           <TabPanel p={"0"} w={"full"} h={"fit-content"}>
             {children}
           </TabPanel>
-          <TabPanel px={"5"} w={"full"} h={"full"}>
+          <TabPanel p={"0"} w={"full"} h={"full"}>
             {children}
           </TabPanel>
         </TabPanels>

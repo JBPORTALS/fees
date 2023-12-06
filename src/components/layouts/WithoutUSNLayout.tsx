@@ -31,14 +31,14 @@ export default function WithoutUSNLayout({
         pathname == "/generate-reciept/without-usn/FEE"
           ? 0
           : pathname === "/generate-reciept/without-usn/MISCELLANEOUS"
-            ? 1
-            : pathname === "/generate-reciept/without-usn/BUS_FEE"
-              ? 2
-              : pathname === "/generate-reciept/without-usn/SECURITY_DEPOSIT"
-                ? 3
-                : pathname === "/generate-reciept/without-usn/HOSTEL_FEE"
-                  ? 4
-                  : -1
+          ? 1
+          : pathname === "/generate-reciept/without-usn/BUS_FEE"
+          ? 2
+          : pathname === "/generate-reciept/without-usn/SECURITY_DEPOSIT"
+          ? 3
+          : pathname === "/generate-reciept/without-usn/HOSTEL_FEE"
+          ? 4
+          : -1
       }
       colorScheme={"purple"}
       size={"md"}
@@ -55,7 +55,7 @@ export default function WithoutUSNLayout({
           backdropBlur={"sm"}
           w={"full"}
           top={"0"}
-          className="py-3 border-b border-gray-200 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm flex justify-between"
+          className="py-3 border-b border-gray-200 bg-white flex justify-between"
         >
           <Tab
             as={Link}

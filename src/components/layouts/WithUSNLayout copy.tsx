@@ -29,14 +29,14 @@ export default function WithUSNLayout({
         pathname == "/generate-reciept/with-usn/FEE"
           ? 0
           : pathname === "/generate-reciept/with-usn/MISCELLANEOUS"
-            ? 1
-            : pathname === "/generate-reciept/with-usn/BUS_FEE"
-              ? 2
-              : pathname === "/generate-reciept/with-usn/SECURITY_DEPOSIT"
-                ? 3
-                : pathname === "/generate-reciept/with-usn/HOSTEL_FEE"
-                  ? 4
-                  : -1
+          ? 1
+          : pathname === "/generate-reciept/with-usn/BUS_FEE"
+          ? 2
+          : pathname === "/generate-reciept/with-usn/SECURITY_DEPOSIT"
+          ? 3
+          : pathname === "/generate-reciept/with-usn/HOSTEL_FEE"
+          ? 4
+          : -1
       }
       colorScheme={"purple"}
       size={"md"}
@@ -53,7 +53,7 @@ export default function WithUSNLayout({
           backdropBlur={"sm"}
           w={"full"}
           top={"0"}
-          className="py-3 border-b border-gray-200 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm flex justify-between"
+          className="py-3 border-b border-gray-200 bg-white flex justify-between"
         >
           <Tab
             as={Link}

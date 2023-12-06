@@ -4,6 +4,9 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  IconButton,
+  InputGroup,
+  InputRightElement,
   Modal,
   ModalBody,
   ModalContent,
@@ -13,9 +16,14 @@ import {
   SimpleGrid,
   Stack,
   Switch,
+  Input,
   VStack,
   useDisclosure,
   useToast,
+  InputLeftElement,
+  Tag,
+  TagLabel,
+  TagCloseButton,
 } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
@@ -24,7 +32,7 @@ import { useAppSelector } from "@/store";
 import { Field } from "@/components/ui/Field";
 import moment from "moment";
 import { useParams } from "next/navigation";
-import { AiOutlineFileDone } from "react-icons/ai";
+import { AiOutlineFileDone, AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
 import {
   BANKS,
@@ -54,10 +62,16 @@ const initialValues = {
   securityDeposit: 0, //✅
   hostelFee: 0, //✅
   total: 0, //✅
+  byApplicationId: false,
 };
 
 const FormikContextProvider = () => {
-  const { values, setFieldValue } = useFormikContext<typeof initialValues>();
+  const { values, setFieldValue, handleReset } =
+    useFormikContext<typeof initialValues>();
+  const [appId, setAppId] = useState("");
+  const [isLoading, setIsloading] = useState(false);
+  const user = useAppSelector((state) => state.fees.user);
+  const toast = useToast();
 
   useEffect(() => {
     setFieldValue(
@@ -79,7 +93,87 @@ const FormikContextProvider = () => {
     setFieldValue,
   ]);
 
-  return <React.Fragment></React.Fragment>;
+  useEffect(() => {
+    if (appId.length == 0) {
+      setFieldValue("byApplicationId", false);
+      handleReset();
+    }
+  }, [appId]);
+
+  async function findStudent() {
+    setIsloading(true);
+    try {
+      const formData = new FormData();
+      formData.append("appid", appId);
+      formData.append("college", user?.college!);
+      const res = await axios(
+        process.env.NEXT_PUBLIC_ADMIN_URL +
+          "retrievestudentdetailsusingappid.php",
+        {
+          method: "POST",
+          data: formData,
+        }
+      );
+
+      if (res.status !== 402) {
+        setFieldValue("name", res.data[0]?.name);
+        setFieldValue("sem", res.data[0]?.sem);
+        setFieldValue("year", res.data[0]?.year);
+        setFieldValue("branch", res.data[0]?.branch);
+        setFieldValue("category", res.data[0]?.category);
+        setFieldValue("total_fee", res.data[0]?.total_fee);
+        setFieldValue("remaining_fee", res.data[0]?.remaining_fee);
+        setFieldValue("byApplicationId", true);
+      }
+    } catch (e: any) {
+      toast({
+        status: "error",
+        title: "Invalid Application ID",
+        description: "Unable to find the Applicantion ID",
+      });
+    }
+    setIsloading(false);
+  }
+
+  return (
+    <React.Fragment>
+      <InputGroup>
+        {values.byApplicationId && (
+          <InputLeftElement px={"2"} w={"fit-content"}>
+            <Tag colorScheme="gray">
+              <TagLabel>By App. ID</TagLabel>
+              <TagCloseButton
+                onClick={() => {
+                  setFieldValue("byApplicationId", false);
+                  handleReset();
+                }}
+              />
+            </Tag>
+          </InputLeftElement>
+        )}
+        <Input
+          w={"full"}
+          pl={values.byApplicationId ? "32" : undefined}
+          colorScheme="whiteAlpha"
+          bg={"white"}
+          onChange={(e) => setAppId(e.target.value)}
+          value={appId}
+          onKeyDown={(e) => e.key == "Enter" && findStudent()}
+          placeholder="Enter Application ID here to find the applicant..."
+        />
+        <InputRightElement>
+          <IconButton
+            {...{ isLoading }}
+            onClick={findStudent}
+            aria-label="search"
+            colorScheme="blue"
+            variant={"ghost"}
+            icon={<AiOutlineSearch />}
+          />
+        </InputRightElement>
+      </InputGroup>
+    </React.Fragment>
+  );
 };
 
 export default function WithoutUSNDynamicPage() {
@@ -149,6 +243,163 @@ export default function WithoutUSNDynamicPage() {
           option: "2022-23",
         },
       ],
+    },
+    {
+      name: "tuitionFee",
+      label: "Tuition Fee",
+      type: "text",
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
+    },
+    {
+      name: "vtuFee",
+      label:
+        user?.college == "KSPT"
+          ? "Admission Fee"
+          : user?.college == "KSPU"
+          ? "PU Board Fee"
+          : "VTU/DTE/DDPI/GP.INS/ IRC Fee",
+      type: "text",
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
+    },
+    {
+      name: "collegeFee",
+      label: "College & Other Fee",
+      type: "text",
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
+    },
+    {
+      name: "labFee",
+      label:
+        user?.college == "KSPT"
+          ? "Development Fee"
+          : user?.college == "KSPU"
+          ? "Exam Fee"
+          : "Skill Lab Fee",
+      type: "text",
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
+    },
+    {
+      name: "excessFee",
+      label: "Excess Fee",
+      type: "text",
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
+    },
+    {
+      name: "total",
+      label: "Total Fee",
+      type: "text",
+      isReadonly: true,
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .moreThan(0, "Total amount should be more than 0"),
+    },
+    {
+      name: "bank",
+      label: "Bank",
+      type: "select",
+      placeholder: "Select Bank",
+      options: BANKS(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+    {
+      name: "paymentMode",
+      label: "Payment Mode",
+      type: "select",
+      placeholder: "Select Payment Mode",
+      options: PAYMENTMODES(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+  ];
+
+  const feeByApplicationIdTemplate = [
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select",
+      validateField: Yup.string().required("Fill the field !"),
+      options: SEMS(user?.college),
+    },
+    {
+      name: "category",
+      label: "Category",
+      type: "select",
+      placeholder: "Select Category",
+      validateField: Yup.string().required("Fill the field !"),
+      options: CATS(user?.college),
+    },
+    {
+      name: "acadYear",
+      label: "Academic Year",
+      type: "select",
+      placeholder: "Select Academic Year",
+      validateField: Yup.string().required("Fill the field !"),
+      options: [
+        {
+          value: "2023-24",
+          option: "2023-24",
+        },
+        {
+          value: "2022-23",
+          option: "2022-23",
+        },
+      ],
+    },
+
+    {
+      name: "total_fee",
+      label: "Total Fee Fixed",
+      type: "text",
+      isReadonly: true,
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
+    },
+    {
+      name: "remaining_fee",
+      label: "Balance",
+      type: "text",
+      isReadonly: true,
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
     },
     {
       name: "tuitionFee",
@@ -699,7 +950,7 @@ export default function WithoutUSNDynamicPage() {
         }}
       >
         {({
-          values: { paymentMode },
+          values: { paymentMode, byApplicationId },
           errors,
           handleSubmit,
           isSubmitting,
@@ -719,8 +970,10 @@ export default function WithoutUSNDynamicPage() {
               : undefined;
 
           const checkOnPaymentType =
-            paymentType == "FEE"
+            paymentType == "FEE" && !byApplicationId
               ? feeTemplate
+              : paymentType == "FEE" && byApplicationId
+              ? feeByApplicationIdTemplate
               : paymentType == "MISCELLANEOUS"
               ? miscellaneousTemplate
               : paymentType == "BUS_FEE"
