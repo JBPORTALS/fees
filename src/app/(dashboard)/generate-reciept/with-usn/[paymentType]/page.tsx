@@ -62,6 +62,8 @@ const initialValues = {
   securityDeposit: 0, //✅
   hostelFee: 0, //✅
   total: 0, //✅
+  total_fee: 0, //
+  remaining_fee: 0, //
 };
 
 const FormikContextProvider = () => {
@@ -113,6 +115,8 @@ const FormikContextProvider = () => {
         setFieldValue("year", res.data[0]?.year);
         setFieldValue("branch", res.data[0]?.branch);
         setFieldValue("category", res.data[0]?.category);
+        setFieldValue("total_fee", res.data[0]?.total_fee);
+        setFieldValue("remaining_fee", res.data[0]?.remaining_fee);
         setIsFound(true);
       }
     } catch (e: any) {
@@ -148,7 +152,7 @@ const FormikContextProvider = () => {
   );
 };
 
-export default function WithoutUSNDynamicPage() {
+export default function WithUSNDynamicPage() {
   const toast = useToast({
     position: "bottom-left",
   });
@@ -247,6 +251,27 @@ export default function WithoutUSNDynamicPage() {
           option: "2022-23",
         },
       ],
+    },
+
+    {
+      name: "total_fee",
+      label: "Total Fee Fixed",
+      type: "text",
+      isReadonly: true,
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
+    },
+    {
+      name: "remaining_fee",
+      label: "Balance",
+      type: "text",
+      isReadonly: true,
+      validateField: Yup.number()
+        .typeError("invalid number")
+        .required("Field required !")
+        .min(0, "minimum amount should be 0"),
     },
     {
       name: "tuitionFee",
@@ -885,7 +910,8 @@ export default function WithoutUSNDynamicPage() {
                 : user?.college == "KSPT"
                 ? "feekspreceipt.php"
                 : "feegeneraterecieptwithusn.php";
-            await axios.get(
+
+            const response = await axios.get(
               process.env.NEXT_PUBLIC_ADMIN_URL +
                 `${filename}?${Object.keys(state)
                   .map(
@@ -900,28 +926,28 @@ export default function WithoutUSNDynamicPage() {
                   user?.college
                 }&mutable=${isMutable}`
             );
-            const link = document.createElement("a");
-            link.href =
+
+            if (response.status == 402) return new Error(response.data.msg);
+
+            window.open(
               process.env.NEXT_PUBLIC_ADMIN_URL +
-              `${filename}?${Object.keys(state)
-                .map(
-                  (key, index) =>
-                    `${key}=${
-                      key == "date"
-                        ? moment(state[key]).format("yyyy-MM-DD")
-                        : Object.values(state)[index]
-                    }`
-                )
-                .join("&")}&paymentType=${paymentType}&college=${
-                user?.college
-              }&mutable=${isMutable}`;
-            link.setAttribute("download", "Fee Reciept Offline.pdf");
-            link.setAttribute("target", "_blank");
-            document.body.appendChild(link);
-            link.click();
+                `${filename}?${Object.keys(state)
+                  .map(
+                    (key, index) =>
+                      `${key}=${
+                        key == "date"
+                          ? moment(state[key]).format("yyyy-MM-DD")
+                          : Object.values(state)[index]
+                      }`
+                  )
+                  .join("&")}&paymentType=${paymentType}&college=${
+                  user?.college
+                }&mutable=${isMutable}`,
+              "_blank"
+            );
           } catch (e: any) {
             toast({
-              title: e.response?.data?.msg,
+              title: e.response?.data?.msg ?? e,
               status: "error",
             });
           }
