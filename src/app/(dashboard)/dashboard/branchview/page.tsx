@@ -47,8 +47,8 @@ ChartJS.register(
 
 export default function BranchViewPage() {
   const [branch, setBranch] = useState<string>("All");
-  const branch_list = useAppSelector(
-    (state) => state.fees.branch_list.data
+  const collegeList = useAppSelector(
+    (state) => state.fees.college_list.data
   ) as [];
   const dispatch = useAppDispatch();
   const branchFeeDetails = useAppSelector(
@@ -77,9 +77,9 @@ export default function BranchViewPage() {
           placeHolder="All"
           value={branch}
           onChange={(value) => setBranch(value as string)}
-          options={branch_list.map((option: any) => ({
-            option: option.branch,
-            value: option.branch,
+          options={collegeList.map((option: any) => ({
+            option: option.college,
+            value: option.college,
           }))}
         />
       </div>

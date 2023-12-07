@@ -400,6 +400,34 @@ export const fetchBranchList = createAsyncThunk<
   }
 );
 
+export const fetchCollegeList = createAsyncThunk<
+  [],
+  { college: string },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/fees/fetchCollegeList",
+  async (payload, { fulfillWithValue, rejectWithValue }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      formData.append("college", payload.college);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMIN_URL + "retrievecollege.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
 export const fetchYearList = createAsyncThunk<
   [],
   { college: string },
@@ -540,6 +568,11 @@ interface FeesIntialState {
     pending: boolean;
     error: null | string;
   };
+  college_list: {
+    data: [];
+    pending: boolean;
+    error: null | string;
+  };
   update_usn: {
     pending: boolean;
     error: null | string;
@@ -587,6 +620,11 @@ const initialState: FeesIntialState = {
     pending: false,
   },
   branch_list: {
+    data: [],
+    error: null,
+    pending: false,
+  },
+  college_list: {
     data: [],
     error: null,
     pending: false,
@@ -744,6 +782,19 @@ export const FeesSlice = createSlice({
       .addCase(fetchBranchList.rejected, (state, action) => {
         state.branch_list.pending = false;
         state.branch_list.error = action.payload?.msg ?? null;
+      });
+
+    builder
+      .addCase(fetchCollegeList.pending, (state, action) => {
+        state.college_list.pending = true;
+      })
+      .addCase(fetchCollegeList.fulfilled, (state, action) => {
+        state.college_list.pending = false;
+        state.college_list.data = action.payload;
+      })
+      .addCase(fetchCollegeList.rejected, (state, action) => {
+        state.college_list.pending = false;
+        state.college_list.error = action.payload?.msg ?? null;
       });
 
     builder

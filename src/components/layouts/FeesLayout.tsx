@@ -105,13 +105,13 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   });
   const [filteredData, setFilteredData] = useState<
     | {
-      challan_id: string;
-      usn: string;
-      name: string;
-      date: string;
-      method: string;
-      amount_paid1: string;
-    }[]
+        challan_id: string;
+        usn: string;
+        name: string;
+        date: string;
+        method: string;
+        amount_paid1: string;
+      }[]
     | null
   >(null);
   const [isloading, setIsLoading] = useState(true);
@@ -122,7 +122,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const [usn, setUSN] = useState("");
   const pathname = usePathname();
   const router = useRouter();
-  const user = useAppSelector(state => state.fees.user);
+  const user = useAppSelector((state) => state.fees.user);
 
   // const fetchBranchListCb = useCallback(() => {
   //   dispatch(fetchBranchList({ college: user?.college! }));
@@ -140,8 +140,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
       formData.append("college", user?.college!);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL +
-        `${filterType == "CHALLAN_DATE" ? "feesearchdate" : "feesearchpaiddate"
-        }.php`,
+          `${
+            filterType == "CHALLAN_DATE" ? "feesearchdate" : "feesearchpaiddate"
+          }.php`,
         {
           method: "POST",
           data: formData,
@@ -181,8 +182,10 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const onModeFilter = async () => {
     setIsPushing(true);
     router.replace(
-      `/dashboard/search?branch=${modeFilterState.branch}&year=${modeFilterState.year
-      }&mode=${modeFilterState.mode}&feeType=${modeFilterState.type
+      `/dashboard/search?branch=${modeFilterState.branch}&year=${
+        modeFilterState.year
+      }&mode=${modeFilterState.mode}&feeType=${
+        modeFilterState.type
       }&fromDate=${moment(modeFilterState.fromDate).format(
         "DD-MM-yyyy"
       )}&toDate=${moment(modeFilterState.toDate).format(
@@ -199,12 +202,12 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
           pathname == "/dashboard"
             ? 0
             : pathname === "/dashboard/branchview"
-              ? 1
-              : pathname === "/dashboard/classview"
-                ? 2
-                : pathname.startsWith("/dashboard/search")
-                  ? 3
-                  : -1
+            ? 1
+            : pathname === "/dashboard/classview"
+            ? 2
+            : pathname.startsWith("/dashboard/search")
+            ? 3
+            : -1
         }
         colorScheme={"facebook"}
         size={"lg"}
@@ -233,7 +236,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                 href={"/dashboard/branchview"}
                 _hover={{ textDecoration: "none" }}
               >
-                Branch Wise
+                College Wise
               </Tab>
               <Tab
                 as={Link}
@@ -258,98 +261,98 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                 <VStack w={"full"}>
                   {isloading
                     ? new Array(6).fill(0).map((_value, key) => {
-                      return (
-                        <Skeleton key={key} w={"full"} h={"16"}></Skeleton>
-                      );
-                    })
+                        return (
+                          <Skeleton key={key} w={"full"} h={"16"}></Skeleton>
+                        );
+                      })
                     : filteredData?.map((paymentData, index) => {
-                      return (
-                        <>
-                          <HStack
-                            key={paymentData.challan_id + index}
-                            w={"full"}
-                            className={"border-b border-b-lightgray"}
-                            bg={"gray.50"}
-                            px={"5"}
-                            py={"2"}
-                          >
-                            <VStack flex={1} alignItems={"start"}>
-                              <HStack justifyContent={"start"}>
-                                <VStack
-                                  justifyContent={"start"}
-                                  alignItems={"start"}
-                                >
-                                  <Heading
-                                    size={"sm"}
-                                    textTransform={"capitalize"}
-                                    whiteSpace={"nowrap"}
-                                  >
-                                    {paymentData?.name
-                                      .toString()
-                                      .toLowerCase()}{" "}
-                                    {paymentData.usn ? (
-                                      `(${paymentData.usn})`
-                                    ) : (
-                                      <Input
-                                        size={"sm"}
-                                        px={"3"}
-                                        value={usn}
-                                        onChange={(e) =>
-                                          setUSN(e.target.value)
-                                        }
-                                        variant={"flushed"}
-                                        placeholder="Enter USN here ..."
-                                      />
-                                    )}
-                                  </Heading>
-                                  <Tag
-                                    size={"md"}
-                                    variant={"outline"}
-                                    colorScheme={"teal"}
-                                    fontWeight={"bold"}
-                                  >
-                                    CH No. {paymentData.challan_id}
-                                  </Tag>
-                                </VStack>
-                              </HStack>
-                              <span className="text-sm">
-                                {paymentData.date}
-                              </span>
-                            </VStack>
-                            <VStack flex={1} alignItems={"end"}>
-                              <Box>
-                                <h1 className="text-xl font-bold text-green-600">
-                                  ₹{paymentData.amount_paid1}
-                                </h1>
-                                <span className="text-md font-medium">
-                                  <i>{paymentData.method}</i>
-                                </span>
-                              </Box>
-                            </VStack>
-                          </HStack>
-                          {!paymentData.usn && (
-                            <Button
+                        return (
+                          <>
+                            <HStack
+                              key={paymentData.challan_id + index}
                               w={"full"}
-                              colorScheme="blue"
-                              onClick={() => {
-                                dispatch(
-                                  updateUSN({
-                                    challan_no: paymentData.challan_id,
-                                    usn,
-                                    college: user?.college!,
-                                  })
-                                ).then(() => {
-                                  onChallanFilter();
-                                });
-                              }}
-                              isLoading={isUpdatingUSN}
+                              className={"border-b border-b-lightgray"}
+                              bg={"gray.50"}
+                              px={"5"}
+                              py={"2"}
                             >
-                              Save USN No.
-                            </Button>
-                          )}
-                        </>
-                      );
-                    })}
+                              <VStack flex={1} alignItems={"start"}>
+                                <HStack justifyContent={"start"}>
+                                  <VStack
+                                    justifyContent={"start"}
+                                    alignItems={"start"}
+                                  >
+                                    <Heading
+                                      size={"sm"}
+                                      textTransform={"capitalize"}
+                                      whiteSpace={"nowrap"}
+                                    >
+                                      {paymentData?.name
+                                        .toString()
+                                        .toLowerCase()}{" "}
+                                      {paymentData.usn ? (
+                                        `(${paymentData.usn})`
+                                      ) : (
+                                        <Input
+                                          size={"sm"}
+                                          px={"3"}
+                                          value={usn}
+                                          onChange={(e) =>
+                                            setUSN(e.target.value)
+                                          }
+                                          variant={"flushed"}
+                                          placeholder="Enter USN here ..."
+                                        />
+                                      )}
+                                    </Heading>
+                                    <Tag
+                                      size={"md"}
+                                      variant={"outline"}
+                                      colorScheme={"teal"}
+                                      fontWeight={"bold"}
+                                    >
+                                      CH No. {paymentData.challan_id}
+                                    </Tag>
+                                  </VStack>
+                                </HStack>
+                                <span className="text-sm">
+                                  {paymentData.date}
+                                </span>
+                              </VStack>
+                              <VStack flex={1} alignItems={"end"}>
+                                <Box>
+                                  <h1 className="text-xl font-bold text-green-600">
+                                    ₹{paymentData.amount_paid1}
+                                  </h1>
+                                  <span className="text-md font-medium">
+                                    <i>{paymentData.method}</i>
+                                  </span>
+                                </Box>
+                              </VStack>
+                            </HStack>
+                            {!paymentData.usn && (
+                              <Button
+                                w={"full"}
+                                colorScheme="blue"
+                                onClick={() => {
+                                  dispatch(
+                                    updateUSN({
+                                      challan_no: paymentData.challan_id,
+                                      usn,
+                                      college: user?.college!,
+                                    })
+                                  ).then(() => {
+                                    onChallanFilter();
+                                  });
+                                }}
+                                isLoading={isUpdatingUSN}
+                              >
+                                Save USN No.
+                              </Button>
+                            )}
+                          </>
+                        );
+                      })}
                 </VStack>
               </IModal>
               <Menu>
@@ -394,7 +397,10 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         }
                       >
                         <option value={""}>Select Year</option>
-                        {(user?.college == "KSIT" ? [{ year: 1 }, { year: 2 }, { year: 3 }, { year: 4 }] : yearList).map((option: any) => (
+                        {(user?.college == "KSIT"
+                          ? [{ year: 1 }, { year: 2 }, { year: 3 }, { year: 4 }]
+                          : yearList
+                        ).map((option: any) => (
                           <option value={option?.year} key={option?.year}>
                             {option?.year}
                           </option>
@@ -412,18 +418,10 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         value={state.status}
                       >
                         <option value={""}>Select Status</option>
-                        <option value={"ALL"}>
-                          All
-                        </option>
-                        <option value={"NOT PAID"}>
-                          Not Paid
-                        </option>
-                        <option value={"PARTIALLY PAID"}>
-                          Partially Paid
-                        </option>
-                        <option value={"FULL PAID"}>
-                          Full Paid
-                        </option>
+                        <option value={"ALL"}>All</option>
+                        <option value={"NOT PAID"}>Not Paid</option>
+                        <option value={"PARTIALLY PAID"}>Partially Paid</option>
+                        <option value={"FULL PAID"}>Full Paid</option>
                       </Select>
                     </FormControl>
                     <FormControl w={"full"}>
@@ -539,7 +537,15 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                 value={modeFilterState.year}
                               >
                                 <option value={"ALL"}>All</option>
-                                {(user?.college == "KSIT" ? [{ year: 1 }, { year: 2 }, { year: 3 }, { year: 4 }] : yearList).map((option: any) => (
+                                {(user?.college == "KSIT"
+                                  ? [
+                                      { year: 1 },
+                                      { year: 2 },
+                                      { year: 3 },
+                                      { year: 4 },
+                                    ]
+                                  : yearList
+                                ).map((option: any) => (
                                   <option
                                     value={option?.year}
                                     key={option?.year}

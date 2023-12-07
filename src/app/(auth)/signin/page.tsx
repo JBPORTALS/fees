@@ -21,7 +21,7 @@ export default function Home() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
   const onSignin = async () => {
     setIsLoading(true);
@@ -31,19 +31,19 @@ export default function Home() {
     });
 
     if (error) {
-      toast.error("Invalid credentials !")
+      toast.error("Invalid credentials !");
       setIsLoading(false);
     } else {
-      router.refresh()
-    };
+      router.refresh();
+    }
   };
 
   return (
     <Stack spacing={8} mx={"auto"} maxW={"md"} py={12} px={6}>
       <Stack align={"center"}>
-        <Heading fontSize={"3xl"}>Sign in to Fee Manager</Heading>
+        <Heading fontSize={"3xl"}>Sign in to Hostel Manager</Heading>
         <Text fontSize={"lg"} color={"gray.600"}>
-          To manage Fee Details
+          To manage Hostel Details
         </Text>
       </Stack>
       <Box rounded={"lg"} bg={"white"} boxShadow={"lg"} p={8}>
