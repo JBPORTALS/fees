@@ -28,7 +28,7 @@ import { Link } from "@chakra-ui/next-js";
 
 export default function Home() {
   const params = useSearchParams();
-  const college = useAppSelector(state => state.fees.user)?.college;
+  const college = useAppSelector((state) => state.fees.user)?.college;
 
   const branch = params.get("branch");
   const year = params.get("year");
@@ -54,7 +54,7 @@ export default function Home() {
         <VStack justifyContent={"center"}>
           <Spinner borderWidth={"2px"} size={"xl"} color="blue.700" />
           <Heading size={"md"} mt={"3"}>
-            Searching...
+            Searching....
           </Heading>
         </VStack>
       </Center>
@@ -168,7 +168,7 @@ export default function Home() {
               : (feeSearchColumns as any)
           }
           alwaysShowHorizontalScroll
-          onRowEditingStarted={(e) => { }}
+          onRowEditingStarted={(e) => {}}
         />
       ) : feeFilter.length == 0 && Error ? (
         <Center h={"100%"} pb={"20"} flexDir={"column"}>
