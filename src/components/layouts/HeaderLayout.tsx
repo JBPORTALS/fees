@@ -32,6 +32,7 @@ import { useAppDispatch } from "@/hooks";
 import { fetchYearList } from "@/store/fees.slice";
 import { useAppSelector } from "@/store";
 import { SC } from "@/utils/supabase";
+import Link from "next/link";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -62,29 +63,31 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
         left={"0"}
         className="bg-secondary border-b border-b-lightgray"
       >
-        <HStack color={"blue.600"}>
-          <div className="relative flex h-8 w-28">
-            <Image
-              quality={100}
-              alt={"nexuss"}
-              src={"/nexuss.png"}
-              priority
-              sizes="10vh"
-              fill
-            />
-          </div>
-          <Heading
-            fontFamily={"sans-serif"}
-            size={"md"}
-            pt={1.5}
-            letterSpacing={1}
-            position={"relative"}
-            color={"gray.700"}
-            fontWeight={"semibold"}
-          >
-            • Fee Master
-          </Heading>
-        </HStack>
+        <Link href={"/dashboard"}>
+          <HStack color={"blue.600"}>
+            <div className="relative flex h-8 w-28">
+              <Image
+                quality={100}
+                alt={"nexuss"}
+                src={"/nexuss.png"}
+                priority
+                sizes="10vh"
+                fill
+              />
+            </div>
+            <Heading
+              fontFamily={"sans-serif"}
+              size={"md"}
+              pt={1.5}
+              letterSpacing={1}
+              position={"relative"}
+              color={"gray.700"}
+              fontWeight={"semibold"}
+            >
+              • Fee Master
+            </Heading>
+          </HStack>
+        </Link>
         <HStack>
           <InputGroup rounded={"2xl"}>
             <Input
