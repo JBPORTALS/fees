@@ -19,10 +19,13 @@ export const fetchFeeDetails = createAsyncThunk<
   }
 >(
   "/fees/fetchFeeDetails",
-  async (payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("branch", payload.branch);
       formData.append("year", payload.year);
       formData.append("college", payload.college);
@@ -49,10 +52,13 @@ export const fetchBranchFeeDetails = createAsyncThunk<
   }
 >(
   "/fees/fetchbranchview",
-  async (_payload, { fulfillWithValue, rejectWithValue }) => {
+  async (_payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("college", _payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feebranchview.php",
@@ -79,10 +85,13 @@ export const fetchOverAllFee = createAsyncThunk<
   }
 >(
   "/fees/fetchoverallfee",
-  async (_payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async (_payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("college", _payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeoverall.php",
@@ -128,10 +137,13 @@ export const fetchSearchByMode = createAsyncThunk<
   }
 >(
   "/fees/fetchsearchresults",
-  async (payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("branch", payload.branch);
       formData.append("year", payload.year);
       formData.append("mode", payload.mode);
@@ -166,10 +178,13 @@ export const fetchSearchRecord = createAsyncThunk<
   }
 >(
   "/fees/fetchSearchBymode",
-  async (payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("searchdata", payload.query);
       formData.append("college", payload.college);
 
@@ -196,10 +211,13 @@ export const fetchFeeYearView = createAsyncThunk<
   }
 >(
   "/fees/fetchyearview",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("branch", payload.branch);
       formData.append("college", payload.college);
       const response = await axios({
@@ -229,10 +247,13 @@ export const fetchSelectedFeeDeatails = createAsyncThunk<
   }
 >(
   "/fees/fetchSelectedFeeDeatails",
-  async (payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("regno", payload.regno);
       formData.append("id", payload.id);
       formData.append("college", payload.college);
@@ -263,10 +284,13 @@ export const fetchSelectedFeeSearchDetails = createAsyncThunk<
   }
 >(
   "/fees/fetchSelectedFeeSearchDeatails",
-  async (payload, { fulfillWithValue, rejectWithValue, dispatch }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("id", payload.id);
       formData.append("regno", payload.regno);
       formData.append("college", payload.college);
@@ -306,7 +330,9 @@ export const updateFeeDetail = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
       const selectedFee = state.fees.selected_fee.data;
+      formData.append("acadYear", acadyear);
       formData.append("id", selectedFee[0].id);
       formData.append("regno", selectedFee[0].regno);
       formData.append("name", selectedFee[0].name);
@@ -353,24 +379,30 @@ export const updateUSN = createAsyncThunk<
       msg: string;
     };
   }
->("/fees/updateUSN", async (payload, { fulfillWithValue, rejectWithValue }) => {
-  var data;
-  try {
-    const formData = new FormData();
-    formData.append("challan_no", payload.challan_no);
-    formData.append("usn", payload.usn);
-    formData.append("college", payload.college);
-    const response = await axios({
-      url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php",
-      method: "POST",
-      data: formData,
-    });
-    data = response.data;
-    return fulfillWithValue(data);
-  } catch (error: any) {
-    return rejectWithValue({ msg: error.response.data.msg });
+>(
+  "/fees/updateUSN",
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
+      formData.append("challan_no", payload.challan_no);
+      formData.append("usn", payload.usn);
+      formData.append("college", payload.college);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
   }
-});
+);
 
 export const fetchBranchList = createAsyncThunk<
   [],
@@ -382,10 +414,13 @@ export const fetchBranchList = createAsyncThunk<
   }
 >(
   "/fees/fetchBranchList",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "retrievebranches.php",
@@ -410,10 +445,13 @@ export const fetchYearList = createAsyncThunk<
   }
 >(
   "/fees/fetchYears",
-  async (payload, { fulfillWithValue, rejectWithValue }) => {
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
     var data;
     try {
       const formData = new FormData();
+      const state = getState() as RootState;
+      const acadyear = state.fees.acadYear;
+      formData.append("acadYear", acadyear);
       formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "retrieveyears.php",
@@ -509,6 +547,7 @@ export interface SelectedFee extends Fee {
 }
 
 interface FeesIntialState {
+  acadYear: string;
   year_list: [];
   all_fee: {
     data: Fee[];
@@ -560,6 +599,7 @@ interface FeesIntialState {
 }
 
 const initialState: FeesIntialState = {
+  acadYear: "2023",
   year_list: [],
   all_fee: {
     data: [],
