@@ -1041,11 +1041,7 @@ export default function WithUSNDynamicPage() {
               <HStack
                 position={"sticky"}
                 bottom={"0"}
-                justifyContent={
-                  params.paymentType === "FEE" && user?.college === "KSSEM"
-                    ? "space-between"
-                    : "end"
-                }
+                justifyContent={"space-between"}
                 w={"full"}
                 p={"4"}
                 zIndex={"modal"}
