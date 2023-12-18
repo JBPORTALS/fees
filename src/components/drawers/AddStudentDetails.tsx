@@ -40,12 +40,10 @@ const Schema = Yup.object().shape({
   sem: Yup.string().required("Sem is required"),
   category: Yup.string().required("Year is required"),
   college: Yup.string(),
-  student_college: Yup.string().when("college", {
-    is: (college: string) => college === "HOSTEL",
-    then: Yup.string().required(
-      "Student College is required when College is HOSTEL"
-    ),
-    otherwise: Yup.string(), // Optional field when college is not HOSTEL
+  student_college: Yup.string().when("college", ([college], sch) => {
+    return college == "HOSTEL"
+      ? sch.required("College is required")
+      : sch.optional();
   }),
   branch: Yup.string().required("Branch is required"),
   total: Yup.number().required().min(0).typeError("invalid number"),
