@@ -903,7 +903,7 @@ export default function WithoutUSNDynamicPage() {
                 ? "feegenerateonlinewithoutusn.php"
                 : paymentType == "MISCELLANEOUS"
                 ? "feegeneratemiscellaneouswithoutusn.php"
-                : user?.college == "KSPT"
+                : user?.college == "KSPT" || user?.college == "KSSA"
                 ? "feekspreceipt.php"
                 : "feegeneraterecieptwithoutusn.php";
 

@@ -30,6 +30,8 @@ const initialState = {
   branch: "",
   total: "",
   category: "",
+  student_college: "",
+  college: "",
 };
 
 const Schema = Yup.object().shape({
@@ -37,6 +39,14 @@ const Schema = Yup.object().shape({
   name: Yup.string().required().min(2),
   sem: Yup.string().required("Sem is required"),
   category: Yup.string().required("Year is required"),
+  college: Yup.string(),
+  student_college: Yup.string().when("college", {
+    is: (college: string) => college === "HOSTEL",
+    then: Yup.string().required(
+      "Student College is required when College is HOSTEL"
+    ),
+    otherwise: Yup.string(), // Optional field when college is not HOSTEL
+  }),
   branch: Yup.string().required("Branch is required"),
   total: Yup.number().required().min(0).typeError("invalid number"),
 });
@@ -83,6 +93,7 @@ export default function AddStudentsDetails({ children }: props) {
   ) as [];
   const user = useAppSelector((state) => state.fees.user);
   const dispatch = useAppDispatch();
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   const {
     errors,
@@ -111,6 +122,8 @@ export default function AddStudentsDetails({ children }: props) {
       formData.append("branch", values.branch);
       formData.append("total_fee", values.total);
       formData.append("college", user?.college!);
+      formData.append("acadyear", acadYear);
+      formData.append("student_college", acadYear);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentadd.php",
         {
@@ -160,6 +173,18 @@ export default function AddStudentsDetails({ children }: props) {
           position={"relative"}
         >
           <>
+            <FormControl hidden px={"5"}>
+              <FormLabel flex={1}>
+                <Text>College</Text>
+              </FormLabel>
+              <Input
+                name="college"
+                bg={"white"}
+                variant={"filled"}
+                flex={"1.5"}
+                value={user?.college}
+              />
+            </FormControl>
             <FormControl
               isInvalid={!!errors.usn?.length && touched.usn}
               px={"5"}
@@ -222,6 +247,32 @@ export default function AddStudentsDetails({ children }: props) {
                 ))}
               </Select>
               <FormErrorMessage>{errors.sem}</FormErrorMessage>
+            </FormControl>
+
+            <FormControl
+              isInvalid={!!errors.branch?.length && touched.branch}
+              px={"5"}
+            >
+              <FormLabel flex={1}>
+                <Text>Branch</Text>
+              </FormLabel>
+              <Select
+                name="branch"
+                bg={"white"}
+                variant={"filled"}
+                flex={"1.5"}
+                value={values.branch}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              >
+                <option value={""}>Select Branch</option>
+                {branch_list.map((branch: any) => (
+                  <option key={branch} value={branch.branch}>
+                    {branch.branch}
+                  </option>
+                ))}
+              </Select>
+              <FormErrorMessage>{errors.branch}</FormErrorMessage>
             </FormControl>
 
             <FormControl

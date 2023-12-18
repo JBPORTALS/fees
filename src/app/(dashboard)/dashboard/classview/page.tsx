@@ -18,7 +18,7 @@ export default function BranchViewPage() {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
-  const user = useAppSelector(state => state.fees.user);
+  const user = useAppSelector((state) => state.fees.user);
   const dispatch = useAppDispatch();
   const yearList = useAppSelector((state) => state.fees.year_list);
 
@@ -43,8 +43,8 @@ export default function BranchViewPage() {
             setState((prev) => ({ ...prev, branch: value as string }))
           }
           options={branch_list.map((option: any) => ({
-            option: option.branch,
-            value: option.branch,
+            option: option[user?.college == "HOSTEL" ? "college" : "branch"],
+            value: option[user?.college == "HOSTEL" ? "college" : "branch"],
           }))}
         />
 

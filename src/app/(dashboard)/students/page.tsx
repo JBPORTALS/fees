@@ -5,10 +5,11 @@ import ISelect from "@/components/ui/utils/ISelect";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import { fetchFeeDetails } from "@/store/fees.slice";
+import { fetchFeeDetails, fetchYearList } from "@/store/fees.slice";
 import { Button, HStack, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { AiOutlineFileExcel, AiOutlineUserAdd } from "react-icons/ai";
 
 export default function Students() {
   const [state, setState] = useState({
@@ -34,19 +35,24 @@ export default function Students() {
       );
   }, [state.branch, state.year, dispatch, user?.college]);
 
+  useEffect(() => {
+    if (user?.college == "HOSTEL" && state.branch)
+      dispatch(fetchYearList({ college: state.branch }));
+  }, [state.branch, user?.college]);
+
   return (
     <>
       <div className="w-full flex justify-between border-b py-3 space-x-3 px-5">
         <div className="flex space-x-3 px-5">
           <ISelect
-            placeHolder="Branch"
+            placeHolder={user?.college == "HOSTEL" ? "College" : "Branch"}
             value={state.branch}
             onChange={(value) =>
               setState((prev) => ({ ...prev, branch: value as string }))
             }
             options={branch_list.map((option: any) => ({
-              option: option.branch,
-              value: option.branch,
+              option: option[user?.college == "HOSTEL" ? "college" : "branch"],
+              value: option[user?.college == "HOSTEL" ? "college" : "branch"],
             }))}
           />
 
@@ -68,8 +74,10 @@ export default function Students() {
           {state.branch && state.year && (
             <Button
               size={"sm"}
-              colorScheme={"whatsapp"}
+              download
+              leftIcon={<AiOutlineFileExcel />}
               target={"_blank"}
+              variant={"ghost"}
               as={Link}
               href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}`}
             >
@@ -79,12 +87,13 @@ export default function Students() {
           <AddStudentsDetails>
             {({ onOpen }) => (
               <Button
+                leftIcon={<AiOutlineUserAdd />}
                 onClick={onOpen}
                 marginLeft={"auto"}
                 size={"sm"}
-                colorScheme="purple"
+                colorScheme="facebook"
               >
-                Add Student
+                New Student
               </Button>
             )}
           </AddStudentsDetails>

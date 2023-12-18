@@ -78,8 +78,8 @@ export default function BranchViewPage() {
           value={branch}
           onChange={(value) => setBranch(value as string)}
           options={branch_list.map((option: any) => ({
-            option: option.branch,
-            value: option.branch,
+            option: option[user?.college == "HOSTEL" ? "college" : "branch"],
+            value: option[user?.college == "HOSTEL" ? "college" : "branch"],
           }))}
         />
       </div>

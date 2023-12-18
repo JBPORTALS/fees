@@ -27,18 +27,16 @@ export default function GenerateRecieptLayout({
 
   return (
     <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
-      <HStack px={"5"} py={"1"} className="border-gray-300 border-b">
-        <IconButton
+      <HStack px={"5"} py={"3"} className="border-gray-300 border-b">
+        {/* <IconButton
           as={Link}
           href={"/dashboard"}
           variant={"ghost"}
           rounded={"full"}
           aria-label="back"
           icon={<AiOutlineArrowLeft className="text-2xl" />}
-        />
-        <Heading size={"md"} color={"gray.600"}>
-          Generate Reciept
-        </Heading>
+        /> */}
+        <Heading size={"md"}>New Reciept</Heading>
       </HStack>
       <Tabs
         isLazy
