@@ -1041,14 +1041,14 @@ export default function WithUSNDynamicPage() {
               <HStack
                 position={"sticky"}
                 bottom={"0"}
-                justifyContent={"space-between"}
+                justifyContent={"end"}
                 w={"full"}
                 p={"4"}
                 zIndex={"modal"}
                 className="border-t border-gray-300 backdrop-blur-sm"
               >
                 {/* {params.paymentType === "FEE" && user?.college === "KSSEM" && ( */}
-                <HStack>
+                {/* <HStack>
                   <FormControl display="flex" alignItems="center">
                     <FormLabel htmlFor="fee-mutation" mb="0">
                       Auto Fee Updation
@@ -1061,17 +1061,17 @@ export default function WithUSNDynamicPage() {
                       id="fee-mutation"
                     />
                   </FormControl>
-                </HStack>
+                </HStack> */}
                 {/* )} */}
                 <Button
                   size={"lg"}
                   isLoading={isSubmitting || isValidating}
                   onClick={() => {
-                    if (isMutable) {
-                      onOpen();
-                    } else {
-                      handleSubmit();
-                    }
+                    // if (isMutable) {
+                    //   onOpen();
+                    // } else {
+                    handleSubmit();
+                    // }
                   }}
                   isDisabled={
                     Object.keys(errors).length > 0 ||
