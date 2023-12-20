@@ -1047,22 +1047,22 @@ export default function WithUSNDynamicPage() {
                 zIndex={"modal"}
                 className="border-t border-gray-300 backdrop-blur-sm"
               >
-                {params.paymentType === "FEE" && user?.college === "KSSEM" && (
-                  <HStack>
-                    <FormControl display="flex" alignItems="center">
-                      <FormLabel htmlFor="fee-mutation" mb="0">
-                        Auto Fee Updation
-                      </FormLabel>
-                      <Switch
-                        isChecked={isMutable}
-                        onChange={(e) => {
-                          setIsMustable(!isMutable);
-                        }}
-                        id="fee-mutation"
-                      />
-                    </FormControl>
-                  </HStack>
-                )}
+                {/* {params.paymentType === "FEE" && user?.college === "KSSEM" && ( */}
+                <HStack>
+                  <FormControl display="flex" alignItems="center">
+                    <FormLabel htmlFor="fee-mutation" mb="0">
+                      Auto Fee Updation
+                    </FormLabel>
+                    <Switch
+                      isChecked={isMutable}
+                      onChange={(e) => {
+                        setIsMustable(!isMutable);
+                      }}
+                      id="fee-mutation"
+                    />
+                  </FormControl>
+                </HStack>
+                {/* )} */}
                 <Button
                   size={"lg"}
                   isLoading={isSubmitting || isValidating}
