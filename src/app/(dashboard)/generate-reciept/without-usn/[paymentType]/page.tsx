@@ -520,6 +520,10 @@ export default function WithoutUSNDynamicPage() {
       validateField: Yup.string().required("Fill the field !"),
       options: [
         {
+          value: "Registration Fee",
+          option: "Registration Fee",
+        },
+        {
           value: "Library Fine",
           option: "Library Fine",
         },
