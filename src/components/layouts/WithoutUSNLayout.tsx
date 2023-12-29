@@ -38,6 +38,8 @@ export default function WithoutUSNLayout({
           ? 3
           : pathname === "/generate-reciept/without-usn/HOSTEL_FEE"
           ? 4
+          : pathname === "/generate-reciept/without-usn/REGISTRATION_FEE"
+          ? 5
           : -1
       }
       colorScheme={"purple"}
@@ -105,6 +107,16 @@ export default function WithoutUSNLayout({
           >
             Hostel Fee
             {pathname == "/generate-reciept/without-usn/HOSTEL_FEE" && (
+              <AiOutlineCheck className="text-md" />
+            )}
+          </Tab>
+          <Tab
+            as={Link}
+            href={"/generate-reciept/without-usn/REGISTRATION_FEE"}
+            _hover={{ textDecoration: "none" }}
+          >
+            Registration Fee
+            {pathname == "/generate-reciept/without-usn/REGISTRATION_FEE" && (
               <AiOutlineCheck className="text-md" />
             )}
           </Tab>

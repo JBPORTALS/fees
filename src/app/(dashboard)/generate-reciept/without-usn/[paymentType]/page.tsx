@@ -792,7 +792,79 @@ export default function WithoutUSNDynamicPage() {
     },
     {
       name: "hostelFee",
-      label: "Total Security Deposit Amount",
+      label: "Total Amount",
+      type: "number",
+      validateField: Yup.number()
+        .typeError("Invalid amount")
+        .moreThan(0, "Amount should be more than 0")
+        .required(),
+    },
+    {
+      name: "bank",
+      label: "Bank",
+      type: "select",
+      placeholder: "Select Bank",
+      options: BANKS(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+    {
+      name: "paymentMode",
+      label: "Payment Mode",
+      type: "select",
+      placeholder: "Select Payment Mode",
+      options: PAYMENTMODES(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+  ];
+
+  const registrationFeeTemplate = [
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: SEMS(user?.college),
+    },
+    {
+      name: "acadYear",
+      label: "Academic Year",
+      type: "select",
+      placeholder: "Select Academic Year",
+      validateField: Yup.string().required("Fill the field !"),
+      options: [
+        {
+          value: "2023-24",
+          option: "2023-24",
+        },
+        {
+          value: "2022-23",
+          option: "2022-23",
+        },
+      ],
+    },
+    {
+      name: "total",
+      label: "Total Amount",
       type: "number",
       validateField: Yup.number()
         .typeError("Invalid amount")
@@ -902,8 +974,13 @@ export default function WithoutUSNDynamicPage() {
           try {
             const filename =
               state.paymentMode == "ONLINE" &&
-              paymentType !== "MISCELLANEOUS" &&
-              user?.college !== "KSPT"
+              paymentType === "REGISTRATION_FEE"
+                ? "feegenerateonlineregistarionfee.php"
+                : paymentType === "REGISTRATION_FEE"
+                ? "feegenerateregistarionfee.php"
+                : state.paymentMode == "ONLINE" &&
+                  paymentType !== "MISCELLANEOUS" &&
+                  user?.college !== "KSPT"
                 ? "feegenerateonlinewithoutusn.php"
                 : paymentType == "MISCELLANEOUS"
                 ? "feegeneratemiscellaneouswithoutusn.php"
@@ -986,6 +1063,8 @@ export default function WithoutUSNDynamicPage() {
               ? securityFeeTemplate
               : paymentType == "HOSTEL_FEE"
               ? hostelFeeTemplate
+              : paymentType == "REGISTRATION_FEE"
+              ? registrationFeeTemplate
               : undefined;
 
           return (

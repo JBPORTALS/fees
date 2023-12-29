@@ -12,6 +12,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
@@ -48,6 +49,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
   const supabase = SC();
   const user = useAppSelector((state) => state.fees.user);
   const [query, setQuery] = useState("");
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const router = useRouter();
 
@@ -176,6 +178,9 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
                     </Heading>
                   </HStack>
                   <HStack spacing={"3"} py={"2"}>
+                    {/* <Button onClick={toggleColorMode} w={"full"}>
+                      Toggle {colorMode === "light" ? "Dark" : "Light"}
+                    </Button> */}
                     <Button
                       leftIcon={<AiOutlineLogout />}
                       onClick={async () => {
