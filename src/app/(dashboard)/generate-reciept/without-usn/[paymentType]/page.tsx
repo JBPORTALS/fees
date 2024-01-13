@@ -42,6 +42,7 @@ import {
   SEMS,
 } from "@/components/mock-data/constants";
 import { useState } from "react";
+import { FaInfoCircle } from "react-icons/fa";
 
 const initialValues = {
   name: "", //✅
@@ -188,9 +189,22 @@ export default function WithoutUSNDynamicPage() {
 
   const user = useAppSelector((state) => state.fees.user);
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [isMutable, setIsMustable] = useState(false);
+  const [isAutoAddEnabled, setIsAutoAddEnabled] = useState(false);
   const params = useParams();
   const paymentType = params.paymentType;
+
+  useEffect(() => {
+    if (isAutoAddEnabled)
+      toast({
+        colorScheme: "blue",
+        variant: "subtle",
+        position: "top",
+        icon: <FaInfoCircle />,
+        description:
+          "Notice: Automatic Add Student is enabled; student data will be updated in database upon challan generation.",
+        title: "Automatic add student turned on",
+      });
+  }, [isAutoAddEnabled]);
 
   const feeTemplate = [
     {
@@ -948,7 +962,7 @@ export default function WithoutUSNDynamicPage() {
                   )
                   .join("&")}&paymentType=${paymentType}&college=${
                   user?.college
-                }&mutable=${isMutable}`
+                }&auto_add=${isAutoAddEnabled}`
             );
             const link = document.createElement("a");
             link.href =
@@ -964,7 +978,7 @@ export default function WithoutUSNDynamicPage() {
                 )
                 .join("&")}&paymentType=${paymentType}&college=${
                 user?.college
-              }&mutable=${isMutable}`;
+              }&auto_add=${isAutoAddEnabled}`;
             link.setAttribute("download", "Fee Reciept Offline.pdf");
             link.setAttribute("target", "_blank");
             document.body.appendChild(link);
@@ -1067,24 +1081,30 @@ export default function WithoutUSNDynamicPage() {
               <HStack
                 position={"sticky"}
                 bottom={"0"}
-                justifyContent={"end"}
+                justifyContent={"space-between"}
                 w={"full"}
                 p={"4"}
                 className="border-t border-gray-300 backdrop-blur-sm"
               >
-                {/* <HStack>
+                <HStack>
                   <FormControl display="flex" alignItems="center">
                     <FormLabel htmlFor="fee-mutation" mb="0">
-                      Auto Fee Updation
+                      Auto Add Student
                     </FormLabel>
-                    <Switch id="fee-mutation" />
+                    <Switch
+                      id="fee-mutation"
+                      isChecked={isAutoAddEnabled}
+                      onChange={(e) => {
+                        setIsAutoAddEnabled(!isAutoAddEnabled);
+                      }}
+                    />
                   </FormControl>
-                </HStack> */}
+                </HStack>
                 <Button
                   size={"lg"}
                   isLoading={isSubmitting || isValidating}
                   onClick={() => {
-                    if (isMutable) {
+                    if (isAutoAddEnabled) {
                       onOpen();
                     } else {
                       handleSubmit();
@@ -1106,9 +1126,7 @@ export default function WithoutUSNDynamicPage() {
                 <ModalContent>
                   <ModalHeader>📢 Are you sure?</ModalHeader>
                   <ModalBody>
-                    {`Generating the receipt will permanently alter the student's
-                    total fee. Confirm only after reviewing the details
-                    carefully.`}
+                    {`Generating the receipt will create new student record.`}
                   </ModalBody>
                   <ModalFooter gap={3}>
                     <Button variant={"ghost"}>Cancel</Button>
