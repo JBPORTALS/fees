@@ -1081,7 +1081,7 @@ export default function WithoutUSNDynamicPage() {
               <HStack
                 position={"sticky"}
                 bottom={"0"}
-                justifyContent={"space-between"}
+                justifyContent={"end"}
                 w={"full"}
                 p={"4"}
                 className="border-t border-gray-300 backdrop-blur-sm"
