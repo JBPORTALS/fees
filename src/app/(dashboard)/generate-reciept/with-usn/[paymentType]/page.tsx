@@ -30,6 +30,7 @@ import { useParams } from "next/navigation";
 import { AiOutlineFileDone, AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
 import {
+  ACADYEARS,
   BANKS,
   CATS,
   PAYMENTMODES,
@@ -241,16 +242,7 @@ export default function WithUSNDynamicPage() {
       type: "select",
       placeholder: "Select Academic Year",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        {
-          value: "2023-24",
-          option: "2023-24",
-        },
-        {
-          value: "2022-23",
-          option: "2022-23",
-        },
-      ],
+      options: ACADYEARS(),
     },
 
     {
@@ -531,16 +523,7 @@ export default function WithUSNDynamicPage() {
       type: "select",
       placeholder: "Select Academic Year",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        {
-          value: "2023-24",
-          option: "2023-24",
-        },
-        {
-          value: "2022-23",
-          option: "2022-23",
-        },
-      ],
+      options: ACADYEARS(),
     },
     {
       name: "bank",
@@ -615,16 +598,7 @@ export default function WithUSNDynamicPage() {
       type: "select",
       placeholder: "Select Academic Year",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        {
-          value: "2023-24",
-          option: "2023-24",
-        },
-        {
-          value: "2022-23",
-          option: "2022-23",
-        },
-      ],
+      options: ACADYEARS(),
     },
     {
       name: "excessFee",
@@ -699,16 +673,7 @@ export default function WithUSNDynamicPage() {
       type: "select",
       placeholder: "Select Academic Year",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        {
-          value: "2023-24",
-          option: "2023-24",
-        },
-        {
-          value: "2022-23",
-          option: "2022-23",
-        },
-      ],
+      options: ACADYEARS(),
     },
     {
       name: "securityDeposit",
@@ -783,16 +748,7 @@ export default function WithUSNDynamicPage() {
       type: "select",
       placeholder: "Select Academic Year",
       validateField: Yup.string().required("Fill the field !"),
-      options: [
-        {
-          value: "2023-24",
-          option: "2023-24",
-        },
-        {
-          value: "2022-23",
-          option: "2022-23",
-        },
-      ],
+      options: ACADYEARS(),
     },
     {
       name: "hostelFee",

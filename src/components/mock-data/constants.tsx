@@ -272,3 +272,20 @@ export const SEMS = (college: string | undefined) => {
       })),
     ];
 };
+
+export const ACADYEARS = () => {
+  return [
+    {
+      value: "2024-25",
+      option: "2024-25",
+    },
+    {
+      value: "2023-24",
+      option: "2023-24",
+    },
+    {
+      value: "2022-23",
+      option: "2022-23",
+    },
+  ];
+};
