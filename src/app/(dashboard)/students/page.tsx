@@ -6,15 +6,26 @@ import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails, fetchYearList } from "@/store/fees.slice";
-import { Button, HStack, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  FormControl,
+  HStack,
+  Menu,
+  MenuButton,
+  MenuList,
+  Select,
+  VStack,
+} from "@chakra-ui/react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { AiOutlineFileExcel, AiOutlineUserAdd } from "react-icons/ai";
+import { AiOutlineDatabase, AiOutlineUserAdd } from "react-icons/ai";
+import { FaChevronDown } from "react-icons/fa";
 
 export default function Students() {
   const [state, setState] = useState({
     branch: "",
     year: "",
+    status: "ALL",
   });
 
   const branch_list = useAppSelector(
@@ -72,17 +83,91 @@ export default function Students() {
         </div>
         <HStack>
           {state.branch && state.year && (
-            <Button
-              size={"sm"}
-              download
-              leftIcon={<AiOutlineFileExcel />}
-              target={"_blank"}
-              variant={"ghost"}
-              as={Link}
-              href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}`}
-            >
-              Download Excel
-            </Button>
+            <Menu placement="bottom-end">
+              <MenuButton
+                as={Button}
+                leftIcon={<AiOutlineDatabase />}
+                size={"sm"}
+                variant={"ghost"}
+                rightIcon={<FaChevronDown />}
+                position={"sticky"}
+                zIndex={"popover"}
+              >
+                Download Class Data
+              </MenuButton>
+              <MenuList zIndex={"popover"} pos={"sticky"}>
+                <VStack px={"4"}>
+                  <FormControl>
+                    <Select
+                      value={state.branch}
+                      onChange={(e) =>
+                        setState((prev) => ({
+                          ...prev,
+                          branch: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value={""}>Select Branch</option>
+                      {branch_list.map((option: any) => (
+                        <option key={option?.branch} value={option?.branch}>
+                          {option?.branch}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <Select
+                      value={state.year}
+                      onChange={(e) =>
+                        setState((prev) => ({
+                          ...prev,
+                          year: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value={""}>Select Year</option>
+                      {(user?.college == "KSIT"
+                        ? [{ year: 1 }, { year: 2 }, { year: 3 }, { year: 4 }]
+                        : yearList
+                      ).map((option: any) => (
+                        <option value={option?.year} key={option?.year}>
+                          {option?.year}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <Select
+                      onChange={(e) =>
+                        setState((prev) => ({
+                          ...prev,
+                          status: e.target.value,
+                        }))
+                      }
+                      value={state.status}
+                    >
+                      <option value={""}>Select Status</option>
+                      <option value={"ALL"}>All</option>
+                      <option value={"NOT PAID"}>Not Paid</option>
+                      <option value={"PARTIALLY PAID"}>Partially Paid</option>
+                      <option value={"FULL PAID"}>Full Paid</option>
+                    </Select>
+                  </FormControl>
+                  <FormControl w={"full"}>
+                    <Button
+                      w={"full"}
+                      target={"_blank"}
+                      isDisabled={!state.branch || !state.year}
+                      colorScheme="blue"
+                      as={Link}
+                      href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}&status=${state.status}`}
+                    >
+                      Download Excel
+                    </Button>
+                  </FormControl>
+                </VStack>
+              </MenuList>
+            </Menu>
           )}
           <AddStudentsDetails>
             {({ onOpen }) => (
