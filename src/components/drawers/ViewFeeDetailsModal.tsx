@@ -119,6 +119,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
     formData.append("regno", selectedFeeDetails[0].regno);
     formData.append("total", state.total);
     formData.append("college", user?.college!);
+    formData.append("acadYear", acadYear);
     try {
       await axios(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdatetotal.php", {
         method: "POST",
