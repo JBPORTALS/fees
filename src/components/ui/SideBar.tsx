@@ -70,7 +70,7 @@ export default function SideBar() {
       >
         New Receipt
       </Button>
-      {/* <FormControl>
+      <FormControl>
         <Select
           rounded={"full"}
           value={acadYear}
@@ -80,10 +80,10 @@ export default function SideBar() {
             router.push("/dashboard");
           }}
         >
-          <option value={"2024"}>2024</option>
+          {/* <option value={"2024"}>2024</option> */}
           <option value={"2023"}>2023</option>
         </Select>
-      </FormControl> */}
+      </FormControl>
     </div>
   );
 }
