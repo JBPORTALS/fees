@@ -56,7 +56,7 @@ export default function SideBar() {
         leftIcon={<AiOutlinePlus className={"text-xl"} />}
         colorScheme={"facebook"}
       >
-        New Reciept
+        New Receipt
       </Button>
       <FormControl>
         <Select
