@@ -271,7 +271,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
                   target={"_blank"}
                   href={
                     process.env.NEXT_PUBLIC_ADMIN_URL +
-                    `feedownload.php?college=${user?.college}&id=${selectedFeeDetails[0]?.id}`
+                    `feedownload.php?college=${user?.college}&id=${selectedFeeDetails[0]?.id}&acadYear=${acadYear}`
                   }
                   colorScheme={"purple"}
                   leftIcon={<AiOutlineFileProtect className="text-xl" />}
