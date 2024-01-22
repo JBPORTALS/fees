@@ -6,14 +6,21 @@ import {
   MdSpaceDashboard,
 } from "react-icons/md";
 import NavButton from "./utils/NavButton";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, Divider, FormControl, Select, VStack } from "@chakra-ui/react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaUsers } from "react-icons/fa";
+import { useAppDispatch } from "@/hooks";
+import { changeAcadYear } from "@/store/fees.slice";
+import { useAppSelector } from "@/store";
 
 export default function SideBar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
+  const dispatch = useAppDispatch();
+
   return (
     <div className="bg-secondary gap-4 flex flex-col border-r p-3 border-slate-300 w-full col-span-1">
       <VStack pb={15} pt={5} w={"full"} gap={4}>
@@ -52,8 +59,16 @@ export default function SideBar() {
         New Reciept
       </Button>
       <FormControl>
-        <Select rounded={"full"}>
-          <option>2023</option>
+        <Select
+          rounded={"full"}
+          value={acadYear}
+          onChange={(e) => {
+            dispatch(changeAcadYear(e.target.value));
+            router.push("/dashboard");
+          }}
+        >
+          <option value={"2024"}>2024</option>
+          <option value={"2023"}>2023</option>
         </Select>
       </FormControl>
     </div>

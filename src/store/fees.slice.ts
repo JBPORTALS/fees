@@ -599,7 +599,7 @@ interface FeesIntialState {
 }
 
 const initialState: FeesIntialState = {
-  acadYear: "2023",
+  acadYear: "2024",
   year_list: [],
   all_fee: {
     data: [],
@@ -646,7 +646,11 @@ const initialState: FeesIntialState = {
 export const FeesSlice = createSlice({
   name: "fees",
   initialState,
-  reducers: {},
+  reducers: {
+    changeAcadYear: (state, action) => {
+      state.acadYear = action.payload;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchUser.pending, (state, _action) => {
@@ -812,3 +816,5 @@ export const FeesSlice = createSlice({
       });
   },
 });
+
+export const { changeAcadYear } = FeesSlice.actions;
