@@ -8,7 +8,14 @@ import {
 import NavButton from "./utils/NavButton";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button, Divider, FormControl, Select, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  Divider,
+  FormControl,
+  Select,
+  VStack,
+  useToast,
+} from "@chakra-ui/react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaUsers } from "react-icons/fa";
 import { useAppDispatch } from "@/hooks";
@@ -20,6 +27,11 @@ export default function SideBar() {
   const router = useRouter();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const dispatch = useAppDispatch();
+  const toast = useToast({
+    position: "bottom",
+    status: "info",
+    variant: "subtle",
+  });
 
   return (
     <div className="bg-secondary gap-4 flex flex-col border-r p-3 border-slate-300 w-full col-span-1">
@@ -59,17 +71,18 @@ export default function SideBar() {
         New Receipt
       </Button>
       <FormControl>
-        <Select
+        {/* <Select
           rounded={"full"}
           value={acadYear}
           onChange={(e) => {
             dispatch(changeAcadYear(e.target.value));
+            toast({ title: `Academic year changed to "${e.target.value}"` });
             router.push("/dashboard");
           }}
         >
           <option value={"2024"}>2024</option>
           <option value={"2023"}>2023</option>
-        </Select>
+        </Select> */}
       </FormControl>
     </div>
   );

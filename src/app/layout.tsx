@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
+import { ToastProvider } from "@chakra-ui/react";
 
 const inter = Inter({ subsets: ["greek"] });
 

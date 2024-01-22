@@ -2,14 +2,22 @@
 import FeesLayout from "@/components/layouts/FeesLayout";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import { fetchBranchFeeDetails, fetchBranchList, fetchOverAllFee, fetchYearList } from "@/store/fees.slice";
+import {
+  fetchBranchFeeDetails,
+  fetchBranchList,
+  fetchOverAllFee,
+  fetchYearList,
+} from "@/store/fees.slice";
 import { useEffect } from "react";
+
+export const revalidate = 0;
 
 export default function DashboardRootLayout(props: {
   children: React.ReactNode;
 }) {
   const dispatch = useAppDispatch();
-  const user = useAppSelector(state => state.fees.user)
+  const user = useAppSelector((state) => state.fees.user);
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   useEffect(() => {
     if (user?.college) {
@@ -18,8 +26,7 @@ export default function DashboardRootLayout(props: {
       dispatch(fetchBranchList({ college: user?.college! }));
       dispatch(fetchYearList({ college: user?.college! }));
     }
-  }, [dispatch, user?.college]);
-
+  }, [dispatch, user?.college, acadYear]);
 
   return <FeesLayout>{props?.children}</FeesLayout>;
 }
