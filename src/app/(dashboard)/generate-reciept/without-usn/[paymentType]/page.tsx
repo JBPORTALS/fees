@@ -65,6 +65,7 @@ const initialValues = {
   hostelFee: 0, //✅
   total: 0, //✅
   byApplicationId: false,
+  appid: "",
 };
 
 const FormikContextProvider = () => {
@@ -128,6 +129,7 @@ const FormikContextProvider = () => {
         setFieldValue("total_fee", res.data[0]?.total_fee);
         setFieldValue("remaining_fee", res.data[0]?.remaining_fee);
         setFieldValue("byApplicationId", true);
+        setFieldValue("appid", appId);
       }
     } catch (e: any) {
       toast({

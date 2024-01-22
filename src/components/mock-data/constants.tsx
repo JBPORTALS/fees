@@ -276,15 +276,15 @@ export const SEMS = (college: string | undefined) => {
 export const ACADYEARS = () => {
   return [
     {
-      value: "2024-25",
+      value: "2024",
       option: "2024-25",
     },
     {
-      value: "2023-24",
+      value: "2023",
       option: "2023-24",
     },
     {
-      value: "2022-23",
+      value: "2022",
       option: "2022-23",
     },
   ];
