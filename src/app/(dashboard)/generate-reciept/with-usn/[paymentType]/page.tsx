@@ -71,8 +71,8 @@ const FormikContextProvider = () => {
   const { values, setFieldValue } = useFormikContext<typeof initialValues>();
   const [usn, setUsn] = useState("");
   const [isLoading, setIsloading] = useState(false);
-  const [isFound, setIsFound] = useState(false);
   const user = useAppSelector((state) => state.fees.user);
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   useEffect(() => {
     setFieldValue(
@@ -96,11 +96,11 @@ const FormikContextProvider = () => {
 
   async function findStudent() {
     setIsloading(true);
-    setIsFound(false);
     try {
       const formData = new FormData();
       formData.append("usn", usn);
       formData.append("college", user?.college!);
+      formData.append("acadyear", acadYear);
       const res = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "retrievestudentdetails.php",
         {
@@ -118,11 +118,9 @@ const FormikContextProvider = () => {
         setFieldValue("category", res.data[0]?.category);
         setFieldValue("total_fee", res.data[0]?.total_fee);
         setFieldValue("remaining_fee", res.data[0]?.remaining_fee);
-        setIsFound(true);
       }
     } catch (e: any) {
       toast.error(e.response.data?.msg, { position: "bottom-center" });
-      setIsFound(false);
     }
     setIsloading(false);
   }
@@ -164,6 +162,7 @@ export default function WithUSNDynamicPage() {
   const [isMutable, setIsMustable] = useState(false);
 
   const user = useAppSelector((state) => state.fees.user);
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   const params = useParams();
   const { isOpen, onClose, onOpen } = useDisclosure();
