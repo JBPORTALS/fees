@@ -48,7 +48,7 @@ const initialValues = {
   branch: "",
   category: "", //✅
   misc_category: "", //✅
-  acadYear: "", //✅
+  chaAcadYear: "", //✅
   tuitionFee: 0, //✅
   collegeFee: 0, //✅
   labFee: 0, //✅

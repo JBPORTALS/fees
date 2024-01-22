@@ -49,7 +49,7 @@ const initialValues = {
   branch: "", //✅
   sem: "", //✅
   category: "", //✅
-  acadYear: "", //✅
+  chaAcadYear: "", //✅
   tuitionFee: 0, //✅
   collegeFee: 0, //✅
   labFee: 0, //✅
