@@ -100,7 +100,7 @@ const FormikContextProvider = () => {
       const formData = new FormData();
       formData.append("usn", usn);
       formData.append("college", user?.college!);
-      formData.append("acadyear", acadYear);
+      formData.append("acadYear", acadYear);
       const res = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "retrievestudentdetails.php",
         {

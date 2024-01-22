@@ -49,17 +49,18 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
   const [state, setState] = useState({ total: "" });
   const [isUpdating, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-  const user = useAppSelector((state) => state.fees.user)
+  const user = useAppSelector((state) => state.fees.user);
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
   const [challanState, setChallanState] = useState<
     | {
-      challan_id: string;
-      usn: string;
-      name: string;
-      date: string;
-      method: string;
-      amount_paid: string;
-      amount_paid1: string;
-    }
+        challan_id: string;
+        usn: string;
+        name: string;
+        date: string;
+        method: string;
+        amount_paid: string;
+        amount_paid1: string;
+      }
     | undefined
   >(undefined);
 
@@ -75,6 +76,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
       formData.append("challan_id", challanId);
       formData.append("reg_no", regno);
       formData.append("college", user?.college!);
+      formData.append("acadYear", acadYear);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "feesearchchallan.php",
         {

@@ -120,7 +120,7 @@ export default function AddStudentsDetails({ children }: props) {
       formData.append("branch", values.branch);
       formData.append("total_fee", values.total);
       formData.append("college", user?.college!);
-      formData.append("acadyear", acadYear);
+      formData.append("acadYear", acadYear);
       formData.append("student_college", acadYear);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentadd.php",

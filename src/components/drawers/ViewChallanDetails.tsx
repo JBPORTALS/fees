@@ -54,6 +54,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
   const fromDate = params.get("fromDate");
   const mode = params.get("mode");
   const feeType = params.get("feeType");
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   const findChallan = useCallback(async () => {
     setIsChecking(true);

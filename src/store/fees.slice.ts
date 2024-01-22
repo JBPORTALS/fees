@@ -24,8 +24,8 @@ export const fetchFeeDetails = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("branch", payload.branch);
       formData.append("year", payload.year);
       formData.append("college", payload.college);
@@ -57,8 +57,8 @@ export const fetchBranchFeeDetails = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("college", _payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feebranchview.php",
@@ -90,8 +90,8 @@ export const fetchOverAllFee = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("college", _payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeoverall.php",
@@ -142,8 +142,8 @@ export const fetchSearchByMode = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("branch", payload.branch);
       formData.append("year", payload.year);
       formData.append("mode", payload.mode);
@@ -183,8 +183,8 @@ export const fetchSearchRecord = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("searchdata", payload.query);
       formData.append("college", payload.college);
 
@@ -216,8 +216,8 @@ export const fetchFeeYearView = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("branch", payload.branch);
       formData.append("college", payload.college);
       const response = await axios({
@@ -252,8 +252,8 @@ export const fetchSelectedFeeDeatails = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("regno", payload.regno);
       formData.append("id", payload.id);
       formData.append("college", payload.college);
@@ -289,8 +289,8 @@ export const fetchSelectedFeeSearchDetails = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("id", payload.id);
       formData.append("regno", payload.regno);
       formData.append("college", payload.college);
@@ -330,9 +330,9 @@ export const updateFeeDetail = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
+      const acadYear = state.fees.acadYear;
       const selectedFee = state.fees.selected_fee.data;
-      formData.append("acadYear", acadyear);
+      formData.append("acadYear", acadYear);
       formData.append("id", selectedFee[0].id);
       formData.append("regno", selectedFee[0].regno);
       formData.append("name", selectedFee[0].name);
@@ -386,8 +386,8 @@ export const updateUSN = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("challan_no", payload.challan_no);
       formData.append("usn", payload.usn);
       formData.append("college", payload.college);
@@ -419,8 +419,8 @@ export const fetchBranchList = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "retrievebranches.php",
@@ -450,8 +450,8 @@ export const fetchYearList = createAsyncThunk<
     try {
       const formData = new FormData();
       const state = getState() as RootState;
-      const acadyear = state.fees.acadYear;
-      formData.append("acadYear", acadyear);
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
       formData.append("college", payload.college);
       const response = await axios({
         url: process.env.NEXT_PUBLIC_ADMIN_URL + "retrieveyears.php",
