@@ -75,7 +75,7 @@ const FormikContextProvider = () => {
   const [isLoading, setIsloading] = useState(false);
   const user = useAppSelector((state) => state.fees.user);
   const toast = useToast();
-  const acadYear = useAppSelector((state) => state.fees.acadYear);
+  const chaAcadYear = useAppSelector((state) => state.fees.acadYear);
 
   useEffect(() => {
     setFieldValue(
@@ -110,7 +110,7 @@ const FormikContextProvider = () => {
       const formData = new FormData();
       formData.append("appid", appId);
       formData.append("college", user?.college!);
-      formData.append("acadYear", acadYear);
+      formData.append("chaAcadYear", chaAcadYear);
       const res = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL +
           "retrievestudentdetailsusingappid.php",
@@ -196,7 +196,7 @@ export default function WithoutUSNDynamicPage() {
   const [isAutoAddEnabled, setIsAutoAddEnabled] = useState(false);
   const params = useParams();
   const paymentType = params.paymentType;
-  const acadYear = useAppSelector((state) => state.fees.acadYear);
+  const chaAcadYear = useAppSelector((state) => state.fees.acadYear);
 
   useEffect(() => {
     if (isAutoAddEnabled)
@@ -248,7 +248,7 @@ export default function WithoutUSNDynamicPage() {
       options: CATS(user?.college),
     },
     {
-      name: "acadYear",
+      name: "chaAcadYear",
       label: "Academic Year",
       type: "select",
       placeholder: "Select Academic Year",
@@ -375,7 +375,7 @@ export default function WithoutUSNDynamicPage() {
       options: CATS(user?.college),
     },
     {
-      name: "acadYear",
+      name: "chaAcadYear",
       label: "Academic Year",
       type: "select",
       placeholder: "Select Academic Year",
@@ -632,7 +632,7 @@ export default function WithoutUSNDynamicPage() {
       options: SEMS(user?.college),
     },
     {
-      name: "acadYear",
+      name: "chaAcadYear",
       label: "Academic Year",
       type: "select",
       placeholder: "Select Academic Year",
@@ -695,7 +695,7 @@ export default function WithoutUSNDynamicPage() {
       options: SEMS(user?.college),
     },
     {
-      name: "acadYear",
+      name: "chaAcadYear",
       label: "Academic Year",
       type: "select",
       placeholder: "Select Academic Year",
@@ -758,7 +758,7 @@ export default function WithoutUSNDynamicPage() {
       options: SEMS(user?.college),
     },
     {
-      name: "acadYear",
+      name: "chaAcadYear",
       label: "Academic Year",
       type: "select",
       placeholder: "Select Academic Year",
@@ -821,7 +821,7 @@ export default function WithoutUSNDynamicPage() {
       options: SEMS(user?.college),
     },
     {
-      name: "acadYear",
+      name: "chaAcadYear",
       label: "Academic Year",
       type: "select",
       placeholder: "Select Academic Year",
