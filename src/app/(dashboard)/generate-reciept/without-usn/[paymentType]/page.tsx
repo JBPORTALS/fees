@@ -75,7 +75,7 @@ const FormikContextProvider = () => {
   const [isLoading, setIsloading] = useState(false);
   const user = useAppSelector((state) => state.fees.user);
   const toast = useToast();
-  const chaAcadYear = useAppSelector((state) => state.fees.acadYear);
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   useEffect(() => {
     setFieldValue(
@@ -110,7 +110,7 @@ const FormikContextProvider = () => {
       const formData = new FormData();
       formData.append("appid", appId);
       formData.append("college", user?.college!);
-      formData.append("chaAcadYear", chaAcadYear);
+      formData.append("acadYear", acadYear);
       const res = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL +
           "retrievestudentdetailsusingappid.php",
