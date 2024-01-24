@@ -196,7 +196,7 @@ export default function WithoutUSNDynamicPage() {
   const [isAutoAddEnabled, setIsAutoAddEnabled] = useState(false);
   const params = useParams();
   const paymentType = params.paymentType;
-  const chaAcadYear = useAppSelector((state) => state.fees.acadYear);
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   useEffect(() => {
     if (isAutoAddEnabled)
@@ -967,7 +967,7 @@ export default function WithoutUSNDynamicPage() {
                   )
                   .join("&")}&paymentType=${paymentType}&college=${
                   user?.college
-                }&auto_add=${isAutoAddEnabled}`
+                }&auto_add=${isAutoAddEnabled}&acadYear=${acadYear}`
             );
             const link = document.createElement("a");
             link.href =
@@ -983,7 +983,7 @@ export default function WithoutUSNDynamicPage() {
                 )
                 .join("&")}&paymentType=${paymentType}&college=${
                 user?.college
-              }&auto_add=${isAutoAddEnabled}`;
+              }&auto_add=${isAutoAddEnabled}&acadYear=${acadYear}`;
             link.setAttribute("download", "Fee Reciept Offline.pdf");
             link.setAttribute("target", "_blank");
             document.body.appendChild(link);
