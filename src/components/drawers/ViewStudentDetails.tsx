@@ -57,6 +57,7 @@ export default function ViewStudentsDetails({
   const data = useAppSelector((state) => state.fees.selected_fee.data);
   const router = useRouter();
   const pathname = usePathname();
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   console.log(pathname);
 
@@ -153,6 +154,7 @@ export default function ViewStudentsDetails({
       formData.append("status", values.status);
       formData.append("paid", values.paid.toString());
       formData.append("remaining", values.remaining.toString());
+      formData.append("acadyear", acadYear);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentupdate.php",
         {
