@@ -239,6 +239,7 @@ export default function ViewStudentsDetails({
       formData.append("challan_id", challanId);
       formData.append("tid", tid);
       formData.append("date", moment(date).format("DD-MM-yyyy"));
+      formData.append("acadYear", acadYear);
 
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentupdatefee.php",
