@@ -186,6 +186,7 @@ export default function ViewStudentsDetails({
       formData.append("id", values.id);
       formData.append("usn", values.usn);
       formData.append("college", user?.college!);
+      formData.append("acadyear", acadYear);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "studentdelete.php",
         {
