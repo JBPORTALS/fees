@@ -110,41 +110,44 @@ export default function AddStudentsDetails({ children }: props) {
     validationSchema: Schema,
   });
 
-  const addStudent = useCallback(async (values: typeof initialState) => {
-    try {
-      const formData = new FormData();
-      formData.append("usn", values.usn);
-      formData.append("name", values.name);
-      formData.append("category", values.category);
-      formData.append("sem", values.sem);
-      formData.append("branch", values.branch);
-      formData.append("total_fee", values.total);
-      formData.append("college", user?.college!);
-      formData.append("acadYear", acadYear);
-      formData.append("student_college", acadYear);
-      const response = await axios(
-        process.env.NEXT_PUBLIC_ADMIN_URL + "studentadd.php",
-        {
-          method: "POST",
-          data: formData,
-        }
-      );
-      if (!response || response.status !== 201)
-        throw Error("Something went wrong !");
-      toast.success("Student Added successfully", { position: "top-right" });
-      handleReset(values);
-      dispatch(
-        fetchFeeDetails({
-          branch: values.branch,
-          year: values.sem,
-          college: user?.college!,
-        })
-      );
-      onClose();
-    } catch (e: any) {
-      toast.error(e.response?.data?.msg);
-    }
-  }, []);
+  const addStudent = useCallback(
+    async (values: typeof initialState) => {
+      try {
+        const formData = new FormData();
+        formData.append("usn", values.usn);
+        formData.append("name", values.name);
+        formData.append("category", values.category);
+        formData.append("sem", values.sem);
+        formData.append("branch", values.branch);
+        formData.append("total_fee", values.total);
+        formData.append("college", user?.college!);
+        formData.append("acadYear", acadYear);
+        formData.append("student_college", acadYear);
+        const response = await axios(
+          process.env.NEXT_PUBLIC_ADMIN_URL + "studentadd.php",
+          {
+            method: "POST",
+            data: formData,
+          }
+        );
+        if (!response || response.status !== 201)
+          throw Error("Something went wrong !");
+        toast.success("Student Added successfully", { position: "top-right" });
+        handleReset(values);
+        dispatch(
+          fetchFeeDetails({
+            branch: values.branch,
+            year: values.sem,
+            college: user?.college!,
+          })
+        );
+        onClose();
+      } catch (e: any) {
+        toast.error(e.response?.data?.msg);
+      }
+    },
+    [user?.college]
+  );
 
   return (
     <>
@@ -171,18 +174,6 @@ export default function AddStudentsDetails({ children }: props) {
           position={"relative"}
         >
           <>
-            <FormControl hidden px={"5"}>
-              <FormLabel flex={1}>
-                <Text>College</Text>
-              </FormLabel>
-              <Input
-                name="college"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={user?.college}
-              />
-            </FormControl>
             <FormControl
               isInvalid={!!errors.usn?.length && touched.usn}
               px={"5"}
@@ -274,32 +265,6 @@ export default function AddStudentsDetails({ children }: props) {
             </FormControl>
 
             <FormControl
-              isInvalid={!!errors.branch?.length && touched.branch}
-              px={"5"}
-            >
-              <FormLabel flex={1}>
-                <Text>Branch</Text>
-              </FormLabel>
-              <Select
-                name="branch"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.branch}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value={""}>Select Branch</option>
-                {branch_list.map((branch: any) => (
-                  <option key={branch} value={branch.branch}>
-                    {branch.branch}
-                  </option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.branch}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl
               isInvalid={!!errors.category?.length && touched.category}
               px={"5"}
             >
@@ -315,7 +280,7 @@ export default function AddStudentsDetails({ children }: props) {
                 onChange={handleChange}
                 onBlur={handleBlur}
               >
-                <option value={""}>Select Branch</option>
+                <option value={""}>Select Category</option>
                 {Categories.map((category) => (
                   <option key={category.value} value={category.value}>
                     {category.option}
