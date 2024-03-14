@@ -91,7 +91,7 @@ export default function Students() {
                 variant={"ghost"}
                 rightIcon={<FaChevronDown />}
                 position={"sticky"}
-                zIndex={"popover"}
+                zIndex={"dropdown"}
               >
                 Download Class Data
               </MenuButton>

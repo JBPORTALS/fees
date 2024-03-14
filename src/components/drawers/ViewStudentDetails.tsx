@@ -124,7 +124,6 @@ export default function ViewStudentsDetails({
   });
 
   function changeStateValue() {
-    console.log("changing...");
     setFieldValue(
       "remaining",
       parseInt(values.total.toString()) - parseInt(values.paid.toString())
