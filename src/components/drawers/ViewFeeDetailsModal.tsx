@@ -212,7 +212,16 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
           <VStack spacing={0} w={"full"} h={"full"}>
             {selectedFeeDetails[0]?.payment_history?.map((history) => {
               return (
-                <>
+                <HStack
+                  key={history.id}
+                  w={"full"}
+                  className={"border-b border-b-lightgray"}
+                  bg={"gray.50"}
+                  px={"5"}
+                  py={"2"}
+                  gap={"3"}
+                  justifyContent={"space-between"}
+                >
                   <IModal
                     isLoading={isDeleting}
                     onSubmit={() =>
@@ -231,49 +240,38 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
                       </p>
                     </Center>
                   </IModal>
-                  <HStack
-                    key={history.paymentno}
-                    w={"full"}
-                    className={"border-b border-b-lightgray"}
-                    bg={"gray.50"}
-                    px={"5"}
-                    py={"2"}
-                    gap={"3"}
-                    justifyContent={"space-between"}
-                  >
-                    <VStack flex={1} alignItems={"start"}>
-                      <HStack>
-                        <h1 className="text-md">{history.paymentno}</h1>
-                        <Tag
-                          size={"sm"}
-                          whiteSpace={"nowrap"}
-                          variant={"outline"}
-                          colorScheme={"teal"}
-                          fontWeight={"bold"}
-                        >
-                          CH No. {history.challan_id}
-                        </Tag>
-                      </HStack>
-                      <span className="text-sm">{history.date}</span>
-                    </VStack>
-                    <VStack flex={1} alignItems={"end"}>
-                      <h1 className="text-lg font-bold text-green-600">
-                        ₹ {history.amount_paid}
-                      </h1>
-                      <span className="text-sm font-medium">
-                        <i>{history.method}</i>
-                      </span>
-                    </VStack>
-                    <IconButton
-                      aria-label="remove"
-                      icon={<MdRemove />}
-                      colorScheme="red"
-                      size={"sm"}
-                      variant={"outline"}
-                      onClick={onConfirmDeleteOpen}
-                    />
-                  </HStack>
-                </>
+                  <VStack flex={1} alignItems={"start"}>
+                    <HStack>
+                      <h1 className="text-md">{history.paymentno}</h1>
+                      <Tag
+                        size={"sm"}
+                        whiteSpace={"nowrap"}
+                        variant={"outline"}
+                        colorScheme={"teal"}
+                        fontWeight={"bold"}
+                      >
+                        CH No. {history.challan_id}
+                      </Tag>
+                    </HStack>
+                    <span className="text-sm">{history.date}</span>
+                  </VStack>
+                  <VStack flex={1} alignItems={"end"}>
+                    <h1 className="text-lg font-bold text-green-600">
+                      ₹ {history.amount_paid}
+                    </h1>
+                    <span className="text-sm font-medium">
+                      <i>{history.method}</i>
+                    </span>
+                  </VStack>
+                  <IconButton
+                    aria-label="remove"
+                    icon={<MdRemove />}
+                    colorScheme="red"
+                    size={"sm"}
+                    variant={"outline"}
+                    onClick={onConfirmDeleteOpen}
+                  />
+                </HStack>
               );
             })}
           </VStack>
