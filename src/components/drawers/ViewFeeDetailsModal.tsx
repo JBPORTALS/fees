@@ -149,13 +149,13 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
     setIsLoading(false);
   };
 
-  const onRemoveChallan = async (challan_id: string) => {
+  const onRemoveChallan = async (history_id: string) => {
     setIsDeleting(true);
     const formData = new FormData();
     formData.append("id", selectedFeeDetails[0].id);
     formData.append("college", user?.college!);
     formData.append("acadYear", acadYear);
-    formData.append("challan_id", challan_id);
+    formData.append("history_id", history_id);
     try {
       await axios(process.env.NEXT_PUBLIC_ADMIN_URL + "feeremove.php", {
         method: "POST",
@@ -214,7 +214,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
                 <>
                   <IModal
                     isLoading={isDeleting}
-                    onSubmit={() => onRemoveChallan(history.challan_id)}
+                    onSubmit={() => onRemoveChallan(history.id)}
                     buttonTitle="Remove"
                     isOpen={isConfirmDeleteOpen}
                     onClose={onConfirmDeleteClose}
