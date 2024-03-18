@@ -179,7 +179,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
         <VStack w={"full"} h={"full"} justifyContent={"space-between"}>
           <VStack spacing={0} w={"full"} h={"full"}>
             {selectedFeeDetails[0]?.payment_history?.map((history) => {
-              return <HistoryItem {...{ history }} />;
+              return <HistoryItem key={history.id} {...{ history }} />;
             })}
           </VStack>
           <VStack
