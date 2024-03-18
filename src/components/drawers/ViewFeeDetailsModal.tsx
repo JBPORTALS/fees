@@ -11,6 +11,7 @@ import {
   Center,
   Heading,
   HStack,
+  IconButton,
   Input,
   Tag,
   useDisclosure,
@@ -22,6 +23,8 @@ import { toast } from "react-hot-toast";
 import { AiOutlineCheckCircle, AiOutlineFileProtect } from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
+import { MdRemove, MdRemoveCircle } from "react-icons/md";
+import HistoryItem from "../ui/HistoryItem";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -37,6 +40,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
     onClose: onConfirmClose,
     onOpen: onConfirmOpen,
   } = useDisclosure();
+
   const selectedFeeDetails = useAppSelector(
     (state) => state.fees.selected_fee.data
   ) as SelectedFee[];
@@ -48,6 +52,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
   const [challanId, setChallanId] = useState("");
   const [state, setState] = useState({ total: "" });
   const [isUpdating, setIsLoading] = useState(false);
+  const [isPermited, setIsPermited] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const user = useAppSelector((state) => state.fees.user);
   const acadYear = useAppSelector((state) => state.fees.acadYear);
@@ -149,7 +154,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
         buttonTitle="Save"
         isOpen={isConfirmOpen}
         onClose={onConfirmClose}
-        heading="Challen  Details"
+        heading="Challen Details"
       >
         <Center>
           <Heading>₹{challanState?.amount_paid1}</Heading>
@@ -158,6 +163,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
           </Tag>
         </Center>
       </IModal>
+
       <IDrawer
         isLoading={isChecking}
         isDisabled={isLoading}
@@ -168,44 +174,12 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
         }}
         isOpen={isOpen}
         heading="Payment History"
+        size={"sm"}
       >
         <VStack w={"full"} h={"full"} justifyContent={"space-between"}>
           <VStack spacing={0} w={"full"} h={"full"}>
             {selectedFeeDetails[0]?.payment_history?.map((history) => {
-              return (
-                <HStack
-                  key={history.paymentno}
-                  w={"full"}
-                  className={"border-b border-b-lightgray"}
-                  bg={"gray.50"}
-                  px={"5"}
-                  py={"2"}
-                >
-                  <VStack flex={1} alignItems={"start"}>
-                    <HStack>
-                      <h1 className="text-md">{history.paymentno}</h1>
-                      <Tag
-                        size={"sm"}
-                        whiteSpace={"nowrap"}
-                        variant={"outline"}
-                        colorScheme={"teal"}
-                        fontWeight={"bold"}
-                      >
-                        CH No. {history.challan_id}
-                      </Tag>
-                    </HStack>
-                    <span className="text-sm">{history.date}</span>
-                  </VStack>
-                  <VStack flex={1} alignItems={"end"}>
-                    <h1 className="text-lg font-bold text-green-600">
-                      ₹ {history.amount_paid}
-                    </h1>
-                    <span className="text-sm font-medium">
-                      <i>{history.method}</i>
-                    </span>
-                  </VStack>
-                </HStack>
-              );
+              return <HistoryItem key={history.id} {...{ history }} />;
             })}
           </VStack>
           <VStack

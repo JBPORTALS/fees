@@ -535,6 +535,7 @@ export interface Fee {
 }
 
 export interface PaymentHistory {
+  id: string;
   paymentno: string;
   date: string;
   method: string;
