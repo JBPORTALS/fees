@@ -58,8 +58,11 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
           college: user?.college!,
         })
       );
+      onConfirmDeleteClose();
     } catch (e: any) {
-      console.log(e);
+      toast.error("unable to remove challan", {
+        position: "top-right",
+      });
     }
     setIsDeleting(false);
   };
