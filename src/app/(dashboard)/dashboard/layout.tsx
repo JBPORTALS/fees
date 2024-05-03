@@ -10,8 +10,6 @@ import {
 } from "@/store/fees.slice";
 import { useEffect } from "react";
 
-export const revalidate = 0;
-
 export default function DashboardRootLayout(props: {
   children: React.ReactNode;
 }) {
