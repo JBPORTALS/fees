@@ -53,7 +53,7 @@ export const appRouter = router({
         }
       );
       const data = await response.json();
-      console.log(data);
+      //   console.log(data);
       return data as [];
     }),
   searchDataByMode: procedure
@@ -88,7 +88,7 @@ export const appRouter = router({
         }
       );
       const data = await response.json();
-      console.log(data);
+      //   console.log(data);
       return data as [];
     }),
 });
