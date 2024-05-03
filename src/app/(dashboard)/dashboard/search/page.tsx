@@ -25,10 +25,13 @@ import {
 import { FcSearch } from "react-icons/fc";
 import { AiOutlineFileExcel } from "react-icons/ai";
 import { Link } from "@chakra-ui/next-js";
+import { trpc } from "@/utils/trpc-cleint";
+import { isEmpty } from "lodash";
 
 export default function Home() {
   const params = useSearchParams();
   const college = useAppSelector((state) => state.fees.user)?.college;
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   const branch = params.get("branch");
   const year = params.get("year");
@@ -38,17 +41,47 @@ export default function Home() {
   const feeType = params.get("feeType");
   const query = params.get("query");
 
-  const feeFilter = useAppSelector(
-    (state) => state.fees.search_by_mode.data
-  ) as [];
-  const Error = useAppSelector((state) => state.fees.search_by_mode.error) as
-    | string
-    | null;
-  const isLoading = useAppSelector(
-    (state) => state.fees.search_by_mode.pending
-  ) as boolean;
+  const { data: feeFilter, isLoading } = trpc.searchData.useQuery(
+    {
+      acadYear,
+      college: college ?? "",
+      query: query as string,
+    },
+    {
+      enabled: mode === "QUERY",
+    }
+  );
+  const { data: feeFilterByMode, isLoading: isFilterByModeLoading } =
+    trpc.searchDataByMode.useQuery(
+      {
+        acadYear,
+        college: college ?? "",
+        branch: branch as string,
+        feeType: feeType as string,
+        fromDate: fromDate as string,
+        mode: mode as string,
+        toDate: toDate as string,
+        year: year as string,
+      },
+      {
+        enabled:
+          mode !== "QUERY" &&
+          !!acadYear &&
+          !!college &&
+          !!branch &&
+          !!feeType &&
+          !!fromDate &&
+          !!mode &&
+          !!toDate &&
+          !!year,
+      }
+    );
 
-  if (isLoading)
+  const isDataFetching = mode !== "QUERY" ? isFilterByModeLoading : isLoading;
+  const isDataEmpty =
+    mode !== "QUERY" ? isEmpty(feeFilterByMode) : isEmpty(feeFilter);
+
+  if (isDataFetching)
     return (
       <Center h={"100%"} pb={"28"}>
         <VStack justifyContent={"center"}>
@@ -152,16 +185,17 @@ export default function Home() {
               <Heading size={"sm"} color={"gray.600"}>
                 Search results for - `{query}`
               </Heading>
-              <Tag>Total {feeFilter.length} records found</Tag>
+              <Tag>Total {feeFilter && feeFilter.length} records found</Tag>
             </>
           )}
         </HStack>
       </HStack>
-      {feeFilter.length > 0 ? (
+      {(feeFilter && feeFilter.length > 0) ||
+      (feeFilterByMode && feeFilterByMode.length > 0) ? (
         <AgGridReact
           className="w-full h-full  pb-6 ag-theme-material"
           animateRows={true}
-          rowData={feeFilter}
+          rowData={mode !== "QUERY" ? feeFilterByMode : feeFilter}
           columnDefs={
             mode !== "QUERY"
               ? (SearchColumns as any)
@@ -170,11 +204,11 @@ export default function Home() {
           alwaysShowHorizontalScroll
           onRowEditingStarted={(e) => {}}
         />
-      ) : feeFilter.length == 0 && Error ? (
+      ) : isDataEmpty ? (
         <Center h={"100%"} pb={"20"} flexDir={"column"}>
           <VStack>
             <FcSearch className="text-8xl" />
-            <Heading size={"lg"}>{Error}</Heading>
+            <Heading size={"lg"}>No Data Found</Heading>
           </VStack>
         </Center>
       ) : null}

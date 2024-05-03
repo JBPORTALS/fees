@@ -34,6 +34,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+import { trpc } from "@/utils/trpc-cleint";
 
 ChartJS.register(
   CategoryScale,
@@ -54,21 +55,18 @@ export default function BranchViewPage() {
   const branchFeeDetails = useAppSelector(
     (state) => state.fees.branch_fee.data
   ) as BranchFee[];
-  const yearFeeDetails = useAppSelector(
-    (state) => state.fees.year_fee.data
-  ) as YearFee[];
+  const acadYear = useAppSelector((state) => state.fees.acadYear) as string;
   const user = useAppSelector((state) => state.fees.user);
-
-  const fetchYearVeiwMemo = useCallback(
-    (Ibranch: string) => {
-      dispatch(fetchFeeYearView({ branch: Ibranch, college: user?.college! }));
+  const { data: yearFeeDetails } = trpc.feeYearView.useQuery(
+    {
+      acadYear,
+      branch,
+      college: user?.college ?? "",
     },
-    [dispatch, user?.college]
+    {
+      enabled: !!acadYear && !!branch && !!user?.college,
+    }
   );
-
-  useEffect(() => {
-    fetchYearVeiwMemo(branch);
-  }, [branch, fetchYearVeiwMemo]);
 
   return (
     <div className={"h-fit w-full"}>
@@ -112,7 +110,7 @@ export default function BranchViewPage() {
           </HStack>
         ) : (
           <HStack py={"5"} pb={"12"} flexWrap={"wrap"} spacing={0} gap={"3"}>
-            {yearFeeDetails.length == 0 && (
+            {yearFeeDetails && yearFeeDetails.length == 0 && (
               <Card w={"420px"} h={"420px"}>
                 <VStack w={"full"} justifyContent={"center"} h={"full"}>
                   <AiOutlineAim className="text-6xl text-purple-500" />
@@ -122,112 +120,117 @@ export default function BranchViewPage() {
                 </VStack>
               </Card>
             )}
-            {yearFeeDetails.map((yearFee) => {
-              return (
-                <HStack
-                  key={yearFee.year}
-                  w={"fit-content"}
-                  shadow={"lg"}
-                  style={{ borderWidth: 1, borderColor: "#dddd" }}
-                  px={"10"}
-                  py={"5"}
-                >
-                  <Stat
-                    h={"full"}
-                    w={"full"}
-                    display={"flex"}
-                    flexDirection={"row"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
+            {yearFeeDetails &&
+              yearFeeDetails.map((yearFee) => {
+                return (
+                  <HStack
+                    key={yearFee.year}
+                    w={"fit-content"}
+                    shadow={"lg"}
+                    style={{ borderWidth: 1, borderColor: "#dddd" }}
+                    px={"10"}
+                    py={"5"}
                   >
-                    <VStack py={"3"}>
-                      <h1 className="text-2xl font-bold text-black">
-                        {yearFee.year} Year
-                      </h1>{" "}
-                      <Tag
-                        variant={"solid"}
-                        size={"lg"}
-                        rounded={"full"}
-                        colorScheme={"blue"}
+                    <Stat
+                      h={"full"}
+                      w={"full"}
+                      display={"flex"}
+                      flexDirection={"row"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                    >
+                      <VStack py={"3"}>
+                        <h1 className="text-2xl font-bold text-black">
+                          {yearFee.year} Year
+                        </h1>{" "}
+                        <Tag
+                          variant={"solid"}
+                          size={"lg"}
+                          rounded={"full"}
+                          colorScheme={"blue"}
+                        >
+                          {yearFee.total_students} Students
+                        </Tag>
+                      </VStack>
+                      <VStack
+                        w={"full"}
+                        justifyContent={"center"}
+                        spacing={"5"}
                       >
-                        {yearFee.total_students} Students
-                      </Tag>
-                    </VStack>
-                    <VStack w={"full"} justifyContent={"center"} spacing={"5"}>
-                      <StatLabel
-                        py={"2"}
-                        alignItems={"center"}
-                        display={"flex"}
-                        flexDirection={"column"}
-                        fontSize={"md"}
-                      >
-                        Total{" "}
-                        <StatNumber fontSize={"2xl"}>
-                          ₹ {yearFee.total1}
-                        </StatNumber>
-                      </StatLabel>
-                      <StatLabel
-                        py={"2"}
-                        alignItems={"center"}
-                        display={"flex"}
-                        flexDirection={"column"}
-                        fontSize={"md"}
-                      >
-                        Paid{" "}
-                        <StatNumber fontSize={"2xl"}>
-                          ₹ {yearFee.paid1}
-                        </StatNumber>
-                      </StatLabel>
-                      <StatLabel
-                        py={"2"}
-                        alignItems={"center"}
-                        display={"flex"}
-                        flexDirection={"column"}
-                        fontSize={"md"}
-                      >
-                        Balance{" "}
-                        <StatNumber fontSize={"2xl"}>
-                          ₹ {yearFee.remaining1}
-                        </StatNumber>
-                      </StatLabel>
-                    </VStack>
-                  </Stat>
-                  <Box p={"10"}>
-                    <div>
-                      <Pie
-                        className="chart-bar"
-                        options={{ responsive: true }}
-                        width={"300px"}
-                        height={"300px"}
-                        data={{
-                          datasets: [
-                            {
-                              data: [
-                                100,
-                                yearFee?.paid_percentage,
-                                yearFee?.remaining_percentage,
-                              ],
-                              backgroundColor: [
-                                "rgb(120,55,228,0.7)",
-                                "rgba(33,191,91,0.7)",
-                                "rgba(242,109,109,0.7)",
-                              ],
-                              type: "pie",
-                              label: "Total",
-                            },
-                          ],
-                          labels: [
-                            `Total (100%)`,
-                            `Paid (${yearFee?.paid_percentage}%)`,
-                            `Balance (${yearFee?.remaining_percentage}%)`,
-                          ],
-                        }}
-                      />
-                    </div>
-                  </Box>
-                </HStack>
-              );
-            })}
+                        <StatLabel
+                          py={"2"}
+                          alignItems={"center"}
+                          display={"flex"}
+                          flexDirection={"column"}
+                          fontSize={"md"}
+                        >
+                          Total{" "}
+                          <StatNumber fontSize={"2xl"}>
+                            ₹ {yearFee.total1}
+                          </StatNumber>
+                        </StatLabel>
+                        <StatLabel
+                          py={"2"}
+                          alignItems={"center"}
+                          display={"flex"}
+                          flexDirection={"column"}
+                          fontSize={"md"}
+                        >
+                          Paid{" "}
+                          <StatNumber fontSize={"2xl"}>
+                            ₹ {yearFee.paid1}
+                          </StatNumber>
+                        </StatLabel>
+                        <StatLabel
+                          py={"2"}
+                          alignItems={"center"}
+                          display={"flex"}
+                          flexDirection={"column"}
+                          fontSize={"md"}
+                        >
+                          Balance{" "}
+                          <StatNumber fontSize={"2xl"}>
+                            ₹ {yearFee.remaining1}
+                          </StatNumber>
+                        </StatLabel>
+                      </VStack>
+                    </Stat>
+                    <Box p={"10"}>
+                      <div>
+                        <Pie
+                          className="chart-bar"
+                          options={{ responsive: true }}
+                          width={"300px"}
+                          height={"300px"}
+                          data={{
+                            datasets: [
+                              {
+                                data: [
+                                  100,
+                                  yearFee?.paid_percentage,
+                                  yearFee?.remaining_percentage,
+                                ],
+                                backgroundColor: [
+                                  "rgb(120,55,228,0.7)",
+                                  "rgba(33,191,91,0.7)",
+                                  "rgba(242,109,109,0.7)",
+                                ],
+                                type: "pie",
+                                label: "Total",
+                              },
+                            ],
+                            labels: [
+                              `Total (100%)`,
+                              `Paid (${yearFee?.paid_percentage}%)`,
+                              `Balance (${yearFee?.remaining_percentage}%)`,
+                            ],
+                          }}
+                        />
+                      </div>
+                    </Box>
+                  </HStack>
+                );
+              })}
           </HStack>
         )}
       </VStack>
