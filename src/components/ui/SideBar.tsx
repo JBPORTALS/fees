@@ -77,10 +77,10 @@ export default function SideBar() {
           onChange={(e) => {
             dispatch(changeAcadYear(e.target.value));
             toast({ title: `Academic year changed to "${e.target.value}"` });
-            router.push("/dashboard");
+            router.refresh();
           }}
         >
-          {/* <option value={"2024"}>2024</option> */}
+          <option value={"2024"}>2024</option>
           <option value={"2023"}>2023</option>
         </Select>
       </FormControl>
