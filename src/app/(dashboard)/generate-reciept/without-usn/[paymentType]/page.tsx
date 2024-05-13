@@ -400,7 +400,6 @@ export default function WithoutUSNDynamicPage() {
       isReadonly: true,
       validateField: Yup.number()
         .typeError("invalid number")
-        .required("Field required !")
         .min(0, "minimum amount should be 0"),
     },
     {
