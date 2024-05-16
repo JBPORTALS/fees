@@ -126,8 +126,6 @@ const FormikContextProvider = () => {
         setFieldValue("year", res.data[0]?.year);
         setFieldValue("branch", res.data[0]?.branch);
         setFieldValue("category", res.data[0]?.category);
-        setFieldValue("total_fee", res.data[0]?.total_fee);
-        setFieldValue("remaining_fee", res.data[0]?.remaining_fee);
         setFieldValue("byApplicationId", true);
         setFieldValue("appid", appId);
       }
@@ -1062,6 +1060,7 @@ export default function WithoutUSNDynamicPage() {
                     />
                   ))}
               </SimpleGrid>
+              {/* <pre>{JSON.stringify(errors, undefined, 3)}</pre> */}
               <HStack
                 position={"sticky"}
                 bottom={"0"}
