@@ -382,26 +382,6 @@ export default function WithoutUSNDynamicPage() {
       validateField: Yup.string().required("Fill the field !"),
       options: ACADYEARS(),
     },
-
-    {
-      name: "total_fee",
-      label: "Total Fee Fixed",
-      type: "text",
-      isReadonly: true,
-      validateField: Yup.number()
-        .typeError("invalid number")
-        .required("Field required !")
-        .min(0, "minimum amount should be 0"),
-    },
-    {
-      name: "remaining_fee",
-      label: "Balance",
-      type: "text",
-      isReadonly: true,
-      validateField: Yup.number()
-        .typeError("invalid number")
-        .min(0, "minimum amount should be 0"),
-    },
     {
       name: "tuitionFee",
       label: "Tuition Fee",
