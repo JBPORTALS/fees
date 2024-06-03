@@ -2,7 +2,6 @@
 import {
   Button,
   FormControl,
-  FormHelperText,
   FormLabel,
   HStack,
   IconButton,
@@ -23,11 +22,21 @@ import {
 } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
-import React, { useEffect, useState } from "react";
-import { Field } from "@/components/ui/Field";
+import type { Schema } from "yup";
+import React, {
+  HTMLAttributes,
+  HTMLInputTypeAttribute,
+  useEffect,
+  useState,
+} from "react";
+import { Field, FieldProps } from "@/components/ui/Field";
 import moment from "moment";
-import { useParams } from "next/navigation";
-import { AiOutlineFileDone, AiOutlineSearch } from "react-icons/ai";
+import { useParams, useSearchParams } from "next/navigation";
+import {
+  AiOutlineCheck,
+  AiOutlineFileDone,
+  AiOutlineSearch,
+} from "react-icons/ai";
 import axios from "axios";
 import {
   ACADYEARS,
@@ -39,6 +48,7 @@ import {
 import { toast } from "react-hot-toast";
 import { useAppSelector } from "@/store";
 import { FaInfoCircle } from "react-icons/fa";
+import { trpc } from "@/utils/trpc-cleint";
 
 const initialValues = {
   usn: "", //✅
@@ -73,6 +83,42 @@ const FormikContextProvider = () => {
   const [isLoading, setIsloading] = useState(false);
   const user = useAppSelector((state) => state.fees.user);
   const acadYear = useAppSelector((state) => state.fees.acadYear);
+  const searchParams = useSearchParams();
+  const challan_id = searchParams.get("challan_id");
+  const { data } = trpc.getChallanDetails.useQuery(
+    {
+      acadYear,
+      challan_id: challan_id!,
+      college: user?.college!,
+    },
+    {
+      enabled: !!challan_id,
+    }
+  );
+
+  useEffect(() => {
+    if (data) {
+      setFieldValue("usn", data[0]?.usn);
+      setFieldValue("name", data[0]?.name);
+      setFieldValue("sem", data[0]?.sem);
+      setFieldValue("year", data[0]?.year);
+      setFieldValue("chaAcadYear", data[0]?.acad_year);
+      setFieldValue("branch", data[0]?.branch);
+      setFieldValue("category", data[0]?.stu_category);
+      setFieldValue("total_fee", data[0]?.total_fee);
+      setFieldValue("remaining_fee", data[0]?.remaining_fee);
+      setFieldValue("excess_fee", data[0]?.excess);
+      setFieldValue("tuitionFee", data[0]?.tuition);
+      setFieldValue("vtuFee", data[0]?.vtu);
+      setFieldValue("collegeFee", data[0]?.college_fee);
+      setFieldValue("labFee", data[0]?.lab);
+      setFieldValue("busFee", data[0]?.bus);
+      setFieldValue("bank", data[0]?.bank);
+      setFieldValue("paymentMode", data[0]?.method);
+      setFieldValue("chequeNo", data[0]?.trans_id);
+      setFieldValue("date", data[0]?.trans_date);
+    }
+  }, [data, challan_id]);
 
   useEffect(() => {
     setFieldValue(
@@ -117,13 +163,15 @@ const FormikContextProvider = () => {
         setFieldValue("branch", res.data[0]?.branch);
         setFieldValue("category", res.data[0]?.category);
         setFieldValue("total_fee", res.data[0]?.total_fee);
-        setFieldValue("remaining_fee", res.data[0]?.remaining_fee);
+        setFieldValue("excessFee", res.data[0]?.remaining_fee);
       }
     } catch (e: any) {
       toast.error(e.response.data?.msg, { position: "bottom-center" });
     }
     setIsloading(false);
   }
+
+  if (challan_id) return null;
 
   return (
     <React.Fragment>
@@ -162,10 +210,27 @@ export default function WithUSNDynamicPage() {
   const [isMutable, setIsMustable] = useState(false);
 
   const user = useAppSelector((state) => state.fees.user);
-  const chaAcadYear = useAppSelector((state) => state.fees.acadYear);
-
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
   const params = useParams();
+  const searchParams = useSearchParams();
+  const challan_id = searchParams.get("challan_id");
+  const { data } = trpc.getChallanDetails.useQuery(
+    {
+      acadYear,
+      challan_id: challan_id!,
+      college: user?.college!,
+    },
+    {
+      enabled: !!challan_id,
+    }
+  );
+
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: isLinkedOpen,
+    onClose: onLinkedClose,
+    onOpen: onLinkeOpen,
+  } = useDisclosure();
   const paymentType = params.paymentType as
     | "FEE"
     | "MISCELLANEOUS"
@@ -187,7 +252,7 @@ export default function WithUSNDynamicPage() {
       });
   }, [isMutable]);
 
-  const feeTemplate = [
+  const feeTemplate: FieldProps[] = [
     {
       name: "usn",
       label:
@@ -243,26 +308,31 @@ export default function WithUSNDynamicPage() {
       validateField: Yup.string().required("Fill the field !"),
       options: ACADYEARS(),
     },
-
     {
       name: "total_fee",
       label: "Total Fee Fixed",
       type: "text",
+      hidden: challan_id ? true : false,
       isReadonly: true,
       validateField: Yup.number()
         .typeError("invalid number")
-        .required("Field required !")
-        .min(0, "minimum amount should be 0"),
+        .min(0, "minimum amount should be 0")
+        .when((_, schema, __) =>
+          challan_id ? schema.optional() : schema.required("Field required !")
+        ),
     },
     {
       name: "remaining_fee",
       label: "Balance",
       type: "text",
       isReadonly: true,
+      hidden: challan_id ? true : false,
       validateField: Yup.number()
         .typeError("invalid number")
-        .required("Field required !")
-        .min(0, "minimum amount should be 0"),
+        .min(0, "minimum amount should be 0")
+        .when((_, schema, __) =>
+          challan_id ? schema.optional() : schema.required("Field required !")
+        ),
     },
     {
       name: "tuitionFee",
@@ -347,7 +417,7 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
-  const miscellaneousTemplate = [
+  const miscellaneousTemplate: FieldProps[] = [
     {
       name: "usn",
       label:
@@ -476,7 +546,7 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
-  const busFeeTemplate = [
+  const busFeeTemplate: FieldProps[] = [
     {
       name: "usn",
       label:
@@ -551,7 +621,7 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
-  const excessFeeTemplate = [
+  const excessFeeTemplate: FieldProps[] = [
     {
       name: "usn",
       label:
@@ -626,7 +696,7 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
-  const securityFeeTemplate = [
+  const securityFeeTemplate: FieldProps[] = [
     {
       name: "usn",
       label:
@@ -701,7 +771,7 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
-  const hostelFeeTemplate = [
+  const hostelFeeTemplate: FieldProps[] = [
     {
       name: "usn",
       label:
@@ -776,7 +846,7 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
-  const chequeTemplate = [
+  const chequeTemplate: FieldProps[] = [
     {
       name: "chequeNo",
       label: "Cheque No.",
@@ -798,7 +868,7 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
-  const cashTemplate = [
+  const cashTemplate: FieldProps[] = [
     {
       name: "date",
       label: "Payment Date",
@@ -809,7 +879,7 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
-  const onlineTemplate = [
+  const onlineTemplate: FieldProps[] = [
     {
       name: "chequeNo",
       label: "Transaction ID",
@@ -831,7 +901,7 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
-  const ddTemplate = [
+  const ddTemplate: FieldProps[] = [
     {
       name: "chequeNo",
       label: "DD No.",
@@ -857,6 +927,10 @@ export default function WithUSNDynamicPage() {
     <VStack spacing={"0"} w={"full"} h={"fit-content"} position={"relative"}>
       <Formik
         {...{ initialValues }}
+        enableReinitialize
+        validateOnChange
+        validateOnBlur
+        validateOnMount
         onSubmit={async (state) => {
           try {
             const filename =
@@ -960,19 +1034,21 @@ export default function WithUSNDynamicPage() {
                 {checkOnPaymentType?.map((field) => {
                   return (
                     <Field
-                      key={field.name}
+                      {...field}
+                      key={field?.name}
                       validate={(value) => {
                         let error;
-                        if (field.validateField) {
+                        if (field?.validateField) {
                           try {
-                            field.validateField.validateSync(value)?.toString();
+                            field?.validateField
+                              .validateSync(value)
+                              ?.toString();
                           } catch (e: any) {
                             error = e.message;
                           }
                         }
                         return error;
                       }}
-                      {...field}
                     />
                   );
                 })}
@@ -997,6 +1073,7 @@ export default function WithUSNDynamicPage() {
                     />
                   ))}
               </SimpleGrid>
+
               <HStack
                 position={"sticky"}
                 bottom={"0"}
@@ -1006,42 +1083,67 @@ export default function WithUSNDynamicPage() {
                 zIndex={"modal"}
                 className="border-t border-gray-300 backdrop-blur-sm"
               >
-                {/* {params.paymentType === "FEE" && user?.college === "KSSEM" && ( */}
-                <HStack>
-                  <FormControl display="flex" alignItems="center">
-                    <FormLabel htmlFor="fee-mutation" mb="0">
-                      Auto Fee Updation
-                    </FormLabel>
-                    <Switch
-                      isChecked={isMutable}
-                      onChange={(e) => {
-                        setIsMustable(!isMutable);
+                {!challan_id ? (
+                  <>
+                    <HStack>
+                      <FormControl display="flex" alignItems="center">
+                        <FormLabel htmlFor="fee-mutation" mb="0">
+                          Auto Fee Updation
+                        </FormLabel>
+                        <Switch
+                          isChecked={isMutable}
+                          onChange={(e) => {
+                            setIsMustable(!isMutable);
+                          }}
+                          id="fee-mutation"
+                        />
+                      </FormControl>
+                    </HStack>
+                    <Button
+                      size={"lg"}
+                      isLoading={isSubmitting || isValidating}
+                      onClick={() => {
+                        if (isMutable) {
+                          onOpen();
+                        } else {
+                          handleSubmit();
+                        }
                       }}
-                      id="fee-mutation"
-                    />
-                  </FormControl>
-                </HStack>
-                {/* )} */}
-                <Button
-                  size={"lg"}
-                  isLoading={isSubmitting || isValidating}
-                  onClick={() => {
-                    if (isMutable) {
-                      onOpen();
-                    } else {
-                      handleSubmit();
-                    }
-                  }}
-                  isDisabled={
-                    Object.keys(errors).length > 0 ||
-                    isSubmitting ||
-                    isValidating
-                  }
-                  colorScheme="purple"
-                  leftIcon={<AiOutlineFileDone className="text-xl" />}
-                >
-                  Generate Reciept
-                </Button>
+                      isDisabled={
+                        Object.keys(errors).length > 0 ||
+                        isSubmitting ||
+                        isValidating
+                      }
+                      colorScheme="purple"
+                      leftIcon={<AiOutlineFileDone className="text-xl" />}
+                    >
+                      Generate Reciept
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      size={"lg"}
+                      isLoading={isSubmitting || isValidating}
+                      onClick={() => {
+                        if (data[0]?.linked) {
+                          onOpen();
+                        } else {
+                          // handleSubmit();
+                        }
+                      }}
+                      isDisabled={
+                        Object.keys(errors).length > 0 ||
+                        isSubmitting ||
+                        isValidating
+                      }
+                      colorScheme="purple"
+                      rightIcon={<AiOutlineCheck className="text-xl" />}
+                    >
+                      Save
+                    </Button>
+                  </>
+                )}
               </HStack>
               <Modal onClose={onClose} isOpen={isOpen}>
                 <ModalOverlay />
@@ -1061,6 +1163,30 @@ export default function WithUSNDynamicPage() {
                       onClick={() => {
                         handleSubmit();
                         onClose();
+                      }}
+                    >
+                      Yes, Generate
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+
+              <Modal onClose={onLinkedClose} isOpen={isLinkedOpen}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>📢 Are you sure?</ModalHeader>
+                  <ModalBody>
+                    {`Updating the receipt will unlink the challan from student transactions, it may lead you to again link the challan to respective student.`}
+                  </ModalBody>
+                  <ModalFooter gap={3}>
+                    <Button onClick={onLinkedClose} variant={"ghost"}>
+                      Cancel
+                    </Button>
+                    <Button
+                      colorScheme="facebook"
+                      onClick={() => {
+                        // handleSubmit();
+                        onLinkedClose();
                       }}
                     >
                       Yes, Generate
