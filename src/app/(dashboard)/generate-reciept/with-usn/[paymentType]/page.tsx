@@ -229,7 +229,7 @@ export default function WithUSNDynamicPage() {
   const {
     isOpen: isLinkedOpen,
     onClose: onLinkedClose,
-    onOpen: onLinkeOpen,
+    onOpen: onLinkedOpen,
   } = useDisclosure();
   const paymentType = params.paymentType as
     | "FEE"
@@ -923,6 +923,111 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
+  async function generateReciept(state: typeof initialValues) {
+    try {
+      const filename =
+        state.paymentMode == "ONLINE" &&
+        paymentType !== "MISCELLANEOUS" &&
+        user?.college !== "KSPT"
+          ? "feegenerateonlinewithusn.php"
+          : paymentType == "MISCELLANEOUS"
+          ? "feegeneratemiscellaneouswithusn.php"
+          : user?.college == "KSPT" || user?.college == "KSSA"
+          ? "feekspreceipt.php"
+          : "feegeneraterecieptwithusn.php";
+
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_ADMIN_URL +
+          `${filename}?${Object.keys(state)
+            .map(
+              (key, index) =>
+                `${key}=${
+                  key == "date"
+                    ? moment(state[key]).format("yyyy-MM-DD")
+                    : Object.values(state)[index]
+                }`
+            )
+            .join("&")}&paymentType=${paymentType}&college=${
+            user?.college
+          }&mutable=${isMutable}`
+      );
+
+      if (response.status == 402) return new Error(response.data.msg);
+
+      window.open(
+        process.env.NEXT_PUBLIC_ADMIN_URL +
+          `${filename}?${Object.keys(state)
+            .map(
+              (key, index) =>
+                `${key}=${
+                  key == "date"
+                    ? moment(state[key]).format("yyyy-MM-DD")
+                    : Object.values(state)[index]
+                }`
+            )
+            .join("&")}&paymentType=${paymentType}&college=${
+            user?.college
+          }&mutable=${isMutable}`,
+        "_blank"
+      );
+    } catch (e: any) {
+      toast({
+        title: e.response?.data?.msg ?? e,
+        status: "error",
+        position: "bottom",
+      });
+    }
+  }
+
+  async function updateReciept(state: typeof initialValues) {
+    try {
+      const formData = new FormData();
+      formData.append("challan_no", challan_id!);
+      formData.append("college", user?.college!);
+      formData.append("usn", state.usn);
+      formData.append("name", state.name);
+      formData.append("stu_category", state.category);
+      formData.append("sem", state.sem);
+      formData.append("year", state.year);
+      formData.append("branch", state.branch);
+      formData.append("bank", state.bank);
+      formData.append("method", state.paymentMode);
+      formData.append("type", paymentType);
+      formData.append("trans_id", state.transactionId);
+      formData.append("trans_date", state.date);
+      formData.append("tuition", state.tuitionFee.toString());
+      formData.append("vtu", state.vtuFee.toString());
+      formData.append("college_fee", state.collegeFee.toString());
+      formData.append("tuition", state.tuitionFee.toString());
+      formData.append("lab", state.labFee.toString());
+      formData.append("bus", state.busFee.toString());
+      formData.append("excess", state.excessFee.toString());
+      formData.append("security_deposit", state.securityDeposit.toString());
+      formData.append("hostel", state.hostelFee.toString());
+      formData.append("amount_paid", data[0].amount_paid);
+      formData.append("acad_year", state.chaAcadYear);
+      formData.append("linked", data[0].linked);
+
+      const response = await axios.post(
+        process.env.NEXT_PUBLIC_ADMIN_URL + `feechallanupdate.php`,
+        formData
+      );
+
+      if (response.status == 402) return new Error(response.data.msg);
+      toast({
+        title: "Your changes has been saved",
+        status: "info",
+        position: "bottom",
+      });
+    } catch (e: any) {
+      toast({
+        title: e.response?.data?.msg ?? e,
+        status: "error",
+        position: "bottom",
+      });
+    }
+  }
+
   return (
     <VStack spacing={"0"} w={"full"} h={"fit-content"} position={"relative"}>
       <Formik
@@ -932,57 +1037,10 @@ export default function WithUSNDynamicPage() {
         validateOnBlur
         validateOnMount
         onSubmit={async (state) => {
-          try {
-            const filename =
-              state.paymentMode == "ONLINE" &&
-              paymentType !== "MISCELLANEOUS" &&
-              user?.college !== "KSPT"
-                ? "feegenerateonlinewithusn.php"
-                : paymentType == "MISCELLANEOUS"
-                ? "feegeneratemiscellaneouswithusn.php"
-                : user?.college == "KSPT" || user?.college == "KSSA"
-                ? "feekspreceipt.php"
-                : "feegeneraterecieptwithusn.php";
-
-            const response = await axios.get(
-              process.env.NEXT_PUBLIC_ADMIN_URL +
-                `${filename}?${Object.keys(state)
-                  .map(
-                    (key, index) =>
-                      `${key}=${
-                        key == "date"
-                          ? moment(state[key]).format("yyyy-MM-DD")
-                          : Object.values(state)[index]
-                      }`
-                  )
-                  .join("&")}&paymentType=${paymentType}&college=${
-                  user?.college
-                }&mutable=${isMutable}`
-            );
-
-            if (response.status == 402) return new Error(response.data.msg);
-
-            window.open(
-              process.env.NEXT_PUBLIC_ADMIN_URL +
-                `${filename}?${Object.keys(state)
-                  .map(
-                    (key, index) =>
-                      `${key}=${
-                        key == "date"
-                          ? moment(state[key]).format("yyyy-MM-DD")
-                          : Object.values(state)[index]
-                      }`
-                  )
-                  .join("&")}&paymentType=${paymentType}&college=${
-                  user?.college
-                }&mutable=${isMutable}`,
-              "_blank"
-            );
-          } catch (e: any) {
-            toast({
-              title: e.response?.data?.msg ?? e,
-              status: "error",
-            });
+          if (challan_id) {
+            await updateReciept(state);
+          } else {
+            await generateReciept(state);
           }
         }}
       >
@@ -1126,10 +1184,11 @@ export default function WithUSNDynamicPage() {
                       size={"lg"}
                       isLoading={isSubmitting || isValidating}
                       onClick={() => {
-                        if (data[0]?.linked) {
-                          onOpen();
+                        const isLinked = data[0].linked;
+                        if (isLinked) {
+                          onLinkedOpen();
                         } else {
-                          // handleSubmit();
+                          handleSubmit();
                         }
                       }}
                       isDisabled={
@@ -1185,11 +1244,11 @@ export default function WithUSNDynamicPage() {
                     <Button
                       colorScheme="facebook"
                       onClick={() => {
-                        // handleSubmit();
+                        handleSubmit();
                         onLinkedClose();
                       }}
                     >
-                      Yes, Generate
+                      Save Changes
                     </Button>
                   </ModalFooter>
                 </ModalContent>
