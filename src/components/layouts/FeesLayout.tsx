@@ -129,6 +129,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
   const user = useAppSelector((state) => state.fees.user);
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   // const fetchBranchListCb = useCallback(() => {
   //   dispatch(fetchBranchList({ college: user?.college! }));
@@ -169,6 +170,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
       const formData = new FormData();
       formData.append("challan_id", filterState.challan_no);
       formData.append("college", user?.college!);
+      formData.append("acadyear", acadYear);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "feechallanfilter.php",
         {
