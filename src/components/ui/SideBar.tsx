@@ -5,7 +5,7 @@ import {
   MdOutlineSpaceDashboard,
   MdSpaceDashboard,
 } from "react-icons/md";
-import NavButton from "./utils/NavButton";
+import { NavButton } from "./utils/NavButton";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -14,6 +14,7 @@ import {
   FormControl,
   Select,
   VStack,
+  useColorMode,
   useToast,
 } from "@chakra-ui/react";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -32,28 +33,41 @@ export default function SideBar() {
     status: "info",
     variant: "subtle",
   });
+  const { toggleColorMode, colorMode, setColorMode } = useColorMode();
 
   return (
-    <div className="bg-secondary gap-4 flex flex-col border-r p-3 border-slate-300 w-full col-span-1">
+    <VStack
+      gap={4}
+      border={"ActiveBorder"}
+      bg={"Background"}
+      borderRightWidth={"thin"}
+      p={3}
+      w={"full"}
+      className=" col-span-1"
+    >
       <VStack pb={15} pt={5} w={"full"} gap={4}>
-        <Link href={"/dashboard"} className="w-full">
-          <NavButton
-            active={pathname.startsWith("/dashboard")}
-            icon={
-              pathname.startsWith("/dashboard") ? (
-                <MdSpaceDashboard />
-              ) : (
-                <MdOutlineSpaceDashboard />
-              )
-            }
-          >
-            Dashboard
-          </NavButton>
-        </Link>
+        <NavButton
+          as={Link}
+          href={"/dashboard"}
+          w={"full"}
+          isActive={pathname.startsWith("/dashboard")}
+          leftIcon={
+            pathname.startsWith("/dashboard") ? (
+              <MdSpaceDashboard />
+            ) : (
+              <MdOutlineSpaceDashboard />
+            )
+          }
+        >
+          Dashboard
+        </NavButton>
         <Link href={"/students"} className="w-full">
           <NavButton
-            active={pathname.startsWith("/students")}
-            icon={pathname.startsWith("/students") ? <FaUsers /> : <FaUsers />}
+            w={"full"}
+            isActive={pathname.startsWith("/students")}
+            leftIcon={
+              pathname.startsWith("/students") ? <FaUsers /> : <FaUsers />
+            }
           >
             Students
           </NavButton>
@@ -62,11 +76,12 @@ export default function SideBar() {
       <Divider />
       <Button
         as={Link}
+        w={"full"}
         href={"/generate-reciept/without-usn"}
         size={"md"}
         rounded={"full"}
+        variant={"outline"}
         leftIcon={<AiOutlinePlus className={"text-xl"} />}
-        colorScheme={"facebook"}
       >
         New Receipt
       </Button>
@@ -84,6 +99,17 @@ export default function SideBar() {
           <option value={"2023"}>2023</option>
         </Select>
       </FormControl>
-    </div>
+      <Select
+        rounded={"full"}
+        value={colorMode}
+        onChange={(e) => {
+          setColorMode(e.target.value);
+        }}
+      >
+        <option value={"light"}>Light</option>
+        <option value={"dark"}>Dark</option>
+        <option value={"system"}>System</option>
+      </Select>
+    </VStack>
   );
 }
