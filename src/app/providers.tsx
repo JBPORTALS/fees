@@ -29,10 +29,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <CacheProvider prepend={false}>
             <Toaster />
             <ChakraProvider
-              colorModeManager={localStorageManager}
+              // colorModeManager={localStorageManager}
               theme={theme}
             >
-              <ColorModeScript initialColorMode={"dark"} />
+              {/* <ColorModeScript initialColorMode={"dark"} /> */}
               {children}
             </ChakraProvider>
           </CacheProvider>
