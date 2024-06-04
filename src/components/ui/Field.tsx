@@ -5,6 +5,7 @@ import {
   FormLabel,
   FormErrorMessage,
   FormErrorIcon,
+  FormHelperText,
 } from "@chakra-ui/react";
 import { FieldHookConfig, useField } from "formik";
 import moment from "moment";
@@ -19,6 +20,7 @@ export type FieldProps = {
   name: string;
   type: FieldInputTypeAttribute;
   label: string;
+  description?: string;
   isReadonly?: boolean;
   isDisabled?: boolean;
   validateField?: Yup.AnySchema;
@@ -65,7 +67,7 @@ export const Field = (props: FieldProps) => {
         return (
           <Select
             {...fieldProps}
-            isDisabled={props?.isDisabled}
+            isDisabled={props?.isDisabled || props.isReadonly}
             isReadOnly={props?.isReadonly}
             _invalid={{
               background(theme) {
@@ -114,10 +116,13 @@ export const Field = (props: FieldProps) => {
   return (
     <FormControl
       isInvalid={!!metaProps.touched && !!metaProps.error}
+      isReadOnly={props.isReadonly}
+      isDisabled={props.isDisabled}
       hidden={props.hidden}
     >
       <FormLabel>{props.label}</FormLabel>
       {renderConditionalInputField()}
+      <FormHelperText>{props.description}</FormHelperText>
       {metaProps.touched && metaProps.error && (
         <FormErrorMessage>
           <FormErrorIcon />

@@ -122,7 +122,9 @@ export default function WithUSNLayout({
           <Divider />
           {isInEditMode && (
             <AbsoluteCenter bg="white" px="4">
-              <Tag colorScheme={"green"}>Edit Mode</Tag>
+              <Tag colorScheme={"green"}>
+                Edit Mode: Challan ID-{searchParams.get("challan_id")}
+              </Tag>
             </AbsoluteCenter>
           )}
         </Box>

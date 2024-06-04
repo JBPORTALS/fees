@@ -8,6 +8,11 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Menu,
+  MenuButton,
+  MenuIcon,
+  MenuItem,
+  MenuList,
   Modal,
   ModalBody,
   ModalContent,
@@ -34,7 +39,10 @@ import moment from "moment";
 import { useParams, useSearchParams } from "next/navigation";
 import {
   AiOutlineCheck,
+  AiOutlineDelete,
   AiOutlineFileDone,
+  AiOutlineFileText,
+  AiOutlineMore,
   AiOutlineSearch,
 } from "react-icons/ai";
 import axios from "axios";
@@ -49,6 +57,7 @@ import { toast } from "react-hot-toast";
 import { useAppSelector } from "@/store";
 import { FaInfoCircle } from "react-icons/fa";
 import { trpc } from "@/utils/trpc-cleint";
+import { Link } from "@chakra-ui/next-js";
 
 const initialValues = {
   usn: "", //✅
@@ -107,7 +116,8 @@ const FormikContextProvider = () => {
       setFieldValue("category", data[0]?.stu_category);
       setFieldValue("total_fee", data[0]?.total_fee);
       setFieldValue("remaining_fee", data[0]?.remaining_fee);
-      setFieldValue("excess_fee", data[0]?.excess);
+      setFieldValue("excessFee", data[0]?.excess);
+      setFieldValue("total", data[0]?.amount_paid);
       setFieldValue("tuitionFee", data[0]?.tuition);
       setFieldValue("vtuFee", data[0]?.vtu);
       setFieldValue("collegeFee", data[0]?.college_fee);
@@ -307,6 +317,8 @@ export default function WithUSNDynamicPage() {
       placeholder: "Select Academic Year",
       validateField: Yup.string().required("Fill the field !"),
       options: ACADYEARS(),
+      isReadonly: challan_id ? true : false,
+      description: challan_id ? "You can't modify in edit mode" : undefined,
     },
     {
       name: "total_fee",
@@ -993,7 +1005,7 @@ export default function WithUSNDynamicPage() {
       formData.append("bank", state.bank);
       formData.append("method", state.paymentMode);
       formData.append("type", paymentType);
-      formData.append("trans_id", state.transactionId);
+      formData.append("trans_id", state.chequeNo);
       formData.append("trans_date", state.date);
       formData.append("tuition", state.tuitionFee.toString());
       formData.append("vtu", state.vtuFee.toString());
@@ -1004,7 +1016,7 @@ export default function WithUSNDynamicPage() {
       formData.append("excess", state.excessFee.toString());
       formData.append("security_deposit", state.securityDeposit.toString());
       formData.append("hostel", state.hostelFee.toString());
-      formData.append("amount_paid", data[0].amount_paid);
+      formData.append("amount_paid", state.total.toString());
       formData.append("acad_year", state.chaAcadYear);
       formData.append("linked", data[0].linked);
 
@@ -1179,7 +1191,36 @@ export default function WithUSNDynamicPage() {
                     </Button>
                   </>
                 ) : (
-                  <>
+                  <HStack width={"100%"} justifyContent={"space-between"}>
+                    <Menu>
+                      <MenuButton
+                        as={IconButton}
+                        size={"lg"}
+                        variant={"outline"}
+                        icon={<AiOutlineMore className="text-2xl" />}
+                        aria-label="More-icon"
+                      />
+                      <MenuList className="hover:no-underline ">
+                        <MenuItem
+                          onClick={() => {
+                            window.open(
+                              `${process.env.NEXT_PUBLIC_ADMIN_URL}feedownloadreciept.php?challan_id=${challan_id}&acadyear=${acadYear}&college=${user?.college}`
+                            );
+                          }}
+                        >
+                          <MenuIcon className="mr-2">
+                            <AiOutlineFileText className="text-lg" />
+                          </MenuIcon>
+                          Download Reciept
+                        </MenuItem>
+                        <MenuItem color={"darkred"}>
+                          <MenuIcon className="mr-2">
+                            <AiOutlineDelete className="text-lg" />
+                          </MenuIcon>
+                          Delete Challan
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
                     <Button
                       size={"lg"}
                       isLoading={isSubmitting || isValidating}
@@ -1201,7 +1242,7 @@ export default function WithUSNDynamicPage() {
                     >
                       Save
                     </Button>
-                  </>
+                  </HStack>
                 )}
               </HStack>
               <Modal onClose={onClose} isOpen={isOpen}>
