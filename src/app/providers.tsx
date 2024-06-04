@@ -14,7 +14,7 @@ import { QueryClientProvider, QueryClient } from "react-query";
 import TRPCProvider from "@/utils/trpc-provider";
 
 const config: ThemeConfig = {
-  initialColorMode: "dark", // 'dark' | 'light'
+  initialColorMode: "light", // 'dark' | 'light'
   useSystemColorMode: false,
 };
 
