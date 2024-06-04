@@ -36,7 +36,7 @@ import React, {
 } from "react";
 import { Field, FieldProps } from "@/components/ui/Field";
 import moment from "moment";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   AiOutlineCheck,
   AiOutlineDelete,
@@ -213,11 +213,11 @@ export default function WithUSNDynamicPage() {
   const toast = useToast({
     position: "bottom-left",
   });
-
   const branchList = useAppSelector((state) => state.fees.branch_list.data) as {
     branch: string;
   }[];
   const [isMutable, setIsMustable] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const user = useAppSelector((state) => state.fees.user);
   const acadYear = useAppSelector((state) => state.fees.acadYear);
@@ -237,10 +237,16 @@ export default function WithUSNDynamicPage() {
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
+    isOpen: isDeleteConfirmOpen,
+    onClose: onDeleteConfirmClose,
+    onOpen: onDeleteConfirmOpen,
+  } = useDisclosure();
+  const {
     isOpen: isLinkedOpen,
     onClose: onLinkedClose,
     onOpen: onLinkedOpen,
   } = useDisclosure();
+  const router = useRouter();
   const paymentType = params.paymentType as
     | "FEE"
     | "MISCELLANEOUS"
@@ -1039,6 +1045,34 @@ export default function WithUSNDynamicPage() {
       });
     }
   }
+  async function deleteReciept() {
+    setIsDeleting(true);
+    try {
+      const formData = new FormData();
+      formData.append("challan_id", challan_id!);
+      formData.append("college", user?.college!);
+
+      const response = await axios.post(
+        process.env.NEXT_PUBLIC_ADMIN_URL + `feedeletechallan.php`,
+        formData
+      );
+
+      if (response.status == 402) return new Error(response.data.msg);
+      toast({
+        title: "Challan Deleted Successfully",
+        status: "success",
+        position: "bottom",
+      });
+      router.back();
+    } catch (e: any) {
+      toast({
+        title: e.response?.data?.msg ?? e,
+        status: "error",
+        position: "bottom",
+      });
+    }
+    setIsDeleting(false);
+  }
 
   return (
     <VStack spacing={"0"} w={"full"} h={"fit-content"} position={"relative"}>
@@ -1213,7 +1247,10 @@ export default function WithUSNDynamicPage() {
                           </MenuIcon>
                           Download Reciept
                         </MenuItem>
-                        <MenuItem color={"darkred"}>
+                        <MenuItem
+                          color={"darkred"}
+                          onClick={onDeleteConfirmOpen}
+                        >
                           <MenuIcon className="mr-2">
                             <AiOutlineDelete className="text-lg" />
                           </MenuIcon>
@@ -1290,6 +1327,34 @@ export default function WithUSNDynamicPage() {
                       }}
                     >
                       Save Changes
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+
+              <Modal
+                onClose={onDeleteConfirmClose}
+                isOpen={isDeleteConfirmOpen}
+              >
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader fontSize={"medium"}>
+                    📢 Are you sure, you want to delete this challan?
+                  </ModalHeader>
+                  <ModalBody>{`This is irreversable action, you can't undo this action at anytime.`}</ModalBody>
+                  <ModalFooter gap={3}>
+                    <Button onClick={onDeleteConfirmClose} variant={"ghost"}>
+                      Cancel
+                    </Button>
+                    <Button
+                      isLoading={isDeleting}
+                      colorScheme="red"
+                      onClick={() => {
+                        deleteReciept();
+                        onLinkedClose();
+                      }}
+                    >
+                      Delete
                     </Button>
                   </ModalFooter>
                 </ModalContent>
