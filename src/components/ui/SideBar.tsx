@@ -41,8 +41,11 @@ export default function SideBar() {
       bg={"Background"}
       borderRightWidth={"1px"}
       p={3}
+      pb={20}
       w={"full"}
+      h={"full"}
       className=" col-span-1"
+      justifyContent={"space-between"}
     >
       <VStack pb={15} pt={5} w={"full"} gap={4}>
         <NavButton
@@ -72,32 +75,33 @@ export default function SideBar() {
           </NavButton>
         </Link>
       </VStack>
-      <Divider />
-      <Button
-        as={Link}
-        w={"full"}
-        href={"/generate-reciept/without-usn"}
-        size={"md"}
-        rounded={"full"}
-        variant={"outline"}
-        leftIcon={<AiOutlinePlus className={"text-xl"} />}
-      >
-        New Receipt
-      </Button>
-      <FormControl>
-        <Select
-          rounded={"full"}
-          value={acadYear}
-          onChange={(e) => {
-            dispatch(changeAcadYear(e.target.value));
-            toast({ title: `Academic year changed to "${e.target.value}"` });
-            router.refresh();
-          }}
+      <VStack w={"full"} gap={4}>
+        <Divider />
+        <Button
+          as={Link}
+          w={"full"}
+          href={"/generate-reciept/without-usn"}
+          size={"md"}
+          variant={"solid"}
+          colorScheme="facebook"
+          leftIcon={<AiOutlinePlus className={"text-xl"} />}
         >
-          <option value={"2024"}>2024</option>
-          <option value={"2023"}>2023</option>
-        </Select>
-      </FormControl>
+          New Receipt
+        </Button>
+        <FormControl>
+          <Select
+            value={acadYear}
+            onChange={(e) => {
+              dispatch(changeAcadYear(e.target.value));
+              toast({ title: `Academic year changed to "${e.target.value}"` });
+              router.refresh();
+            }}
+          >
+            <option value={"2024"}>2024</option>
+            <option value={"2023"}>2023</option>
+          </Select>
+        </FormControl>
+      </VStack>
       {/* <Select
         rounded={"full"}
         value={colorMode}
