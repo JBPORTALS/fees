@@ -9,11 +9,13 @@ import {
   ModalHeader,
   ModalOverlay,
   ResponsiveValue,
+  ModalProps,
+  ModalBodyProps,
 } from "@chakra-ui/react";
 import React from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 
-interface IDrawerProps {
+interface IDrawerProps extends ModalProps {
   heading: string;
   children: React.ReactNode;
   onSubmit?: () => void;
@@ -24,7 +26,8 @@ interface IDrawerProps {
   isLoading?: boolean;
   colorBtn?: "blue" | "red" | "orange";
   hideBtn?: boolean;
-  isDisabled?:boolean;
+  isDisabled?: boolean;
+  modalBodyProps?: ModalBodyProps;
 }
 
 export default function IModal({
@@ -38,10 +41,12 @@ export default function IModal({
   isLoading,
   colorBtn,
   hideBtn,
-  isDisabled=false
+  isDisabled = false,
+  modalBodyProps,
+  ...props
 }: IDrawerProps) {
   return (
-    <Modal size={size} isOpen={isOpen} onClose={onClose}>
+    <Modal size={size} isOpen={isOpen} onClose={onClose} {...props}>
       <ModalOverlay
         bg={"rgba(255,255,255,0.2)"}
         className={"backdrop-blur-sm"}
@@ -51,7 +56,10 @@ export default function IModal({
           {heading}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody className="w-full h-fit bg-primary flex justify-center">
+        <ModalBody
+          {...modalBodyProps}
+          className="w-full h-fit bg-primary flex justify-center"
+        >
           <div className="w-full h-full">{children}</div>
         </ModalBody>
         {!hideBtn && (
@@ -66,7 +74,7 @@ export default function IModal({
               Close
             </Button>
             <Button
-            isDisabled={isDisabled}
+              isDisabled={isDisabled}
               onClick={async () => {
                 onSubmit && (await onSubmit());
               }}

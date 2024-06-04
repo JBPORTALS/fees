@@ -18,9 +18,11 @@ import {
   FormLabel,
   Heading,
   HStack,
+  IconButton,
   Input,
   Menu,
   MenuButton,
+  MenuItem,
   MenuList,
   Select,
   Skeleton,
@@ -37,6 +39,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import {
+  AiOutlineArrowRight,
   AiOutlineDatabase,
   AiOutlineDownload,
   AiOutlineFilePdf,
@@ -116,7 +119,8 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
         name: string;
         date: string;
         method: string;
-        amount_paid1: string;
+        amount_paid: string;
+        type: string;
       }[]
     | null
   >(null);
@@ -271,6 +275,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                 isOpen={isOpen}
                 onClose={onClose}
                 heading={"Search Result"}
+                modalBodyProps={{
+                  p: "0",
+                }}
               >
                 <VStack w={"full"}>
                   {isloading
@@ -280,15 +287,24 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         );
                       })
                     : filteredData?.map((paymentData, index) => {
+                        const conditionalAsProp = paymentData.usn
+                          ? {
+                              href: `/generate-reciept/with-usn/${paymentData.type}?challan_id=${paymentData.challan_id}`,
+                              _hover: { bg: "rgba(0,0,0,0.03)" },
+                            }
+                          : {};
                         return (
                           <>
                             <HStack
+                              role="group"
+                              as={paymentData.usn ? Link : "div"}
                               key={paymentData.challan_id + index}
                               w={"full"}
-                              className={"border-b border-b-lightgray"}
-                              bg={"gray.50"}
+                              className={"border-b group border-b-lightgray"}
                               px={"5"}
                               py={"2"}
+                              gap={"5"}
+                              {...conditionalAsProp}
                             >
                               <VStack flex={1} alignItems={"start"}>
                                 <HStack justifyContent={"start"}>
@@ -336,13 +352,24 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                               <VStack flex={1} alignItems={"end"}>
                                 <Box>
                                   <h1 className="text-xl font-bold text-green-600">
-                                    ₹{paymentData.amount_paid1}
+                                    ₹{paymentData.amount_paid}
                                   </h1>
                                   <span className="text-md font-medium">
                                     <i>{paymentData.method}</i>
                                   </span>
                                 </Box>
                               </VStack>
+                              {paymentData.usn && (
+                                <Box
+                                  _groupHover={{
+                                    transform: "translateX(10px)",
+                                    color: "blue",
+                                  }}
+                                  transition={"transform 0.3s ease"}
+                                >
+                                  <AiOutlineArrowRight className="text-2xl" />
+                                </Box>
+                              )}
                             </HStack>
                             {!paymentData.usn && (
                               <Button
@@ -454,7 +481,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                   </VStack>
                 </MenuList>
               </Menu>
-              <Menu size={"lg"} placement="bottom-end">
+              <Menu size={"lg"} closeOnSelect placement="bottom-end">
                 <MenuButton
                   as={Button}
                   size={"sm"}
@@ -643,37 +670,39 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                           ) : null}
                         </FormControl>
                         <FormControl>
-                          <Button
-                            isLoading={isPushing}
-                            onClick={() => {
-                              switch (filterType) {
-                                case "CHALLAN":
-                                  onChallanFilter();
-                                  onOpen();
-                                  break;
-                                case "CHALLAN_DATE":
-                                  onDateFilter();
-                                  onOpen();
-                                  break;
-                                case "PAID_DATE":
-                                  onDateFilter();
-                                  onOpen();
-                                  break;
-                                case "MODE":
-                                  onModeFilter();
-                                  break;
-                                default:
-                                  return;
+                          <MenuItem p={"0"} _hover={{ bg: "transparent" }}>
+                            <Button
+                              isLoading={isPushing}
+                              onClick={() => {
+                                switch (filterType) {
+                                  case "CHALLAN":
+                                    onChallanFilter();
+                                    onOpen();
+                                    break;
+                                  case "CHALLAN_DATE":
+                                    onDateFilter();
+                                    onOpen();
+                                    break;
+                                  case "PAID_DATE":
+                                    onDateFilter();
+                                    onOpen();
+                                    break;
+                                  case "MODE":
+                                    onModeFilter();
+                                    break;
+                                  default:
+                                    return;
+                                }
+                              }}
+                              colorScheme={"blue"}
+                              rightIcon={
+                                <AiOutlineSearch className={"text-lg"} />
                               }
-                            }}
-                            colorScheme={"blue"}
-                            rightIcon={
-                              <AiOutlineSearch className={"text-lg"} />
-                            }
-                            w={"full"}
-                          >
-                            Search
-                          </Button>
+                              w={"full"}
+                            >
+                              Search
+                            </Button>
+                          </MenuItem>
                         </FormControl>
                       </>
                     )}
