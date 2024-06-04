@@ -4,6 +4,7 @@ import { CiReceipt } from "react-icons/ci";
 import ViewFeeDetailsModal from "../drawers/ViewFeeDetailsModal";
 import ViewChallanDetails from "../drawers/ViewChallanDetails";
 import ViewStudentsDetails from "../drawers/ViewStudentDetails";
+import Link from "next/link";
 
 const CustomViewButton = (data: any) => {
   return (
@@ -38,12 +39,11 @@ const ProfileViewButton = (data: any) => {
 const CustomViewChallanButton = (data: any) => {
   return (
     <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
-      <ViewChallanDetails
-        regno={data.value.usn}
-        challan_id={data.value.challan_id}
+      <Link
+        href={`/generate-reciept/with-usn/${data.value.payment_type}?challan_id=${data.value.challan_id}`}
       >
-        {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
-      </ViewChallanDetails>
+        <AiOutlineEye />
+      </Link>
     </div>
   );
 };
@@ -67,7 +67,6 @@ const StatusView = (data: {
   );
 };
 
-
 export const columns = [
   {
     field: "sl_no",
@@ -76,7 +75,7 @@ export const columns = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width:"100px"
+    width: "100px",
   },
   {
     field: "regno",
@@ -131,7 +130,6 @@ export const columns = [
     },
   },
 ];
-
 
 export const feeSearchColumns = [
   {
@@ -276,7 +274,7 @@ export const columnsForNonUpdate = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width:"100px"
+    width: "100px",
   },
   {
     field: "regno",

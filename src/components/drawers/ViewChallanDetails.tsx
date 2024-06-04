@@ -62,6 +62,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
       const formData = new FormData();
       formData.append("challan_id", challan_id);
       formData.append("college", user?.college!);
+      formData.append("acadyear", acadYear);
 
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL + "feechallanfilter.php",

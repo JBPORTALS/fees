@@ -54,7 +54,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
   const router = useRouter();
 
   return (
-    <div className="bg-primary relative overflow-hidden w-full  h-[100vh]">
+    <div className="bg-primary relative overflow-hidden w-full  h-full">
       <HStack
         w={"full"}
         zIndex={"banner"}
@@ -203,7 +203,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
           </HStack>
         </HStack>
       </HStack>
-      <div className="w-full h-full grid grid-cols-7 grid-flow-row">
+      <div className="w-full min-h-full grid grid-cols-7 grid-flow-row">
         <SideBar />
         <div className="col-span-6 h-full w-full">{children}</div>
       </div>

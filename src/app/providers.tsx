@@ -14,25 +14,25 @@ import { QueryClientProvider, QueryClient } from "react-query";
 import TRPCProvider from "@/utils/trpc-provider";
 
 const config: ThemeConfig = {
-  initialColorMode: "system", // 'dark' | 'light'
-  useSystemColorMode: true,
+  initialColorMode: "light", // 'dark' | 'light'
+  useSystemColorMode: false,
 };
 
-const theme = extendTheme();
+const theme = extendTheme(config);
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
   return (
     <TRPCProvider>
       <QueryClientProvider client={queryClient}>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <Provider store={store}>
           <CacheProvider prepend={false}>
             <Toaster />
             <ChakraProvider
-              colorModeManager={localStorageManager}
+              // colorModeManager={localStorageManager}
               theme={theme}
             >
+              {/* <ColorModeScript initialColorMode={"dark"} /> */}
               {children}
             </ChakraProvider>
           </CacheProvider>

@@ -56,6 +56,31 @@ export const appRouter = router({
       //   console.log(data);
       return data as [];
     }),
+  getChallanDetails: procedure
+    .input(
+      z.object({
+        challan_id: z.string(),
+        college: z.string(),
+        acadYear: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const formData = new FormData();
+      formData.append("challan_id", input.challan_id);
+      formData.append("college", input?.college!);
+      formData.append("acadyear", input.acadYear);
+
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_ADMIN_URL + "feechallanfilter.php",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await response.json();
+      //   console.log(data);
+      return data as any;
+    }),
   searchDataByMode: procedure
     .input(
       z.object({

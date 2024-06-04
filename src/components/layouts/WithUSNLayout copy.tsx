@@ -1,15 +1,20 @@
 import {
+  AbsoluteCenter,
+  Box,
+  Divider,
   HStack,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Tag,
+  VStack,
 } from "@chakra-ui/react";
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "@chakra-ui/next-js";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { AiOutlineCheck } from "react-icons/ai";
 
 interface GenerateRecieptLayoutProps {
@@ -20,6 +25,8 @@ export default function WithUSNLayout({
   children,
 }: GenerateRecieptLayoutProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isInEditMode = searchParams.get("challan_id");
 
   return (
     <Tabs
@@ -45,7 +52,7 @@ export default function WithUSNLayout({
       position={"relative"}
       zIndex={"sticky"}
     >
-      <HStack px={"36"}>
+      <VStack gap={"0"} px={"36"}>
         <TabList
           position={"sticky"}
           zIndex={"popover"}
@@ -53,7 +60,7 @@ export default function WithUSNLayout({
           backdropBlur={"sm"}
           w={"full"}
           top={"0"}
-          className="py-3 border-b border-gray-200 bg-white flex justify-between"
+          className="py-3 bg-white flex justify-between"
         >
           <Tab
             as={Link}
@@ -107,7 +114,21 @@ export default function WithUSNLayout({
             )}
           </Tab>
         </TabList>
-      </HStack>
+        <Box
+          position="relative"
+          width={"100%"}
+          py={isInEditMode ? "3" : "unset"}
+        >
+          <Divider />
+          {isInEditMode && (
+            <AbsoluteCenter bg="white" px="4">
+              <Tag colorScheme={"green"}>
+                Edit Mode: Challan ID-{searchParams.get("challan_id")}
+              </Tag>
+            </AbsoluteCenter>
+          )}
+        </Box>
+      </VStack>
       <TabPanels
         px={"36"}
         height={"67vh"}

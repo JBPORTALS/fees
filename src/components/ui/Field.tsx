@@ -5,72 +5,39 @@ import {
   FormLabel,
   FormErrorMessage,
   FormErrorIcon,
+  FormHelperText,
 } from "@chakra-ui/react";
 import { FieldHookConfig, useField } from "formik";
 import moment from "moment";
+import { HTMLAttributes, HTMLInputTypeAttribute } from "react";
 import ReactDatePicker from "react-datepicker";
-import * as Yup from "yup"
+import * as Yup from "yup";
 
 type HookProps = FieldHookConfig<string>;
+type FieldInputTypeAttribute = HTMLInputTypeAttribute | "select";
 
-type FieldProps = {
-  options?: { value: string; option: string }[];
+export type FieldProps = {
+  name: string;
+  type: FieldInputTypeAttribute;
   label: string;
-  isDisabled?: boolean;
+  description?: string;
   isReadonly?: boolean;
-  placeholder?: string;
-  type?: string;
-  validateField:Yup.StringSchema | Yup.NumberSchema | Yup.DateSchema
-} & HookProps;
+  isDisabled?: boolean;
+  validateField?: Yup.AnySchema;
+  options?: Array<any>;
+} & HookProps &
+  HTMLAttributes<HTMLInputElement>;
 
 export const Field = (props: FieldProps) => {
   const [fieldProps, metaProps, helperProps] = useField(props);
+  const type = props.type as FieldInputTypeAttribute;
 
   function renderConditionalInputField() {
-    switch (props.type) {
-      case "text":
-        return (
-          <Input
-            _invalid={{
-              background(theme) {
-                return theme.colors.red["50"];
-              },
-              borderColor(theme) {
-                return theme.colors.red["500"];
-              },
-              borderWidth: "2px",
-            }}
-            bg={"white"}
-            {...fieldProps}
-            placeholder={props.placeholder}
-            type={props.type}
-            isDisabled={props?.isDisabled}
-            isReadOnly={props?.isReadonly}
-          />
-        );
-      case "number":
-        return (
-          <Input
-            _invalid={{
-              background(theme) {
-                return theme.colors.red["50"];
-              },
-              borderColor(theme) {
-                return theme.colors.red["500"];
-              },
-              borderWidth: "2px",
-            }}
-            bg={"white"}
-            {...fieldProps}
-            placeholder={props.placeholder}
-            type={props.type}
-            isDisabled={props?.isDisabled}
-            isReadOnly={props?.isReadonly}
-          />
-        );
+    switch (type) {
       case "date":
         return (
           <Input
+            {...fieldProps}
             as={ReactDatePicker}
             _invalid={{
               background(theme) {
@@ -99,8 +66,9 @@ export const Field = (props: FieldProps) => {
       case "select":
         return (
           <Select
-          isDisabled={props?.isDisabled}
-          isReadOnly={props?.isReadonly}
+            {...fieldProps}
+            isDisabled={props?.isDisabled || props.isReadonly}
+            isReadOnly={props?.isReadonly}
             _invalid={{
               background(theme) {
                 return theme.colors.red["50"];
@@ -122,20 +90,46 @@ export const Field = (props: FieldProps) => {
           </Select>
         );
       default:
-        return null;
+        return (
+          <Input
+            {...fieldProps}
+            _invalid={{
+              background(theme) {
+                return theme.colors.red["50"];
+              },
+              borderColor(theme) {
+                return theme.colors.red["500"];
+              },
+              borderWidth: "2px",
+            }}
+            bg={"white"}
+            {...fieldProps}
+            placeholder={props.placeholder}
+            type={props.type}
+            isDisabled={props?.isDisabled}
+            isReadOnly={props?.isReadonly}
+          />
+        );
     }
   }
 
   return (
-    <FormControl isInvalid={!!metaProps.touched && !!metaProps.error}>
+    <FormControl
+      isInvalid={!!metaProps.touched && !!metaProps.error}
+      isReadOnly={props.isReadonly}
+      isDisabled={props.isDisabled}
+      hidden={props.hidden}
+    >
       <FormLabel>{props.label}</FormLabel>
       {renderConditionalInputField()}
+      <FormHelperText>{props.description}</FormHelperText>
       {metaProps.touched && metaProps.error && (
         <FormErrorMessage>
           <FormErrorIcon />
           {metaProps.error}
         </FormErrorMessage>
       )}
+      {/* <pre>{JSON.stringify(metaProps.error)}</pre> */}
     </FormControl>
   );
 };
