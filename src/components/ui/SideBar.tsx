@@ -38,9 +38,8 @@ export default function SideBar() {
   return (
     <VStack
       gap={4}
-      border={"ActiveBorder"}
       bg={"Background"}
-      borderRightWidth={"thin"}
+      borderRightWidth={"1px"}
       p={3}
       w={"full"}
       className=" col-span-1"
@@ -99,7 +98,7 @@ export default function SideBar() {
           <option value={"2023"}>2023</option>
         </Select>
       </FormControl>
-      <Select
+      {/* <Select
         rounded={"full"}
         value={colorMode}
         onChange={(e) => {
@@ -109,7 +108,7 @@ export default function SideBar() {
         <option value={"light"}>Light</option>
         <option value={"dark"}>Dark</option>
         <option value={"system"}>System</option>
-      </Select>
+      </Select> */}
     </VStack>
   );
 }
