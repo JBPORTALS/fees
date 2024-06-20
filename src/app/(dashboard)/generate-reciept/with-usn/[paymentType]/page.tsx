@@ -173,7 +173,7 @@ const FormikContextProvider = () => {
         setFieldValue("branch", res.data[0]?.branch);
         setFieldValue("category", res.data[0]?.category);
         setFieldValue("total_fee", res.data[0]?.total_fee);
-        setFieldValue("excessFee", res.data[0]?.remaining_fee);
+        setFieldValue("remaining_fee", res.data[0]?.remaining_fee);
       }
     } catch (e: any) {
       toast.error(e.response.data?.msg, { position: "bottom-center" });
