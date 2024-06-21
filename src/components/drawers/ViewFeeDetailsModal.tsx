@@ -122,6 +122,8 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
     setIsLoading(true);
     const formData = new FormData();
     formData.append("regno", selectedFeeDetails[0].regno);
+    formData.append("sem", selectedFeeDetails[0].sem);
+    formData.append("year", selectedFeeDetails[0].year);
     formData.append("total", state.total);
     formData.append("college", user?.college!);
     formData.append("acadYear", acadYear);
