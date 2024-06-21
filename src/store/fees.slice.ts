@@ -335,6 +335,8 @@ export const updateFeeDetail = createAsyncThunk<
       formData.append("acadYear", acadYear);
       formData.append("id", selectedFee[0].id);
       formData.append("regno", selectedFee[0].regno);
+      formData.append("sem", selectedFee[0].sem);
+      formData.append("year", selectedFee[0].year);
       formData.append("name", selectedFee[0].name);
       formData.append("method", payload.method);
       formData.append("paid", payload.paid);
