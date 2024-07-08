@@ -21,7 +21,7 @@ interface IDrawerProps {
   buttonTitle?: string;
   isDisabled?: boolean;
   isLoading?: boolean;
-  size?: ResponsiveValue<"sm" | "xs" | "lg" | "xl">;
+  size?: ResponsiveValue<"sm" | "xs" | "lg" | "xl" | "md">;
 }
 
 export default function IDrawer({
@@ -36,7 +36,7 @@ export default function IDrawer({
   size,
 }: IDrawerProps) {
   return (
-    <Drawer  isOpen={isOpen} onClose={onClose} size={size}>
+    <Drawer isOpen={isOpen} onClose={onClose} size={size}>
       <DrawerOverlay
         bg={"rgba(246,246,246,0.2)"}
         className={"backdrop-blur-sm"}

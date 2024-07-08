@@ -1,4 +1,9 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
   Button,
   FormControl,
   FormErrorMessage,
@@ -347,7 +352,9 @@ export default function ViewStudentsDetails({
           </SimpleGrid>
         </VStack>
       </IModal>
+
       <IDrawer
+        size={"sm"}
         isLoading={isSubmitting}
         isDisabled={!!Object.keys(errors).length}
         onSubmit={() => {
@@ -561,6 +568,18 @@ export default function ViewStudentsDetails({
           >
             {values.id && (
               <>
+                {values.remaining < 0 && (
+                  <Alert status="warning">
+                    <AlertIcon />
+                    <Box>
+                      <AlertTitle fontSize={"small"}>Warning !</AlertTitle>
+                      <AlertDescription fontSize={"smaller"}>
+                        Remaining Amount is less than zero. You still may
+                        continue to save the changes.
+                      </AlertDescription>
+                    </Box>
+                  </Alert>
+                )}
                 <Button
                   isDisabled={!isValid}
                   onClick={onPaymentOpen}
