@@ -602,7 +602,7 @@ interface FeesIntialState {
 }
 
 const initialState: FeesIntialState = {
-  acadYear: "2023",
+  acadYear: "2024",
   year_list: [],
   all_fee: {
     data: [],
