@@ -473,7 +473,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                         isDisabled={!state.branch || !state.year}
                         colorScheme="blue"
                         as={Link}
-                        href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}&status=${state.status}`}
+                        href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}&status=${state.status}&acadYear=${acadYear}`}
                       >
                         Download Excel
                       </Button>
