@@ -57,6 +57,7 @@ import { FaBullseye, FaChevronDown } from "react-icons/fa";
 import { MdBarChart, MdOutlineAutoGraph } from "react-icons/md";
 import { SiGoogleclassroom } from "react-icons/si";
 import Link from "next/link";
+import { useUser } from "@/utils/auth";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -132,7 +133,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const [usn, setUSN] = useState("");
   const pathname = usePathname();
   const router = useRouter();
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   // const fetchBranchListCb = useCallback(() => {

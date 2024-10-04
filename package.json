@@ -34,6 +34,7 @@
     "eslint-config-next": "^14.2.3",
     "formik": "^2.4.2",
     "framer-motion": "^10.18.0",
+    "iron-session": "^8.0.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "next": "^14.2.3",

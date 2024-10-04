@@ -27,13 +27,7 @@ import {
 } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
-import type { Schema } from "yup";
-import React, {
-  HTMLAttributes,
-  HTMLInputTypeAttribute,
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { Field, FieldProps } from "@/components/ui/Field";
 import moment from "moment";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -57,7 +51,7 @@ import { toast } from "react-hot-toast";
 import { useAppSelector } from "@/store";
 import { FaInfoCircle } from "react-icons/fa";
 import { trpc } from "@/utils/trpc-cleint";
-import { Link } from "@chakra-ui/next-js";
+import { useUser } from "@/utils/auth";
 
 const initialValues = {
   usn: "", //✅
@@ -90,7 +84,7 @@ const FormikContextProvider = () => {
   const { values, setFieldValue } = useFormikContext<typeof initialValues>();
   const [usn, setUsn] = useState("");
   const [isLoading, setIsloading] = useState(false);
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const searchParams = useSearchParams();
   const challan_id = searchParams.get("challan_id");

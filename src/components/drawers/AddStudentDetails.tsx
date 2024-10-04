@@ -9,15 +9,16 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import IDrawer from "../ui/utils/IDrawer";
-import { Field, Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useAppSelector } from "@/store";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useAppDispatch } from "@/hooks";
 import { fetchFeeDetails } from "@/store/fees.slice";
 import { SEMS } from "../mock-data/constants";
+import { useUser } from "@/utils/auth";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -89,7 +90,7 @@ export default function AddStudentsDetails({ children }: props) {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const dispatch = useAppDispatch();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
 

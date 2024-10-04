@@ -25,6 +25,7 @@ import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
 import { MdRemove, MdRemoveCircle } from "react-icons/md";
 import HistoryItem from "../ui/HistoryItem";
+import { useUser } from "@/utils/auth";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -52,9 +53,8 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
   const [challanId, setChallanId] = useState("");
   const [state, setState] = useState({ total: "" });
   const [isUpdating, setIsLoading] = useState(false);
-  const [isPermited, setIsPermited] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const [challanState, setChallanState] = useState<
     | {

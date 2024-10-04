@@ -20,6 +20,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { MdRemove } from "react-icons/md";
 import IModal from "./utils/IModal";
+import { useUser } from "@/utils/auth";
 
 export default function HistoryItem({ history }: { history: PaymentHistory }) {
   const dispatch = useAppDispatch();
@@ -27,7 +28,7 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
   const selectedFeeDetails = useAppSelector(
     (state) => state.fees.selected_fee.data
   ) as SelectedFee[];
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const {
     isOpen: isConfirmDeleteOpen,

@@ -14,7 +14,6 @@ import {
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
-  Stack,
   Switch,
   Input,
   VStack,
@@ -43,6 +42,7 @@ import {
 } from "@/components/mock-data/constants";
 import { useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
+import { useUser } from "@/utils/auth";
 
 const initialValues = {
   name: "", //✅
@@ -73,7 +73,7 @@ const FormikContextProvider = () => {
     useFormikContext<typeof initialValues>();
   const [appId, setAppId] = useState("");
   const [isLoading, setIsloading] = useState(false);
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const toast = useToast();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
 
