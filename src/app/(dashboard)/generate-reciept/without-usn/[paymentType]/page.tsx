@@ -189,7 +189,7 @@ export default function WithoutUSNDynamicPage() {
     position: "bottom-left",
   });
 
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [isAutoAddEnabled, setIsAutoAddEnabled] = useState(false);
   const params = useParams();
