@@ -213,7 +213,7 @@ export default function WithUSNDynamicPage() {
   const [isMutable, setIsMustable] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const params = useParams();
   const searchParams = useSearchParams();
