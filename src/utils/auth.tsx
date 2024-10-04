@@ -1,5 +1,6 @@
 import React from "react";
 import { trpc } from "./trpc-cleint";
+import { useRouter } from "next/navigation";
 
 export function useUser() {
   const [userId, setUserId] = React.useState(undefined);
@@ -33,6 +34,7 @@ export function useUser() {
 export function useSignIn() {
   const [userId, setUserId] = React.useState(undefined);
   const user = trpc.getUser.useQuery(userId ?? "", { enabled: !!userId });
+  const router = useRouter();
   const { mutateAsync } = trpc.signIn.useMutation({
     async onSuccess(data) {
       await fetch("/api/session", {
@@ -62,6 +64,16 @@ export function useSignIn() {
     setUserId(sessionData.id);
   }, []);
 
+  const signOut = React.useCallback(async () => {
+    // Fetch session
+    await fetch(`/api/session`, {
+      credentials: "include",
+      method: "DELETE",
+    });
+
+    router.refresh();
+  }, []);
+
   React.useEffect(() => {
     setUser();
   }, []);
@@ -69,5 +81,6 @@ export function useSignIn() {
   return {
     isLoggedIn: !!user.data,
     signIn: mutateAsync,
+    signOut,
   };
 }

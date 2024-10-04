@@ -34,7 +34,7 @@ import { fetchYearList } from "@/store/fees.slice";
 import { useAppSelector } from "@/store";
 import { SC } from "@/utils/supabase";
 import Link from "next/link";
-import { useUser } from "@/utils/auth";
+import { useSignIn, useUser } from "@/utils/auth";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -47,10 +47,9 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
     onOpen: onProfileOpen,
   } = useDisclosure();
 
-  const supabase = SC();
   const user = useUser();
+  const { signOut } = useSignIn();
   const [query, setQuery] = useState("");
-  const { colorMode, toggleColorMode } = useColorMode();
 
   const router = useRouter();
 
@@ -185,8 +184,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
                     <Button
                       leftIcon={<AiOutlineLogout />}
                       onClick={async () => {
-                        await supabase.auth.signOut(); //signout functinality TODO:
-                        router.refresh();
+                        await signOut();
                       }}
                       colorScheme="facebook"
                       w={"full"}
