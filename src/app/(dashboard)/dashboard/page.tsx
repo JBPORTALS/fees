@@ -26,6 +26,7 @@ import {
   ArcElement,
 } from "chart.js";
 import { useAppSelector } from "@/store";
+import { useUser } from "@/utils/auth";
 
 ChartJS.register(
   CategoryScale,
@@ -44,7 +45,7 @@ export default function Home() {
   const branchFeeDetails = useAppSelector(
     (state) => state.fees.branch_fee.data
   ) as BranchFee[];
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
 
   return (
     <Stack h={"full"} w={"full"} justifyContent={"start"}>

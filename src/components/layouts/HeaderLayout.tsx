@@ -34,6 +34,7 @@ import { fetchYearList } from "@/store/fees.slice";
 import { useAppSelector } from "@/store";
 import { SC } from "@/utils/supabase";
 import Link from "next/link";
+import { useUser } from "@/utils/auth";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -47,7 +48,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
   } = useDisclosure();
 
   const supabase = SC();
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const [query, setQuery] = useState("");
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -130,7 +131,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
         <HStack>
           <HStack>
             <HStack>
-              <Heading size={"md"}>{user?.username}</Heading>
+              <Heading size={"md"}>{user?.fullname}</Heading>
               <IconButton
                 onClick={onProfileOpen}
                 variant={"unstyled"}
@@ -154,7 +155,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
                   <HStack spacing={"3"} py={"2"}>
                     <AiOutlineUser className="text-2xl" />
                     <Heading size={"sm"} fontWeight={"normal"}>
-                      {user?.username}
+                      {user?.fullname}
                     </Heading>
                   </HStack>
                   <HStack spacing={"3"} py={"2"}>
@@ -169,14 +170,14 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
                       {user?.college}
                     </Heading>
                   </HStack>
-                  <HStack spacing={"3"} py={"2"}>
+                  {/* <HStack spacing={"3"} py={"2"}>
                     <AiOutlineFieldTime className="text-2xl" />
                     <Heading size={"sm"} fontWeight={"normal"}>
-                      {moment(user?.last_login_at).format(
+                      {moment(user?).format(
                         "MMMM Do YYYY, h:mm a"
                       )}
                     </Heading>
-                  </HStack>
+                  </HStack> */}
                   <HStack spacing={"3"} py={"2"}>
                     {/* <Button onClick={toggleColorMode} w={"full"}>
                       Toggle {colorMode === "light" ? "Dark" : "Light"}
@@ -184,11 +185,7 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
                     <Button
                       leftIcon={<AiOutlineLogout />}
                       onClick={async () => {
-                        await supabase
-                          .from("profiles")
-                          .update({ last_login_at: new Date(Date.now()) })
-                          .eq("id", user?.session?.user.id);
-                        await supabase.auth.signOut();
+                        await supabase.auth.signOut(); //signout functinality TODO:
                         router.refresh();
                       }}
                       colorScheme="facebook"

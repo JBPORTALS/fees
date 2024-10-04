@@ -6,13 +6,14 @@ import { columns, columnsForNonUpdate } from "../mock-data/fee-meta";
 import { Center, Heading, VStack } from "@chakra-ui/react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
+import { useUser } from "@/utils/auth";
 
 function ClassDataGrid() {
   const FeeDetails = useAppSelector((state) => state.fees.all_fee.data) as any;
   const Error = useAppSelector((state) => state.fees.all_fee.error) as
     | null
     | string;
-  const user = useAppSelector(state => state.fees.user);
+  const user = useUser();
 
   return (
     <VStack h={"78vh"} w={"full"}>
@@ -22,10 +23,12 @@ function ClassDataGrid() {
           animateRows={true}
           rowData={FeeDetails}
           columnDefs={
-            user?.can_update_total ? (columns as any) : (columnsForNonUpdate as any)
+            user?.can_update_total
+              ? (columns as any)
+              : (columnsForNonUpdate as any)
           }
           alwaysShowHorizontalScroll
-          onRowEditingStarted={(e) => { }}
+          onRowEditingStarted={(e) => {}}
         />
       ) : FeeDetails.length == 0 && Error ? (
         <Center h={"80%"}>

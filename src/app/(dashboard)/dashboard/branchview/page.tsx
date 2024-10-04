@@ -2,13 +2,7 @@
 import ISelect from "@/components/ui/utils/ISelect";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import {
-  BranchFee,
-  YearFee,
-  fetchBranchFeeDetails,
-  fetchBranchList,
-  fetchFeeYearView,
-} from "@/store/fees.slice";
+import { BranchFee } from "@/store/fees.slice";
 import {
   Box,
   Card,
@@ -20,7 +14,7 @@ import {
   Tag,
   VStack,
 } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { AiOutlineAim } from "react-icons/ai";
 import { Pie } from "react-chartjs-2";
@@ -35,6 +29,7 @@ import {
   ArcElement,
 } from "chart.js";
 import { trpc } from "@/utils/trpc-cleint";
+import { useUser } from "@/utils/auth";
 
 ChartJS.register(
   CategoryScale,
@@ -56,7 +51,7 @@ export default function BranchViewPage() {
     (state) => state.fees.branch_fee.data
   ) as BranchFee[];
   const acadYear = useAppSelector((state) => state.fees.acadYear) as string;
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const { data: yearFeeDetails } = trpc.feeYearView.useQuery(
     {
       acadYear,

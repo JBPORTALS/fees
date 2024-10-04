@@ -4,11 +4,12 @@ import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails } from "@/store/fees.slice";
 import { VStack } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
+import { useUser } from "@/utils/auth";
 
 export default function BranchViewPage() {
   const [state, setState] = useState({
@@ -18,7 +19,7 @@ export default function BranchViewPage() {
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const dispatch = useAppDispatch();
   const yearList = useAppSelector((state) => state.fees.year_list);
 

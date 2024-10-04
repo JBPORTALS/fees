@@ -1,15 +1,16 @@
 "use client";
 import { fetchBranchList, fetchYearList } from "@/store/fees.slice";
 import "../../globals.css";
-import { store, useAppSelector } from "@/store";
+import { useAppSelector } from "@/store";
 import { useEffect } from "react";
 import { useAppDispatch } from "@/hooks";
+import { useUser } from "@/utils/auth";
 
 export default function DashboardRootLayout(props: {
   children: React.ReactNode;
 }) {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   useEffect(() => {

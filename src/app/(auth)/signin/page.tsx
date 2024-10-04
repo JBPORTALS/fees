@@ -14,6 +14,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { SC } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
+import { useSignIn } from "@/utils/auth";
 
 export default function Home() {
   const [state, setState] = useState({
@@ -21,21 +22,24 @@ export default function Home() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
+  const { signIn } = useSignIn();
 
   const onSignin = async () => {
     setIsLoading(true);
-    const { error } = await SC().auth.signInWithPassword({
-      email: state.email,
-      password: state.password,
-    });
+    try {
+      const data = await signIn({
+        email: state.email,
+        password: state.password,
+      });
+      if (data) {
+        router.refresh();
+      }
+    } catch (e) {
+      toast.error("Invalid credentials !");
+    }
 
-    if (error) {
-      toast.error("Invalid credentials !")
-      setIsLoading(false);
-    } else {
-      router.refresh()
-    };
+    setIsLoading(false);
   };
 
   return (

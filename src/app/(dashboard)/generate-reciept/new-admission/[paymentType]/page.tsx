@@ -1,12 +1,5 @@
 "use client";
-import {
-  Button,
-  HStack,
-  SimpleGrid,
-  Stack,
-  VStack,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, HStack, SimpleGrid, VStack, useToast } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
 import React, { useEffect } from "react";
@@ -22,6 +15,7 @@ import {
   PAYMENTMODES,
   SEMS,
 } from "@/components/mock-data/constants";
+import { useUser } from "@/utils/auth";
 
 const initialValues = {
   name: "", //✅
@@ -80,7 +74,7 @@ export default function WithoutUSNDynamicPage() {
     position: "bottom-left",
   });
 
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
 
   const params = useParams();
   const paymentType = params.paymentType;

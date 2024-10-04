@@ -6,6 +6,7 @@ import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails, fetchYearList } from "@/store/fees.slice";
+import { useUser } from "@/utils/auth";
 import {
   Button,
   FormControl,
@@ -33,7 +34,7 @@ export default function Students() {
   ) as [];
   const dispatch = useAppDispatch();
   const yearList = useAppSelector((state) => state.fees.year_list);
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
 
   useEffect(() => {
     if (state.branch && state.year)

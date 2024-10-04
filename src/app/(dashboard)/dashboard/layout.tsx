@@ -8,13 +8,14 @@ import {
   fetchOverAllFee,
   fetchYearList,
 } from "@/store/fees.slice";
+import { useUser } from "@/utils/auth";
 import { useEffect } from "react";
 
 export default function DashboardRootLayout(props: {
   children: React.ReactNode;
 }) {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   useEffect(() => {

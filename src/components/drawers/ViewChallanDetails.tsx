@@ -11,13 +11,14 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiOutlineDelete, AiOutlineFilePdf } from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
 import { useSearchParams } from "next/navigation";
 import { Link } from "@chakra-ui/next-js";
 import { useAppSelector } from "@/store";
+import { useUser } from "@/utils/auth";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -30,7 +31,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [isChecking, setIsChecking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
   const [usn, setUsn] = useState("");
   const [challanState, setChallanState] = useState<
     | {

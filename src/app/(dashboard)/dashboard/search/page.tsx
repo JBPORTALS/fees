@@ -27,10 +27,11 @@ import { AiOutlineFileExcel } from "react-icons/ai";
 import { Link } from "@chakra-ui/next-js";
 import { trpc } from "@/utils/trpc-cleint";
 import { isEmpty } from "lodash";
+import { useUser } from "@/utils/auth";
 
 export default function Home() {
   const params = useSearchParams();
-  const college = useAppSelector((state) => state.fees.user)?.college;
+  const college = useUser()?.college;
   const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   const branch = params.get("branch");

@@ -35,6 +35,7 @@ import { useAppDispatch } from "@/hooks";
 import { CATS, SEMS } from "../mock-data/constants";
 import IModal from "../ui/utils/IModal";
 import moment from "moment";
+import { useUser } from "@/utils/auth";
 
 const Schema = Yup.object().shape({
   name: Yup.string().required().min(2),
@@ -86,7 +87,7 @@ export default function ViewStudentsDetails({
     isOpen: isPaymentOpen,
     onClose: onPaymentClose,
   } = useDisclosure();
-  const user = useAppSelector((state) => state.fees.user);
+  const user = useUser();
 
   const Categories = CATS(user?.college);
 
