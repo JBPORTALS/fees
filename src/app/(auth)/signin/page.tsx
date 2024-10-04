@@ -73,7 +73,7 @@ export default function Home() {
             />
           </FormControl>
           <Stack spacing={2}>
-            <Stack
+            {/* <Stack
               direction={{ base: "column", sm: "row" }}
               align={"start"}
               justify={"end"}
@@ -81,7 +81,7 @@ export default function Home() {
               <Link href={"/forgot-password"} color={"blue.400"}>
                 Forgot password?
               </Link>
-            </Stack>
+            </Stack> */}
             <Button
               isLoading={isLoading}
               onClick={onSignin}
