@@ -10,6 +10,7 @@ export function useUser() {
     // Fetch session
     const sessionResponse = await fetch(`/api/session`, {
       credentials: "include",
+      cache: "force-cache",
     });
 
     if (!sessionResponse.ok) {
@@ -51,6 +52,7 @@ export function useSignIn() {
     // Fetch session
     const sessionResponse = await fetch(`/api/session`, {
       credentials: "include",
+      cache: "force-cache",
     });
 
     if (!sessionResponse.ok) {

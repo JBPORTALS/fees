@@ -80,6 +80,7 @@ export default function ViewStudentsDetails({
 }: {
   id: string;
   regno: string;
+  college: string;
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
 }) {
   const branch_list = useAppSelector(
