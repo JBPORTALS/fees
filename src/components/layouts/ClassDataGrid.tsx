@@ -29,6 +29,8 @@ function ClassDataGrid() {
           }
           alwaysShowHorizontalScroll
           onRowEditingStarted={(e) => {}}
+          suppressFocusAfterRefresh
+          suppressCellFocus
         />
       ) : FeeDetails.length == 0 && Error ? (
         <Center h={"80%"}>
