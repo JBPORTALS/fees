@@ -90,7 +90,6 @@ export default function ViewStudentsDetails({
   const data = useAppSelector((state) => state.fees.selected_fee.data);
   const pending = useAppSelector((state) => state.fees.selected_fee.pending);
   const router = useRouter();
-  const pathname = usePathname();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const {
     errors,
@@ -390,7 +389,18 @@ export default function ViewStudentsDetails({
           handleSubmit();
         }}
         buttonTitle="Save"
-        onClose={onClose}
+        onClose={() => {
+          setFormikState({
+            isSubmitting: false,
+            isValidating: false,
+            submitCount: 0,
+            values: initialState,
+            errors: {},
+            touched: {},
+            status: "",
+          });
+          onClose();
+        }}
         isOpen={isOpen}
         heading="Student Details"
       >
