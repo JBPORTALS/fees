@@ -19,7 +19,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import IDrawer from "../ui/utils/IDrawer";
-import { useFormik } from "formik";
+import { useFormik, Formik } from "formik";
 import * as Yup from "yup";
 import { useAppSelector } from "@/store";
 import { useCallback, useEffect, useState } from "react";
@@ -46,6 +46,32 @@ const Schema = Yup.object().shape({
   paid: Yup.number().required().min(0).typeError("invalid number"),
 });
 
+type FormikState = {
+  id: string;
+  name: string;
+  usn: string;
+  sem: string;
+  branch: string;
+  total: number;
+  status: "FULLY PAID" | "PARTIALLY PAID" | "NOT PAID";
+  paid: number;
+  remaining: number;
+  category: string;
+};
+
+let initialState: FormikState = {
+  id: "",
+  usn: "",
+  name: "",
+  sem: "",
+  branch: "",
+  total: 0,
+  status: "NOT PAID",
+  paid: 0,
+  remaining: 0,
+  category: "",
+};
+
 export default function ViewStudentsDetails({
   id,
   children,
@@ -61,24 +87,28 @@ export default function ViewStudentsDetails({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const data = useAppSelector((state) => state.fees.selected_fee.data);
+  const pending = useAppSelector((state) => state.fees.selected_fee.pending);
   const router = useRouter();
   const pathname = usePathname();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
-
-  console.log(pathname);
-
-  let initialState = {
-    id: data[0]?.id ?? "",
-    usn: data[0]?.regno ?? "",
-    name: data[0]?.name ?? "",
-    sem: data[0]?.sem ?? "",
-    branch: data[0]?.branch ?? "",
-    total: data[0]?.total ?? "",
-    status: data[0]?.status ?? "",
-    paid: data[0]?.paid ?? "",
-    remaining: data[0]?.remaining ?? "",
-    category: data[0]?.category ?? "",
-  };
+  const {
+    errors,
+    touched,
+    setFieldValue,
+    values,
+    isSubmitting,
+    isValid,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    setFormikState,
+  } = useFormik<FormikState>({
+    initialValues: initialState,
+    onSubmit: async () => await updateStudent(),
+    validationSchema: Schema,
+    enableReinitialize: true,
+    initialStatus: "Loading",
+  });
 
   const dispatch = useAppDispatch();
   const { onOpen, isOpen, onClose } = useDisclosure();
@@ -96,38 +126,37 @@ export default function ViewStudentsDetails({
     if (id && isOpen) {
       dispatch(
         fetchSelectedFeeSearchDetails({ id, regno, college: user?.college! })
-      );
-      initialState = {
-        id: data[0]?.id ?? "",
-        usn: data[0]?.regno ?? "",
-        name: data[0]?.name ?? "",
-        sem: data[0]?.sem ?? "",
-        branch: data[0]?.branch ?? "",
-        total: data[0]?.total ?? "",
-        category: data[0]?.category ?? "",
-        status: data[0]?.status ?? "",
-        paid: data[0]?.paid ?? "",
-        remaining: data[0]?.remaining ?? "",
-      };
+      ).then(() => {
+        // setFieldValue("id", data[0].id);
+        // setFieldValue("usn", data[0].regno);
+        // setFieldValue("name", data[0].name);
+      });
     }
   }, [id, isOpen, regno, dispatch]);
 
-  const {
-    errors,
-    touched,
-    setFieldValue,
-    values,
-    isSubmitting,
-    isValid,
-    handleBlur,
-    handleChange,
-    handleSubmit,
-  } = useFormik({
-    initialValues: initialState,
-    onSubmit: async () => await updateStudent(),
-    validationSchema: Schema,
-    enableReinitialize: true,
-  });
+  useEffect(() => {
+    if (isOpen && id && regno && !pending)
+      setFormikState({
+        isSubmitting: false,
+        values: {
+          id: data[0]?.id ?? "",
+          usn: data[0]?.regno ?? "",
+          name: data[0]?.name ?? "",
+          sem: data[0]?.sem ?? "",
+          branch: data[0]?.branch ?? "",
+          total: data[0]?.total ?? "",
+          category: data[0]?.category ?? "",
+          status: data[0]?.status ?? "",
+          paid: data[0]?.paid ?? "",
+          remaining: data[0]?.remaining ?? 0,
+        },
+        errors: {},
+        touched: {},
+        submitCount: 0,
+        status: "",
+        isValidating: true,
+      });
+  }, [pending, regno, isOpen, id]);
 
   function changeStateValue() {
     setFieldValue(
@@ -279,7 +308,9 @@ export default function ViewStudentsDetails({
         size={"2xl"}
         isOpen={isPaymentOpen}
         onSubmit={paymentUpdate}
-        onClose={onPaymentClose}
+        onClose={() => {
+          onPaymentClose();
+        }}
         isDisabled={
           !amount || !method || amount == "0" || !challanId || !date || !tid
         }
