@@ -1,20 +1,45 @@
 import { Tooltip } from "@chakra-ui/react";
 import { AiOutlineEye } from "react-icons/ai";
 import ViewStudentsDetails from "../drawers/ViewStudentDetails";
+import {
+  CellRendererSelectorFunc,
+  CellRendererSelectorResult,
+  ColDef,
+  ICellRendererParams,
+} from "ag-grid-community";
+
+export type Student = {
+  sl_no: string;
+  regno: string;
+  name: string;
+  category: string;
+  sem: string;
+  total1: string;
+  paid1: string;
+  remaining1: string;
+  status: "NOT PAID" | "FULLY PAID" | "PARTIALLY PAID";
+};
 
 const CustomViewButton = (data: any) => {
   return (
-    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
-      <ViewStudentsDetails regno={data.value.regno} id={data.value.id}>
+    <div
+      key={data.value.id}
+      className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full"
+    >
+      <ViewStudentsDetails
+        key={data.value.id}
+        regno={data.value.regno}
+        id={data.value.id}
+      >
         {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
       </ViewStudentsDetails>
     </div>
   );
 };
 
-const StatusView = (data: {
-  value: "NOT PAID" | "FULLY PAID" | "PARTIALLY PAID";
-}) => {
+const StatusView = (
+  data: ICellRendererParams<Student, Student["status"], Student["status"]>
+): React.ReactElement => {
   return (
     <Tooltip placement={"right"} hasArrow label={data.value}>
       <div className="flex hover:cursor-pointer hover:scale-110 justify-center items-center text-2xl text-brand h-full w-full">
@@ -31,7 +56,7 @@ const StatusView = (data: {
   );
 };
 
-export const StudentColumnDefs = [
+export const StudentColumnDefs: ColDef<Student>[] = [
   {
     field: "sl_no",
     headerName: "Sl No.",
@@ -39,7 +64,7 @@ export const StudentColumnDefs = [
     pinned: "left",
     resizable: true,
     suppressMovable: true,
-    width:"140px"
+    width: 140,
   },
   {
     field: "regno",
@@ -60,27 +85,27 @@ export const StudentColumnDefs = [
   {
     field: "category",
     headerName: "Category",
-    width: "160px",
+    width: 160,
   },
   {
     field: "sem",
     headerName: "Sem",
-    width: "100px",
+    width: 100,
   },
   {
     field: "total1",
     headerName: "Total Amount",
-    width: "180px",
+    width: 180,
   },
   {
     field: "paid1",
     headerName: "Paid Amount",
-    width: "170px",
+    width: 170,
   },
   {
     field: "remaining1",
     headerName: "Balance Amount",
-    width: "170px",
+    width: 170,
     resizable: true,
   },
   {
@@ -88,8 +113,15 @@ export const StudentColumnDefs = [
     headerName: "Status",
     resizable: true,
     filter: true,
-    width: "120px",
-    cellRenderer: StatusView,
+    width: 120,
+    cellRendererSelector: (params) => {
+      return {
+        component: StatusView,
+        params: {
+          status: params.data?.status,
+        },
+      };
+    },
     valueGetter: (params: any) => {
       return params.data.status;
     },
@@ -97,9 +129,20 @@ export const StudentColumnDefs = [
   {
     field: "",
     headerName: "View",
-    width: "110px",
-    cellRenderer: CustomViewButton,
-    valueGetter: (params: any) => {
+    width: 110,
+    keyCreator(params) {
+      return params.data.sl_no;
+    },
+    sortable: false,
+    cellRendererSelector: (params) => {
+      return {
+        component: CustomViewButton,
+        params: {
+          data: params.data,
+        },
+      };
+    },
+    valueGetter: (params) => {
       return params.data;
     },
   },
