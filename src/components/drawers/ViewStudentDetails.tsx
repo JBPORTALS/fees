@@ -13,6 +13,7 @@ import {
   Input,
   Select,
   SimpleGrid,
+  Spinner,
   Tag,
   Text,
   useDisclosure,
@@ -123,16 +124,12 @@ export default function ViewStudentsDetails({
 
   useEffect(() => {
     console.log(id);
-    if (id && isOpen) {
+    if (id && isOpen && user?.college) {
       dispatch(
         fetchSelectedFeeSearchDetails({ id, regno, college: user?.college! })
-      ).then(() => {
-        // setFieldValue("id", data[0].id);
-        // setFieldValue("usn", data[0].regno);
-        // setFieldValue("name", data[0].name);
-      });
+      );
     }
-  }, [id, isOpen, regno, dispatch]);
+  }, [id, isOpen, regno, dispatch, user?.college]);
 
   useEffect(() => {
     if (isOpen && id && regno && !pending)
@@ -397,242 +394,254 @@ export default function ViewStudentsDetails({
         isOpen={isOpen}
         heading="Student Details"
       >
-        <VStack
-          alignItems={"flex-start"}
-          py={"5"}
-          w={"full"}
-          h={"full"}
-          gap={"2"}
-          justifyContent={"start"}
-          position={"relative"}
-        >
-          <>
-            {/* <pre>{JSON.stringify(values)}</pre> */}
-            <FormControl
-              isInvalid={!!errors.usn?.length && touched.usn}
-              px={"5"}
-            >
-              <FormLabel flex={1}>
-                <Text>USN</Text>
-              </FormLabel>
-              <Input
-                name="usn"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.usn}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              <FormErrorMessage>{errors.usn}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl
-              isInvalid={!!errors.name?.length && touched.name}
-              px={"5"}
-            >
-              <FormLabel flex={1}>
-                <Text>Name</Text>
-              </FormLabel>
-              <Input
-                name="name"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.name}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              <FormErrorMessage>{errors.name}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl
-              isInvalid={!!errors.sem?.length && touched.sem}
-              px={"5"}
-            >
-              <FormLabel flex={1}>
-                <Text>Sem</Text>
-              </FormLabel>
-              <Select
-                name="sem"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.sem}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value={""}>Select Sem</option>
-                {SEMS(user?.college).map((value) => (
-                  <option value={value.value} key={value.value}>
-                    {value.option}
-                  </option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.sem}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl
-              isInvalid={!!errors.branch?.length && touched.branch}
-              px={"5"}
-            >
-              <FormLabel flex={1}>
-                <Text>Branch</Text>
-              </FormLabel>
-              <Select
-                name="branch"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.branch}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value={""}>Select Branch</option>
-                {branch_list.map((branch: any, key) => (
-                  <option key={branch + key} value={branch.branch}>
-                    {branch.branch}
-                  </option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.branch}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl
-              isInvalid={!!errors.category?.length && touched.category}
-              px={"5"}
-            >
-              <FormLabel flex={1}>
-                <Text>Category</Text>
-              </FormLabel>
-              <Select
-                name="category"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.category}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value={""}>Select Category</option>
-                {Categories.map((category, key) => (
-                  <option key={category.value + key} value={category.value}>
-                    {category.option}
-                  </option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.category}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl
-              isInvalid={!!errors.total?.length && touched.total}
-              px={"5"}
-            >
-              <FormLabel flex={1}>
-                <Text>Total Amount</Text>
-              </FormLabel>
-              <Input
-                name="total"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.total}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              <FormErrorMessage>{errors.total}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl px={"5"}>
-              <FormLabel flex={1}>
-                <Text>Paid Amount</Text>
-              </FormLabel>
-              <Input
-                name="paid"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.paid}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-              <FormErrorMessage>{errors.total}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl px={"5"}>
-              <FormLabel flex={1}>
-                <Text>Balance Amount</Text>
-              </FormLabel>
-              <Input
-                name="remaining"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.remaining}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </FormControl>
-
-            <FormControl isReadOnly px={"5"}>
-              <FormLabel flex={1}>
-                <Text>Status</Text>
-              </FormLabel>
-              <Input
-                isReadOnly
-                name="status"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.status}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </FormControl>
-          </>
+        {pending ? (
           <VStack
-            position={"sticky"}
-            className="backdrop-blur-sm"
-            bg={"rgba(255,255,255,0.4)"}
-            bottom={"0"}
-            w={"full"}
-            p={"5"}
+            h={"auto"}
+            py={"300px"}
+            w={"auto"}
+            alignContent={"center"}
+            alignItems={"center"}
           >
-            {values.id && (
-              <>
-                {values.remaining < 0 && (
-                  <Alert status="warning">
-                    <AlertIcon />
-                    <Box>
-                      <AlertTitle fontSize={"small"}>Warning !</AlertTitle>
-                      <AlertDescription fontSize={"smaller"}>
-                        Remaining Amount is less than zero. You still may
-                        continue to save the changes.
-                      </AlertDescription>
-                    </Box>
-                  </Alert>
-                )}
-                <Button
-                  isDisabled={!isValid}
-                  onClick={onPaymentOpen}
-                  w={"full"}
-                  colorScheme="purple"
-                >
-                  Update Payment
-                </Button>
-                <Button
-                  isLoading={isDeleting}
-                  onClick={() => deleteStudent()}
-                  w={"full"}
-                  colorScheme="red"
-                  leftIcon={<AiOutlineUserDelete />}
-                >
-                  Remove
-                </Button>
-              </>
-            )}
+            <Spinner colorScheme="facebook" color="blue" size={"lg"} />
           </VStack>
-        </VStack>
+        ) : (
+          <VStack
+            alignItems={"flex-start"}
+            py={"5"}
+            w={"full"}
+            h={"full"}
+            gap={"2"}
+            justifyContent={"start"}
+            position={"relative"}
+          >
+            <>
+              {/* <pre>{JSON.stringify(values)}</pre> */}
+              <FormControl
+                isInvalid={!!errors.usn?.length && touched.usn}
+                px={"5"}
+              >
+                <FormLabel flex={1}>
+                  <Text>USN</Text>
+                </FormLabel>
+                <Input
+                  name="usn"
+                  bg={"white"}
+                  variant={"filled"}
+                  flex={"1.5"}
+                  value={values.usn}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <FormErrorMessage>{errors.usn}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl
+                isInvalid={!!errors.name?.length && touched.name}
+                px={"5"}
+              >
+                <FormLabel flex={1}>
+                  <Text>Name</Text>
+                </FormLabel>
+                <Input
+                  name="name"
+                  bg={"white"}
+                  variant={"filled"}
+                  flex={"1.5"}
+                  value={values.name}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <FormErrorMessage>{errors.name}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl
+                isInvalid={!!errors.sem?.length && touched.sem}
+                px={"5"}
+              >
+                <FormLabel flex={1}>
+                  <Text>Sem</Text>
+                </FormLabel>
+                <Select
+                  name="sem"
+                  bg={"white"}
+                  variant={"filled"}
+                  flex={"1.5"}
+                  value={values.sem}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  <option value={""}>Select Sem</option>
+                  {SEMS(user?.college).map((value) => (
+                    <option value={value.value} key={value.value}>
+                      {value.option}
+                    </option>
+                  ))}
+                </Select>
+                <FormErrorMessage>{errors.sem}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl
+                isInvalid={!!errors.branch?.length && touched.branch}
+                px={"5"}
+              >
+                <FormLabel flex={1}>
+                  <Text>Branch</Text>
+                </FormLabel>
+                <Select
+                  name="branch"
+                  bg={"white"}
+                  variant={"filled"}
+                  flex={"1.5"}
+                  value={values.branch}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  <option value={""}>Select Branch</option>
+                  {branch_list.map((branch: any, key) => (
+                    <option key={branch + key} value={branch.branch}>
+                      {branch.branch}
+                    </option>
+                  ))}
+                </Select>
+                <FormErrorMessage>{errors.branch}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl
+                isInvalid={!!errors.category?.length && touched.category}
+                px={"5"}
+              >
+                <FormLabel flex={1}>
+                  <Text>Category</Text>
+                </FormLabel>
+                <Select
+                  name="category"
+                  bg={"white"}
+                  variant={"filled"}
+                  flex={"1.5"}
+                  value={values.category}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  <option value={""}>Select Category</option>
+                  {Categories.map((category, key) => (
+                    <option key={category.value + key} value={category.value}>
+                      {category.option}
+                    </option>
+                  ))}
+                </Select>
+                <FormErrorMessage>{errors.category}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl
+                isInvalid={!!errors.total?.length && touched.total}
+                px={"5"}
+              >
+                <FormLabel flex={1}>
+                  <Text>Total Amount</Text>
+                </FormLabel>
+                <Input
+                  name="total"
+                  bg={"white"}
+                  variant={"filled"}
+                  flex={"1.5"}
+                  value={values.total}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <FormErrorMessage>{errors.total}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl px={"5"}>
+                <FormLabel flex={1}>
+                  <Text>Paid Amount</Text>
+                </FormLabel>
+                <Input
+                  name="paid"
+                  bg={"white"}
+                  variant={"filled"}
+                  flex={"1.5"}
+                  value={values.paid}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+                <FormErrorMessage>{errors.total}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl px={"5"}>
+                <FormLabel flex={1}>
+                  <Text>Balance Amount</Text>
+                </FormLabel>
+                <Input
+                  name="remaining"
+                  bg={"white"}
+                  variant={"filled"}
+                  flex={"1.5"}
+                  value={values.remaining}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </FormControl>
+
+              <FormControl isReadOnly px={"5"}>
+                <FormLabel flex={1}>
+                  <Text>Status</Text>
+                </FormLabel>
+                <Input
+                  isReadOnly
+                  name="status"
+                  bg={"white"}
+                  variant={"filled"}
+                  flex={"1.5"}
+                  value={values.status}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </FormControl>
+            </>
+            <VStack
+              position={"sticky"}
+              className="backdrop-blur-sm"
+              bg={"rgba(255,255,255,0.4)"}
+              bottom={"0"}
+              w={"full"}
+              p={"5"}
+            >
+              {values.id && (
+                <>
+                  {values.remaining < 0 && (
+                    <Alert status="warning">
+                      <AlertIcon />
+                      <Box>
+                        <AlertTitle fontSize={"small"}>Warning !</AlertTitle>
+                        <AlertDescription fontSize={"smaller"}>
+                          Remaining Amount is less than zero. You still may
+                          continue to save the changes.
+                        </AlertDescription>
+                      </Box>
+                    </Alert>
+                  )}
+                  <Button
+                    isDisabled={!isValid}
+                    onClick={onPaymentOpen}
+                    w={"full"}
+                    colorScheme="purple"
+                  >
+                    Update Payment
+                  </Button>
+                  <Button
+                    isLoading={isDeleting}
+                    onClick={() => deleteStudent()}
+                    w={"full"}
+                    colorScheme="red"
+                    leftIcon={<AiOutlineUserDelete />}
+                  >
+                    Remove
+                  </Button>
+                </>
+              )}
+            </VStack>
+          </VStack>
+        )}
       </IDrawer>
       {children({ onOpen })}
     </>
