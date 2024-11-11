@@ -131,7 +131,7 @@ export default function ViewStudentsDetails({
   }, [id, isOpen, regno, dispatch, user?.college]);
 
   useEffect(() => {
-    if (isOpen && id && regno && !pending)
+    if (isOpen && id && !pending)
       setFormikState({
         isSubmitting: false,
         values: {
