@@ -137,7 +137,11 @@ export const appRouter = router({
         }
       );
 
-      // console.log(process.env.NEXT_PUBLIC_ADMIN_URL, "user", response.text);
+      console.log(
+        "API URL",
+        process.env.NEXT_PUBLIC_ADMIN_URL,
+        response.status
+      );
 
       if (!response.ok)
         throw new TRPCError({
