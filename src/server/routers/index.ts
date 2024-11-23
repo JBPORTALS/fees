@@ -137,6 +137,8 @@ export const appRouter = router({
         }
       );
 
+      // console.log(process.env.NEXT_PUBLIC_ADMIN_URL, "user", response.text);
+
       if (!response.ok)
         throw new TRPCError({
           message: "Invalid credentials",
@@ -144,7 +146,7 @@ export const appRouter = router({
         });
 
       const user = (await response.json()) as SessionData;
-
+      // console.log(user, "user");
       return user;
     }),
   getUser: procedure
