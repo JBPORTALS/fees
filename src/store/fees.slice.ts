@@ -233,6 +233,37 @@ export const fetchFeeYearView = createAsyncThunk<
   }
 );
 
+export const fetchFeeretrieveyears = createAsyncThunk<
+  [],
+  { college: string },
+  {
+    rejectValue: {
+      msg: string;
+    };
+  }
+>(
+  "/fees/feeretrieveyears",
+  async (payload, { fulfillWithValue, rejectWithValue, getState }) => {
+    var data;
+    try {
+      const formData = new FormData();
+      const state = getState() as RootState;
+      const acadYear = state.fees.acadYear;
+      formData.append("acadYear", acadYear);
+      formData.append("college", payload.college);
+      const response = await axios({
+        url: process.env.NEXT_PUBLIC_ADMIN_URL + "feeretrieveyears.php",
+        method: "POST",
+        data: formData,
+      });
+      data = response.data;
+      return fulfillWithValue(data);
+    } catch (error: any) {
+      return rejectWithValue({ msg: error.response.data.msg });
+    }
+  }
+);
+
 export const fetchSelectedFeeDeatails = createAsyncThunk<
   SelectedFee[],
   {
@@ -577,6 +608,11 @@ interface FeesIntialState {
     pending: boolean;
     error: null | string;
   };
+  fee_retrieve_years: {
+    data: [];
+    pending: boolean;
+    error: null | string;
+  };
   branch_list: {
     data: [];
     pending: boolean;
@@ -605,6 +641,11 @@ const initialState: FeesIntialState = {
   acadYear: "2024",
   year_list: [],
   all_fee: {
+    data: [],
+    error: null,
+    pending: false,
+  },
+  fee_retrieve_years: {
     data: [],
     error: null,
     pending: false,
@@ -816,6 +857,20 @@ export const FeesSlice = createSlice({
         state.search_by_mode.data = [];
         state.search_by_mode.pending = false;
         state.search_by_mode.error = action.payload?.msg ?? null;
+      });
+
+    builder
+      .addCase(fetchFeeretrieveyears.pending, (state, action) => {
+        state.fee_retrieve_years.pending = true;
+      })
+      .addCase(fetchFeeretrieveyears.fulfilled, (state, action) => {
+        state.fee_retrieve_years.pending = false;
+        state.fee_retrieve_years.data = action.payload;
+      })
+      .addCase(fetchFeeretrieveyears.rejected, (state, action) => {
+        state.fee_retrieve_years.data = [];
+        state.fee_retrieve_years.pending = false;
+        state.fee_retrieve_years.error = action.payload?.msg ?? null;
       });
   },
 });

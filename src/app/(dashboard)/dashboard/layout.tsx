@@ -5,6 +5,7 @@ import { useAppSelector } from "@/store";
 import {
   fetchBranchFeeDetails,
   fetchBranchList,
+  fetchFeeretrieveyears,
   fetchOverAllFee,
   fetchYearList,
 } from "@/store/fees.slice";
@@ -21,6 +22,7 @@ export default function DashboardRootLayout(props: {
   useEffect(() => {
     if (user?.college) {
       dispatch(fetchBranchFeeDetails({ college: user?.college! }));
+      dispatch(fetchFeeretrieveyears({ college: user?.college! }));
       dispatch(fetchOverAllFee({ college: user?.college! }));
       dispatch(fetchBranchList({ college: user?.college! }));
       dispatch(fetchYearList({ college: user?.college! }));
