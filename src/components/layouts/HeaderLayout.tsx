@@ -12,27 +12,20 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-  AiOutlineFieldTime,
   AiOutlineLogout,
   AiOutlineMail,
   AiOutlineSearch,
   AiOutlineUser,
 } from "react-icons/ai";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
-import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 import SideBar from "../ui/SideBar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useAppDispatch } from "@/hooks";
-import { fetchYearList } from "@/store/fees.slice";
-import { useAppSelector } from "@/store";
-import { SC } from "@/utils/supabase";
 import Link from "next/link";
 import { useSignIn, useUser } from "@/utils/auth";
 
