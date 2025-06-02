@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Box,
   Card,
@@ -27,7 +28,6 @@ import {
 } from "chart.js";
 import { useAppSelector } from "@/store";
 import { useUser } from "@/utils/auth";
-import { useQueryState, parseAsString, parseAsInteger } from "nuqs";
 import React from "react";
 
 ChartJS.register(
@@ -57,13 +57,6 @@ export default function Home() {
     (state) => state.fees.fee_retrieve_years.data
   ) as any[];
   const user = useUser();
-
-  const [currentIndex, setCurrentIndex] = useQueryState(
-    "index",
-    parseAsString
-      .withDefault("all-branches")
-      .withOptions({ clearOnDefault: true })
-  );
 
   return (
     <React.Fragment>
@@ -103,12 +96,7 @@ export default function Home() {
       </VStack>
 
       {/** Sub tabs */}
-      <Tabs.Root
-        defaultValue={"all-branches"}
-        size={"sm"}
-        variant={"enclosed"}
-        onValueChange={({ value }) => setCurrentIndex(value)}
-      >
+      <Tabs.Root defaultValue={"all-branches"} size={"sm"} variant={"enclosed"}>
         <Tabs.List>
           <Tabs.Trigger value={"all-branches"}>All Branches</Tabs.Trigger>
           <Tabs.Trigger value={"all-years"}>All Years</Tabs.Trigger>

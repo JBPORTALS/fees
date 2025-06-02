@@ -27,6 +27,7 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
+import { MenuContent, MenuRoot, MenuTrigger } from "../ui/menu";
 import React, { useCallback, useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import {
@@ -77,15 +78,15 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
     branch: string;
     year: string;
     mode: string;
-    fromDate: Date | null;
-    toDate: Date | null;
+    fromDate: string | null;
+    toDate: string | null;
     type: string;
   }>({
     branch: "ALL",
     year: "ALL",
     mode: "ALL",
-    fromDate: new Date(),
-    toDate: new Date(),
+    fromDate: new Date().toDateString(),
+    toDate: new Date().toDateString(),
     type: "ALL",
   });
 
@@ -97,9 +98,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const [filterType, setFilterType] = useState<string>("");
   const [filterState, setFilterState] = useState<{
     challan_no: string;
-    date: Date | null;
+    date: string | null;
   }>({
-    date: new Date(),
+    date: new Date().toDateString(),
     challan_no: "0",
   });
   const [filteredData, setFilteredData] = useState<
@@ -124,14 +125,6 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const router = useRouter();
   const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
-
-  // const fetchBranchListCb = useCallback(() => {
-  //   dispatch(fetchBranchList({ college: user?.college! }));
-  // }, []);
-
-  // useEffect(() => {
-  //   fetchBranchListCb();
-  // }, [open]);
 
   const onDateFilter = async () => {
     setIsLoading(true);
@@ -375,15 +368,15 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
               </IModal>
 
               {/** Menu #1 */}
-              <Menu.Root positioning={{ placement: "bottom-end" }}>
-                <Menu.Trigger asChild>
+              <MenuRoot positioning={{ placement: "bottom-end" }}>
+                <MenuTrigger asChild>
                   <Button size={"sm"} variant={"ghost"}>
                     <AiOutlineDatabase />
                     Download Class Data <FaChevronDown />
                   </Button>
-                </Menu.Trigger>
-                <Menu.Content zIndex={"popover"} pos={"sticky"}>
-                  <VStack px={"4"}>
+                </MenuTrigger>
+                <MenuContent w={"250px"}>
+                  <VStack p={"2"}>
                     <Field.Root>
                       <NativeSelect.Root>
                         <NativeSelect.Field
@@ -395,13 +388,14 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                             }))
                           }
                         >
-                          <option value={""}>NativeSelect.Root Branch</option>
+                          <option value={""}>Select Branch</option>
                           {branchList.map((option: any) => (
                             <option key={option?.branch} value={option?.branch}>
                               {option?.branch}
                             </option>
                           ))}
                         </NativeSelect.Field>
+                        <NativeSelect.Indicator />
                       </NativeSelect.Root>
                     </Field.Root>
                     <Field.Root>
@@ -415,7 +409,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                             }))
                           }
                         >
-                          <option value={""}>NativeSelect.Root Year</option>
+                          <option value={""}>Select Year</option>
                           {(user?.college == "KSIT"
                             ? [
                                 { year: 1 },
@@ -430,6 +424,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                             </option>
                           ))}
                         </NativeSelect.Field>
+                        <NativeSelect.Indicator />
                       </NativeSelect.Root>
                     </Field.Root>
                     <Field.Root>
@@ -443,7 +438,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                           }
                           value={state.status}
                         >
-                          <option value={""}>NativeSelect.Root Status</option>
+                          <option value={""}>Select Status</option>
                           <option value={"ALL"}>All</option>
                           <option value={"NOT PAID"}>Not Paid</option>
                           <option value={"PARTIALLY PAID"}>
@@ -451,6 +446,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                           </option>
                           <option value={"FULL PAID"}>Full Paid</option>
                         </NativeSelect.Field>
+                        <NativeSelect.Indicator />
                       </NativeSelect.Root>
                     </Field.Root>
                     <Field.Root w={"full"}>
@@ -469,15 +465,12 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                       </Button>
                     </Field.Root>
                   </VStack>
-                </Menu.Content>
-              </Menu.Root>
+                </MenuContent>
+              </MenuRoot>
 
               {/** Menu #2 */}
-              <Menu.Root
-                closeOnSelect
-                positioning={{ placement: "bottom-end" }}
-              >
-                <Menu.Trigger asChild>
+              <MenuRoot closeOnSelect positioning={{ placement: "bottom-end" }}>
+                <MenuTrigger asChild>
                   <Button
                     size={"sm"}
                     variant={"ghost"}
@@ -488,16 +481,17 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                     Filter
                     <FaChevronDown />
                   </Button>
-                </Menu.Trigger>
+                </MenuTrigger>
 
-                <Menu.Content zIndex={"popover"} pos={"sticky"}>
-                  <VStack px={"4"}>
+                <MenuContent w={"250px"}>
+                  <VStack p={"2"}>
                     <Field.Root>
                       <NativeSelect.Root>
                         <NativeSelect.Field
+                          value={filterType}
                           onChange={(e) => setFilterType(e.target.value)}
                         >
-                          <option value={""}>Select Root Filter</option>
+                          <option value={""}>Select Filter</option>
                           <option value={"CHALLAN_DATE"}>
                             By Challan Date
                           </option>
@@ -505,6 +499,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                           <option value={"CHALLAN"}>By Challan No.</option>
                           <option value={"MODE"}>By Mode</option>
                         </NativeSelect.Field>
+                        <NativeSelect.Indicator />
                       </NativeSelect.Root>
                     </Field.Root>
                     {filterType && (
@@ -532,27 +527,20 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                             filterType == "CHALLAN_DATE" ? (
                             <>
                               <Field.Label>Date</Field.Label>
-                              <ReactDatePicker
-                                className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                                selected={
-                                  !filterState.date
-                                    ? new Date()
-                                    : new Date(filterState.date)
-                                }
-                                dateFormat={"dd/MM/yyyy"}
-                                onChange={(date) => {
+                              <Input
+                                type="date"
+                                value={filterState.date ?? ""}
+                                onChange={(e) => {
                                   setFilterState((prev) => ({
                                     ...prev,
-                                    date: date,
+                                    date: e.target.value,
                                   }));
                                 }}
                               />
                             </>
                           ) : filterType == "MODE" ? (
                             <>
-                              <Field.Label>
-                                NativeSelect.Root Branch
-                              </Field.Label>
+                              <Field.Label>Select Branch</Field.Label>
                               <NativeSelect.Root>
                                 <NativeSelect.Field
                                   onChange={(e) =>
@@ -573,8 +561,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                     </option>
                                   ))}
                                 </NativeSelect.Field>
+                                <NativeSelect.Indicator />
                               </NativeSelect.Root>
-                              <Field.Label>NativeSelect.Root Year</Field.Label>
+                              <Field.Label>Select Year</Field.Label>
                               <NativeSelect.Root>
                                 <NativeSelect.Field
                                   onChange={(e) =>
@@ -603,10 +592,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                     </option>
                                   ))}
                                 </NativeSelect.Field>
+                                <NativeSelect.Indicator />
                               </NativeSelect.Root>
-                              <Field.Label>
-                                NativeSelect.Root Fee Type
-                              </Field.Label>
+                              <Field.Label>Select Fee Type</Field.Label>
                               <NativeSelect.Root>
                                 <NativeSelect.Field
                                   value={modeFilterState.type}
@@ -633,8 +621,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                     Hostel Fee
                                   </option>
                                 </NativeSelect.Field>
+                                <NativeSelect.Indicator />
                               </NativeSelect.Root>
-                              <Field.Label>NativeSelect.Root Mode</Field.Label>
+                              <Field.Label>Select Mode</Field.Label>
                               <NativeSelect.Root>
                                 <NativeSelect.Field
                                   value={modeFilterState.mode}
@@ -653,34 +642,24 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                 </NativeSelect.Field>
                               </NativeSelect.Root>
                               <Field.Label>From Date</Field.Label>
-                              <ReactDatePicker
-                                className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                                selected={
-                                  !modeFilterState.fromDate
-                                    ? new Date()
-                                    : new Date(modeFilterState.fromDate)
-                                }
-                                dateFormat={"dd/MM/yyyy"}
-                                onChange={(date) => {
+                              <Input
+                                type="date"
+                                value={modeFilterState.fromDate ?? ""}
+                                onChange={(e) => {
                                   setModeFilterState((prev) => ({
                                     ...prev,
-                                    fromDate: date,
+                                    fromDate: e.target.value,
                                   }));
                                 }}
                               />
                               <Field.Label>To Date</Field.Label>
-                              <ReactDatePicker
-                                className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
-                                selected={
-                                  !modeFilterState.toDate
-                                    ? new Date()
-                                    : new Date(modeFilterState.toDate)
-                                }
-                                dateFormat={"dd/MM/yyyy"}
-                                onChange={(date) => {
+                              <Input
+                                type="date"
+                                value={modeFilterState.toDate ?? ""}
+                                onChange={(e) => {
                                   setModeFilterState((prev) => ({
                                     ...prev,
-                                    toDate: date,
+                                    toDate: e.target.value,
                                   }));
                                 }}
                               />
@@ -726,8 +705,8 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                       </>
                     )}
                   </VStack>
-                </Menu.Content>
-              </Menu.Root>
+                </MenuContent>
+              </MenuRoot>
             </HStack>
           </HStack>
         </Tabs.List>
