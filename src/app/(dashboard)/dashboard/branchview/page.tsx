@@ -1,5 +1,4 @@
 "use client";
-import ISelect from "@/components/ui/utils/ISelect";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { BranchFee } from "@/store/fees.slice";
@@ -8,6 +7,7 @@ import {
   Card,
   HStack,
   Heading,
+  NativeSelect,
   Stat,
   Tag,
   VStack,
@@ -64,15 +64,23 @@ export default function BranchViewPage() {
   return (
     <div className={"h-fit w-full"}>
       <div className="w-full backdrop-blur-sm z-20 h-fit flex border-b py-3 sticky top-0 space-x-3 px-5">
-        <ISelect
-          placeHolder="All"
-          value={branch}
-          onChange={(value) => setBranch(value as string)}
-          options={branch_list.map((option: any) => ({
-            option: option[user?.college == "HOSTEL" ? "college" : "branch"],
-            value: option[user?.college == "HOSTEL" ? "college" : "branch"],
-          }))}
-        />
+        <NativeSelect.Root>
+          <NativeSelect.Field
+            value={branch}
+            onChange={(e) => setBranch(e.target.value)}
+          >
+            <option value={""}>All</option>
+            {branch_list
+              .map((option: any) => ({
+                option:
+                  option[user?.college == "HOSTEL" ? "college" : "branch"],
+                value: option[user?.college == "HOSTEL" ? "college" : "branch"],
+              }))
+              .map((item) => (
+                <option value={item.value}>{item.option}</option>
+              ))}
+          </NativeSelect.Field>
+        </NativeSelect.Root>
       </div>
       <VStack p={"5"} h={"fit"}>
         {branch == "All" || !branch ? (
@@ -119,8 +127,6 @@ export default function BranchViewPage() {
                   <HStack
                     key={yearFee.year}
                     w={"fit-content"}
-                    shadow={"lg"}
-                    style={{ borderWidth: 1, borderColor: "#dddd" }}
                     px={"10"}
                     py={"5"}
                   >

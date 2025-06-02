@@ -1,9 +1,8 @@
 "use client";
-import ISelect from "@/components/ui/utils/ISelect";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails } from "@/store/fees.slice";
-import { VStack } from "@chakra-ui/react";
+import { HStack, NativeSelect, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
@@ -35,50 +34,61 @@ export default function BranchViewPage() {
 
   return (
     <>
-      <div className="w-full flex border-b py-3 space-x-3 px-5">
-        <ISelect
-          placeHolder="Branch"
-          value={state.branch}
-          onChange={(value) =>
-            setState((prev) => ({ ...prev, branch: value as string }))
-          }
-          options={branch_list.map((option: any) => ({
-            option: option[user?.college == "HOSTEL" ? "college" : "branch"],
-            value: option[user?.college == "HOSTEL" ? "college" : "branch"],
-          }))}
-        />
+      <HStack gap={"3"}>
+        <NativeSelect.Root w={"250px"}>
+          <NativeSelect.Field
+            value={state.branch}
+            onChange={(e) =>
+              setState((prev) => ({ ...prev, branch: e.target.value }))
+            }
+          >
+            <option>Select Branch</option>
+            {branch_list
+              .map((option: any) => ({
+                option:
+                  option[user?.college == "HOSTEL" ? "college" : "branch"],
+                value: option[user?.college == "HOSTEL" ? "college" : "branch"],
+              }))
+              .map((item) => (
+                <option value={item.value}>{item.option}</option>
+              ))}
+          </NativeSelect.Field>
+          <NativeSelect.Indicator />
+        </NativeSelect.Root>
 
         {state.branch ? (
-          <ISelect
-            placeHolder="Year"
-            value={state.year}
-            onChange={(value) =>
-              setState((prev) => ({ ...prev, year: value as string }))
-            }
-            options={yearList.map((option: any) => ({
-              value: option.year,
-              option: option.year,
-            }))}
-          />
+          <NativeSelect.Root w={"250px"}>
+            <NativeSelect.Field
+              value={state.year}
+              onChange={(e) =>
+                setState((prev) => ({ ...prev, year: e.target.value }))
+              }
+            >
+              <option>Select Year</option>
+              {yearList
+                .map((option: any) => ({
+                  value: option.year,
+                  option: option.year,
+                }))
+                .map((item) => (
+                  <option value={item.value}>{item.option}</option>
+                ))}
+            </NativeSelect.Field>
+            <NativeSelect.Indicator />
+          </NativeSelect.Root>
         ) : null}
-      </div>
+      </HStack>
       <VStack className="w-full h-full" gap={0}>
         {!state.branch ? (
           <InfoCard message="Select Branch" />
         ) : state.branch && !state.year ? (
           <InfoCard message="Select Year" />
         ) : null}
-        <VStack
-          px={0}
-          gap={0}
-          className={
-            "justify-start items-start flex w-full h-full overflow-scroll"
-          }
-        >
+        <VStack px={0} gap={0}>
           {/* displaying admin childrens */}
           {state.branch && state.year && (
             <VStack h={"90vh"} w={"full"}>
-              <ClassDataGrid />
+              {/* <ClassDataGrid /> */}
             </VStack>
           )}
         </VStack>

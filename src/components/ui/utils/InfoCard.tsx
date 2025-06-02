@@ -1,15 +1,22 @@
-import { AiOutlineSelect } from "react-icons/ai";
+import { Center, EmptyState, VStack } from "@chakra-ui/react";
+import { LuPointer } from "react-icons/lu";
 
 export const InfoCard = ({ message }: { message: string }) => {
-    return (
-      <div className="flex  w-full h-full items-center justify-center pb-24">
-        <div className="flex flex-col space-y-2 bg-secondary p-10 rounded-md border border-lightgray justify-center items-center">
-          <AiOutlineSelect className="text-4xl text-brand" />
-          <h1 className="text-xl font-medium text-dark ">{message}</h1>
-          <span className="text-gray-500">
-            Select an option on the top section
-          </span>
-        </div>
-      </div>
-    );
-  };
+  return (
+    <Center h={"full"} pb={"24"}>
+      <EmptyState.Root>
+        <EmptyState.Content>
+          <EmptyState.Indicator>
+            <LuPointer />
+          </EmptyState.Indicator>
+          <VStack textAlign={"center"}>
+            <EmptyState.Title>{message}</EmptyState.Title>
+            <EmptyState.Description>
+              Select an option on the top section
+            </EmptyState.Description>
+          </VStack>
+        </EmptyState.Content>
+      </EmptyState.Root>
+    </Center>
+  );
+};

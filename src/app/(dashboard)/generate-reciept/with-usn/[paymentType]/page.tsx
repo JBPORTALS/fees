@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Button,
   Field as ChakraField,
@@ -35,9 +36,7 @@ import {
   PAYMENTMODES,
   SEMS,
 } from "@/components/mock-data/constants";
-import { toast } from "react-hot-toast";
 import { useAppSelector } from "@/store";
-import { FaInfoCircle } from "react-icons/fa";
 import { trpc } from "@/utils/trpc-cleint";
 import { useUser } from "@/utils/auth";
 import { toaster } from "@/components/ui/toaster";
@@ -159,7 +158,7 @@ const FormikContextProvider = () => {
         setFieldValue("remaining_fee", res.data[0]?.remaining_fee);
       }
     } catch (e: any) {
-      toast.error(e.response.data?.msg, { position: "bottom-center" });
+      toaster.create({ title: e.response.data?.msg, type: "error" });
     }
     setIsloading(false);
   }
@@ -182,8 +181,6 @@ const FormikContextProvider = () => {
         }
       >
         <Input
-          colorScheme="whiteAlpha"
-          bg={"white"}
           onChange={(e) => setUsn(e.target.value)}
           value={usn}
           onKeyDown={(e) => e.key == "Enter" && findStudent()}
@@ -1030,9 +1027,7 @@ export default function WithUSNDynamicPage() {
       );
 
       if (response.status == 402) return new Error(response.data.msg);
-      toast.success("Challan Deleted Successfully", {
-        position: "bottom-center",
-      });
+      toaster.info({ title: "Challan Deleted Successfully" });
       router.back();
     } catch (e: any) {
       toaster.error({
@@ -1102,6 +1097,7 @@ export default function WithUSNDynamicPage() {
                 w={"full"}
                 h={"fit-content"}
                 py={"7"}
+                px={"4"}
               >
                 {checkOnPaymentType?.map((field) => {
                   return (
@@ -1153,24 +1149,25 @@ export default function WithUSNDynamicPage() {
                 w={"full"}
                 p={"4"}
                 zIndex={"modal"}
-                className="border-t border-gray-300 backdrop-blur-sm"
+                borderTopWidth={"thin"}
+                backdropFilter={"blur(5px)"}
               >
                 {!challan_id ? (
                   <>
-                    <HStack>
+                    <HStack px={"4"}>
                       <ChakraField.Root display="flex" alignItems="center">
-                        <ChakraField.Label htmlFor="fee-mutation" mb="0">
-                          Auto Fee Updation
-                        </ChakraField.Label>
                         <Switch.Root
                           checked={isMutable}
-                          onChange={(e) => {
-                            setIsMustable(!isMutable);
+                          onCheckedChange={({ checked }) => {
+                            setIsMustable(checked);
                           }}
                           id="fee-mutation"
                         >
+                          <Switch.Label>Auto Fee Updation</Switch.Label>
                           <Switch.HiddenInput />
-                          <Switch.Indicator />
+                          <Switch.Control>
+                            <Switch.Thumb />
+                          </Switch.Control>
                         </Switch.Root>
                       </ChakraField.Root>
                     </HStack>

@@ -1,25 +1,49 @@
+"use client";
 import {
   AbsoluteCenter,
   Box,
-  Divider,
-  HStack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
+  Separator,
   Tabs,
   Tag,
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
 
-import { Link } from "@chakra-ui/next-js";
 import { usePathname, useSearchParams } from "next/navigation";
 import { AiOutlineCheck } from "react-icons/ai";
+import Link from "next/link";
 
 interface GenerateRecieptLayoutProps {
   children: React.ReactNode;
 }
+
+const items = [
+  {
+    title: "Fee",
+    value: "FEE",
+    href: "/generate-reciept/with-usn/FEE",
+  },
+  {
+    title: "Miscellaneous",
+    value: "MISCELLANEOUS",
+    href: "/generate-reciept/with-usn/MISCELLANEOUS",
+  },
+  {
+    title: "Security",
+    value: "SECURITY_DEPOSIT",
+    href: "/generate-reciept/with-usn/SECURITY_DEPOSIT",
+  },
+  {
+    title: "Hostel",
+    value: "HOSTEL_FEE",
+    href: "/generate-reciept/with-usn/HOSTEL_FEE",
+  },
+  {
+    title: "Registration",
+    value: "REGISTRATION_FEE",
+    href: "/generate-reciept/with-usn/REGISTRATION_FEE",
+  },
+];
 
 export default function WithUSNLayout({
   children,
@@ -29,119 +53,50 @@ export default function WithUSNLayout({
   const isInEditMode = searchParams.get("challan_id");
 
   return (
-    <Tabs
-      isLazy
-      lazyBehavior="unmount"
-      index={
-        pathname == "/generate-reciept/with-usn/FEE"
-          ? 0
-          : pathname === "/generate-reciept/with-usn/MISCELLANEOUS"
-          ? 1
-          : pathname === "/generate-reciept/with-usn/BUS_FEE"
-          ? 2
-          : pathname === "/generate-reciept/with-usn/SECURITY_DEPOSIT"
-          ? 3
-          : pathname === "/generate-reciept/with-usn/HOSTEL_FEE"
-          ? 4
-          : -1
-      }
-      colorScheme={"purple"}
+    <Tabs.Root
+      variant={"subtle"}
+      lazyMount
+      value={pathname.split("/").at(3)}
       size={"md"}
-      variant={"soft-rounded"}
-      h={"fit-content"}
-      position={"relative"}
-      zIndex={"sticky"}
     >
-      <VStack gap={"0"} px={"36"}>
-        <TabList
-          position={"sticky"}
-          zIndex={"popover"}
-          bg={"whiteAlpha.100"}
-          backdropBlur={"sm"}
-          w={"full"}
-          top={"0"}
-          className="py-3 bg-white flex justify-between"
-        >
-          <Tab
-            as={Link}
-            href={"/generate-reciept/with-usn/FEE"}
-            _hover={{ textDecoration: "none" }}
-            gap={"2"}
-          >
-            Fee
-            {pathname == "/generate-reciept/with-usn/FEE" && (
-              <AiOutlineCheck className="text-md" />
-            )}
-          </Tab>
-          <Tab
-            as={Link}
-            href={"/generate-reciept/with-usn/MISCELLANEOUS"}
-            _hover={{ textDecoration: "none" }}
-          >
-            Miscellaneous
-            {pathname == "/generate-reciept/with-usn/MISCELLANEOUS" && (
-              <AiOutlineCheck className="text-md" />
-            )}
-          </Tab>
-          <Tab
-            as={Link}
-            href={"/generate-reciept/with-usn/BUS_FEE"}
-            _hover={{ textDecoration: "none" }}
-          >
-            Bus Fee
-            {pathname == "/generate-reciept/with-usn/BUS_FEE" && (
-              <AiOutlineCheck className="text-md" />
-            )}
-          </Tab>
-          <Tab
-            as={Link}
-            href={"/generate-reciept/with-usn/SECURITY_DEPOSIT"}
-            _hover={{ textDecoration: "none" }}
-          >
-            Security Deposit
-            {pathname == "/generate-reciept/with-usn/SECURITY_DEPOSIT" && (
-              <AiOutlineCheck className="text-md" />
-            )}
-          </Tab>
-          <Tab
-            as={Link}
-            href={"/generate-reciept/with-usn/HOSTEL_FEE"}
-            _hover={{ textDecoration: "none" }}
-          >
-            Hostel Fee
-            {pathname == "/generate-reciept/with-usn/HOSTEL_FEE" && (
-              <AiOutlineCheck className="text-md" />
-            )}
-          </Tab>
-        </TabList>
+      <VStack gap={"0"}>
+        <Tabs.List w={"full"}>
+          {items.map((item) => (
+            <Tabs.Trigger
+              value={item.value}
+              _hover={{ textDecoration: "none" }}
+              gap={"2"}
+              asChild
+            >
+              <Link href={item.href}>
+                {item.title}
+                {pathname == item.href && (
+                  <AiOutlineCheck className="text-md" />
+                )}
+              </Link>
+            </Tabs.Trigger>
+          ))}
+        </Tabs.List>
         <Box
           position="relative"
           width={"100%"}
           py={isInEditMode ? "3" : "unset"}
         >
-          <Divider />
           {isInEditMode && (
-            <AbsoluteCenter bg="white" px="4">
-              <Tag colorScheme={"green"}>
-                Edit Mode: Challan ID-{searchParams.get("challan_id")}
-              </Tag>
-            </AbsoluteCenter>
+            <React.Fragment>
+              <Separator />
+              <AbsoluteCenter px="4">
+                <Tag.Root colorScheme={"green"}>
+                  <Tag.Label>
+                    Edit Mode: Challan ID-{searchParams.get("challan_id")}
+                  </Tag.Label>
+                </Tag.Root>
+              </AbsoluteCenter>
+            </React.Fragment>
           )}
         </Box>
       </VStack>
-      <TabPanels
-        px={"36"}
-        height={"67vh"}
-        position={"relative"}
-        overflowY={"scroll"}
-      >
-        <TabPanel px={"5"}>{children}</TabPanel>
-        <TabPanel px={"5"}>{children}</TabPanel>
-        <TabPanel px={"5"}>{children}</TabPanel>
-        <TabPanel px={"5"}>{children}</TabPanel>
-        <TabPanel px={"5"}>{children}</TabPanel>
-        <TabPanel px={"5"}>{children}</TabPanel>
-      </TabPanels>
-    </Tabs>
+      <Tabs.ContentGroup py={"4"}>{children}</Tabs.ContentGroup>
+    </Tabs.Root>
   );
 }
