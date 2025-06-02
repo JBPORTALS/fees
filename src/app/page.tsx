@@ -1,7 +1,6 @@
-"use client";
-import { Image } from "@chakra-ui/next-js";
 import Link from "next/link";
-import { Button, Card, Center, Flex, HStack, Heading } from "@chakra-ui/react";
+import { Button, Center, HStack } from "@chakra-ui/react";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -14,41 +13,24 @@ export default function Home() {
         py={"3"}
       >
         <div className="relative h-10 w-32">
-          <Image
-            alt={"ismart"}
-            src={"/nexuss.png"}
-            priority
-            sizes="10vh"
-            fill
-          />
+          <Image alt={"nexus"} src={"/nexuss.png"} priority sizes="10vh" fill />
         </div>
         <HStack>
-          <Button
-            size={"sm"}
-            variant={"ghost"}
-            colorScheme="blue"
-            as={Link}
-            href={"/signin"}
-          >
-            Signin
+          <Button size={"sm"} variant={"ghost"} colorScheme="blue" asChild>
+            <Link href={"/signin"}>Signin</Link>
           </Button>
         </HStack>
       </HStack>
       <Center h={"full"}>
-        <Card border={"1px"} shadow={"md"} p={"10"}>
-          <Heading color={"blue.600"}>Fee Manager</Heading>
-          <p className="mt-3 text-center">To manage fee details</p>
-          <Button
-            mt={"4"}
-            size={"md"}
-            variant={"outline"}
-            colorScheme="blue"
-            as={Link}
-            href={"/signin"}
-          >
-            Signin
-          </Button>
-        </Card>
+        <Button
+          mt={"4"}
+          size={"md"}
+          variant={"outline"}
+          colorScheme="blue"
+          asChild
+        >
+          <Link href={"/signin"}>Signin</Link>
+        </Button>
       </Center>
     </div>
   );

@@ -7,18 +7,11 @@ import {
   Spinner,
   Stack,
   Stat,
-  StatLabel,
-  StatNumber,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
   Tabs,
   Tag,
   VStack,
 } from "@chakra-ui/react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-material.css";
+
 import { BranchFee, OverallFee } from "@/store/fees.slice";
 import { Pie } from "react-chartjs-2";
 import {
@@ -65,7 +58,9 @@ export default function Home() {
 
   const [currentIndex, setCurrentIndex] = useQueryState(
     "index",
-    parseAsInteger.withDefault(0).withOptions({ clearOnDefault: true })
+    parseAsString
+      .withDefault("all-branches")
+      .withOptions({ clearOnDefault: true })
   );
 
   return (
@@ -73,7 +68,7 @@ export default function Home() {
       <VStack alignItems={"start"} h={"fit-content"}>
         <Heading size={"lg"}>Grand Total</Heading>
         <HStack>
-          <Card
+          <Card.Root
             style={{ borderWidth: 2, borderColor: "white" }}
             w={"fit-content"}
             p={"10"}
@@ -83,7 +78,7 @@ export default function Home() {
               "bg-gradient-to-tr from-gray-900 via-purple-900 to-violet-600"
             }
           >
-            <Stat
+            <Stat.Root
               as={"div"}
               borderWidth={"1"}
               borderColor={"purple.700"}
@@ -94,71 +89,70 @@ export default function Home() {
               justifyContent={"center"}
               alignItems={"center"}
             >
-              <StatLabel py={"2"} color={"white"} fontSize={"lg"}>
+              <Stat.Label py={"2"} color={"white"} fontSize={"lg"}>
                 Amount
-              </StatLabel>
-              <StatNumber fontSize={"3xl"} className={"text-white"}>
+              </Stat.Label>
+              <Stat.ValueUnit fontSize={"3xl"} className={"text-white"}>
                 ₹ {overallFeeDetails[0]?.total}
-              </StatNumber>
-            </Stat>
-          </Card>
-          <Card
+              </Stat.ValueUnit>
+            </Stat.Root>
+          </Card.Root>
+          <Card.Root
             style={{ borderWidth: 2, borderColor: "white" }}
             w={"fit-content"}
             p={"10"}
             className={"bg-gradient-to-tr to-green-500 from-green-900"}
           >
-            <Stat
+            <Stat.Root
               h={"full"}
               w={"full"}
               display={"flex"}
               justifyContent={"center"}
               alignItems={"center"}
             >
-              <StatLabel py={"2"} color={"white"} fontSize={"lg"}>
+              <Stat.Label py={"2"} color={"white"} fontSize={"lg"}>
                 Amount Paid
-              </StatLabel>
-              <StatNumber fontSize={"3xl"} className={"text-white"}>
+              </Stat.Label>
+              <Stat.ValueUnit fontSize={"3xl"} className={"text-white"}>
                 ₹ {overallFeeDetails[0]?.paid}
-              </StatNumber>
-            </Stat>
-          </Card>
-          <Card
+              </Stat.ValueUnit>
+            </Stat.Root>
+          </Card.Root>
+          <Card.Root
             style={{ borderWidth: 2, borderColor: "white" }}
             width={"190px"}
             className="bg-gradient-to-tr to-red-400 from-red-900"
             w={"fit-content"}
             p={"10"}
           >
-            <Stat
+            <Stat.Root
               h={"full"}
               w={"full"}
               display={"flex"}
               justifyContent={"center"}
               alignItems={"center"}
             >
-              <StatLabel py={"2"} fontSize={"lg"} color={"white"}>
+              <Stat.Label py={"2"} fontSize={"lg"} color={"white"}>
                 Amount To Be Paid
-              </StatLabel>
-              <StatNumber fontSize={"3xl"} className={"text-white"}>
+              </Stat.Label>
+              <Stat.ValueUnit fontSize={"3xl"} className={"text-white"}>
                 ₹ {overallFeeDetails[0]?.remaining}
-              </StatNumber>
-            </Stat>
-          </Card>
+              </Stat.ValueUnit>
+            </Stat.Root>
+          </Card.Root>
         </HStack>
       </VStack>
 
-      <Tabs
-        defaultIndex={currentIndex}
-        index={currentIndex}
-        onChange={(index) => setCurrentIndex(index)}
+      <Tabs.Root
+        defaultValue={"all-branches"}
+        onValueChange={({ value }) => setCurrentIndex(value)}
       >
-        <TabList>
-          <Tab>All Branches</Tab>
-          <Tab>All Years</Tab>
-        </TabList>
-        <TabPanels px={0}>
-          <TabPanel>
+        <Tabs.List>
+          <Tabs.Trigger value={"all-branches"}>All Branches</Tabs.Trigger>
+          <Tabs.Trigger value={"all-years"}>All Years</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.ContentGroup px={0}>
+          <Tabs.Content value={"all-branches"}>
             {isBranchFeePending ? (
               <Stack w={"100%"} justifyContent={"center"} alignItems={"center"}>
                 <Spinner size={"lg"} color="blue" />
@@ -172,13 +166,12 @@ export default function Home() {
                   py={"5"}
                   pb={"12"}
                   flexWrap={"wrap"}
-                  spacing={0}
                   gap={"3"}
                   justifyContent={"center"}
                 >
                   {branchFeeDetails.map((branchFee) => {
                     return (
-                      <Card
+                      <Card.Root
                         key={branchFee.branch}
                         w={"580px"}
                         shadow={"lg"}
@@ -187,7 +180,7 @@ export default function Home() {
                         py={"5"}
                         display={"flex"}
                       >
-                        <Stat
+                        <Stat.Root
                           h={"full"}
                           w={"full"}
                           display={"flex"}
@@ -207,17 +200,19 @@ export default function Home() {
                                     ]
                                   }
                                 </h1>{" "}
-                                <Tag
+                                <Tag.Root
                                   variant={"solid"}
                                   size={"lg"}
                                   rounded={"full"}
                                   colorScheme={"blue"}
                                 >
-                                  {branchFee.total_students} Students
-                                </Tag>
+                                  <Tag.Label>
+                                    {branchFee.total_students} Students
+                                  </Tag.Label>
+                                </Tag.Root>
                               </VStack>
                               <VStack w={"full"} justifyContent={"center"}>
-                                <StatLabel
+                                <Stat.Label
                                   py={"2"}
                                   alignItems={"center"}
                                   display={"flex"}
@@ -225,11 +220,11 @@ export default function Home() {
                                   fontSize={"md"}
                                 >
                                   Total{" "}
-                                  <StatNumber fontSize={"lg"}>
+                                  <Stat.ValueUnit fontSize={"lg"}>
                                     ₹ {branchFee.total1}
-                                  </StatNumber>
-                                </StatLabel>
-                                <StatLabel
+                                  </Stat.ValueUnit>
+                                </Stat.Label>
+                                <Stat.Label
                                   py={"2"}
                                   alignItems={"center"}
                                   display={"flex"}
@@ -237,11 +232,11 @@ export default function Home() {
                                   fontSize={"md"}
                                 >
                                   Paid{" "}
-                                  <StatNumber fontSize={"lg"}>
+                                  <Stat.ValueUnit fontSize={"lg"}>
                                     ₹ {branchFee.paid1}
-                                  </StatNumber>
-                                </StatLabel>
-                                <StatLabel
+                                  </Stat.ValueUnit>
+                                </Stat.Label>
+                                <Stat.Label
                                   py={"2"}
                                   alignItems={"center"}
                                   display={"flex"}
@@ -249,10 +244,10 @@ export default function Home() {
                                   fontSize={"md"}
                                 >
                                   Balance{" "}
-                                  <StatNumber fontSize={"lg"}>
+                                  <Stat.ValueUnit fontSize={"lg"}>
                                     ₹ {branchFee.remaining1}
-                                  </StatNumber>
-                                </StatLabel>
+                                  </Stat.ValueUnit>
+                                </Stat.Label>
                               </VStack>
                             </VStack>
                             <Box p={"10"}>
@@ -285,15 +280,15 @@ export default function Home() {
                               </div>
                             </Box>
                           </HStack>
-                        </Stat>
-                      </Card>
+                        </Stat.Root>
+                      </Card.Root>
                     );
                   })}
                 </HStack>
               </VStack>
             )}
-          </TabPanel>
-          <TabPanel px={0} className="w-full">
+          </Tabs.Content>
+          <Tabs.Content value={"all-years"} px={0} className="w-full">
             {isYearsFeePending ? (
               <Stack w={"100%"} justifyContent={"center"} alignItems={"center"}>
                 <Spinner size={"lg"} color="blue" />
@@ -307,13 +302,12 @@ export default function Home() {
                   py={"5"}
                   pb={"12"}
                   flexWrap={"wrap"}
-                  spacing={0}
                   gap={"3"}
                   justifyContent={"center"}
                 >
                   {feeYearsDetails.map((yearFee) => {
                     return (
-                      <Card
+                      <Card.Root
                         key={yearFee.branch}
                         w={"580px"}
                         shadow={"lg"}
@@ -322,7 +316,7 @@ export default function Home() {
                         py={"5"}
                         display={"flex"}
                       >
-                        <Stat
+                        <Stat.Root
                           h={"full"}
                           w={"full"}
                           display={"flex"}
@@ -336,17 +330,19 @@ export default function Home() {
                                 <h1 className="text-xl font-medium text-black">
                                   {yearFee.year} Year
                                 </h1>{" "}
-                                <Tag
+                                <Tag.Root
                                   variant={"solid"}
                                   size={"lg"}
                                   rounded={"full"}
                                   colorScheme={"blue"}
                                 >
-                                  {yearFee.total_students} Students
-                                </Tag>
+                                  <Tag.Label>
+                                    {yearFee.total_students} Students
+                                  </Tag.Label>
+                                </Tag.Root>
                               </VStack>
                               <VStack w={"full"} justifyContent={"center"}>
-                                <StatLabel
+                                <Stat.Label
                                   py={"2"}
                                   alignItems={"center"}
                                   display={"flex"}
@@ -354,11 +350,11 @@ export default function Home() {
                                   fontSize={"md"}
                                 >
                                   Total{" "}
-                                  <StatNumber fontSize={"lg"}>
+                                  <Stat.ValueUnit fontSize={"lg"}>
                                     ₹ {yearFee.total1}
-                                  </StatNumber>
-                                </StatLabel>
-                                <StatLabel
+                                  </Stat.ValueUnit>
+                                </Stat.Label>
+                                <Stat.Label
                                   py={"2"}
                                   alignItems={"center"}
                                   display={"flex"}
@@ -366,11 +362,11 @@ export default function Home() {
                                   fontSize={"md"}
                                 >
                                   Paid{" "}
-                                  <StatNumber fontSize={"lg"}>
+                                  <Stat.ValueUnit fontSize={"lg"}>
                                     ₹ {yearFee.paid1}
-                                  </StatNumber>
-                                </StatLabel>
-                                <StatLabel
+                                  </Stat.ValueUnit>
+                                </Stat.Label>
+                                <Stat.Label
                                   py={"2"}
                                   alignItems={"center"}
                                   display={"flex"}
@@ -378,10 +374,10 @@ export default function Home() {
                                   fontSize={"md"}
                                 >
                                   Balance{" "}
-                                  <StatNumber fontSize={"lg"}>
+                                  <Stat.ValueUnit fontSize={"lg"}>
                                     ₹ {yearFee.remaining1}
-                                  </StatNumber>
-                                </StatLabel>
+                                  </Stat.ValueUnit>
+                                </Stat.Label>
                               </VStack>
                             </VStack>
                             <Box p={"10"}>
@@ -419,16 +415,16 @@ export default function Home() {
                               </div>
                             </Box>
                           </HStack>
-                        </Stat>
-                      </Card>
+                        </Stat.Root>
+                      </Card.Root>
                     );
                   })}
                 </HStack>
               </VStack>
             )}
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+          </Tabs.Content>
+        </Tabs.ContentGroup>
+      </Tabs.Root>
     </Stack>
   );
 }

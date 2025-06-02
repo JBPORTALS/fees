@@ -6,7 +6,7 @@ interface ISelectProps {
   value?: string;
   onChange: (value: string | undefined) => void;
   placeHolder: string;
-  isLoading?: boolean;
+  loading?: boolean;
 }
 
 export default function ISelect({
@@ -14,32 +14,41 @@ export default function ISelect({
   onChange,
   placeHolder,
   value,
-  isLoading,
+  loading,
 }: ISelectProps) {
   const [currentValue, setCurrentValue] = useState<string | undefined>(value);
 
   useEffect(() => {
     onChange(currentValue);
-  }, [currentValue,value]);
+  }, [currentValue, value]);
 
   return (
-    <VStack p={0} px={0} className="bg-primary w-52 relative flex flex-col px-10">
-       <Select bg={"white"} onChange={(e)=>setCurrentValue(e.target.value)} size={"sm"} shadow={"md"}>
-          <option value={""}>{placeHolder}</option>
-          {
-            options.map((value)=>{
-              return (
-                <option key={value.value} value={value.value}>{value.option}</option>
-              )
-            })
-          }
-       </Select>
+    <VStack
+      p={0}
+      px={0}
+      className="bg-primary w-52 relative flex flex-col px-10"
+    >
+      <Select
+        bg={"white"}
+        onChange={(e) => setCurrentValue(e.target.value)}
+        size={"sm"}
+        shadow={"md"}
+      >
+        <option value={""}>{placeHolder}</option>
+        {options.map((value) => {
+          return (
+            <option key={value.value} value={value.value}>
+              {value.option}
+            </option>
+          );
+        })}
+      </Select>
     </VStack>
   );
 }
 
-
-{/* <VStack p={0} px={0} className="bg-primary w-fit relative border-r flex flex-col p-0 border-lightgray custom-scroll-sm overflow-y-scroll">
+{
+  /* <VStack p={0} px={0} className="bg-primary w-fit relative border-r flex flex-col p-0 border-lightgray custom-scroll-sm overflow-y-scroll">
       <HStack className="border-b sticky top-0 backdrop-blur-sm  border-lightgray w-full px-2 py-2.5 justify-center">
         <Heading
           fontSize={"sm"}
@@ -50,7 +59,7 @@ export default function ISelect({
         </Heading>
       </HStack>
       <VStack className="px-4 pb-[65px] items-center justify-center">
-        {isLoading
+        {loading
           ? new Array(10).fill(0).map((value, index) => {
               return (
                 <div
@@ -82,4 +91,5 @@ export default function ISelect({
               );
             })}
       </VStack>
-    </VStack> */}
+    </VStack> */
+}

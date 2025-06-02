@@ -4,8 +4,6 @@ import { useAppSelector } from "@/store";
 import { AgGridReact } from "ag-grid-react";
 import { Center, Heading, VStack } from "@chakra-ui/react";
 import { Student, StudentColumnDefs } from "../mock-data/students-meta";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-material.css";
 
 function StudentDataGrid() {
   const FeeDetails = useAppSelector((state) => state.fees.all_fee.data) as any;

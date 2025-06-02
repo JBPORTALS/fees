@@ -9,7 +9,7 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import React from "react";
-import "react-datepicker/dist/react-datepicker.css";
+
 import { Link } from "@chakra-ui/next-js";
 import { usePathname } from "next/navigation";
 import { AiOutlineArrowLeft, AiOutlineCheck } from "react-icons/ai";

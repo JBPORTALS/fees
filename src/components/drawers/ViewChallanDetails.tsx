@@ -28,7 +28,7 @@ interface props {
 }
 
 export default function ViewChallanDetails({ children, challan_id }: props) {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
   const [isChecking, setIsChecking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const user = useUser();
@@ -81,8 +81,8 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
   }, [challan_id, user?.college]);
 
   useEffect(() => {
-    isOpen && findChallan();
-  }, [isOpen, findChallan]);
+    open && findChallan();
+  }, [open, findChallan]);
 
   const submit = useCallback(() => {
     if (usn) {
@@ -183,14 +183,14 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
   return (
     <>
       <IDrawer
-        isLoading={isChecking}
-        isDisabled={false}
+        loading={isChecking}
+        disabled={false}
         onSubmit={submit}
         buttonTitle="Save"
         onClose={() => {
           onClose();
         }}
-        isOpen={isOpen}
+        open={open}
         heading="Challan Details"
       >
         <VStack
@@ -356,7 +356,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             <Button
               w={"full"}
               colorScheme="red"
-              isLoading={isDeleting}
+              loading={isDeleting}
               onClick={onDelete}
               leftIcon={<AiOutlineDelete className={"text-xl"} />}
             >

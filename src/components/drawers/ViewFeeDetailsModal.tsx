@@ -35,9 +35,9 @@ interface props {
 }
 
 export default function ViewFeeDetailsModal({ children, regno, id }: props) {
-  const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
+  const { open, onClose, onOpen: onModalOpen } = useDisclosure();
   const {
-    isOpen: isConfirmOpen,
+    open: isConfirmOpen,
     onClose: onConfirmClose,
     onOpen: onConfirmOpen,
   } = useDisclosure();
@@ -46,7 +46,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
     (state) => state.fees.selected_fee.data
   ) as SelectedFee[];
   const error = useAppSelector((state) => state.fees.selected_fee.error);
-  const isLoading = useAppSelector(
+  const loading = useAppSelector(
     (state) => state.fees.selected_fee.pending
   ) as boolean;
   const dispatch = useAppDispatch();
@@ -151,10 +151,10 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
   return (
     <>
       <IModal
-        isLoading={isLoading}
+        loading={loading}
         onSubmit={onsubmit}
         buttonTitle="Save"
-        isOpen={isConfirmOpen}
+        open={isConfirmOpen}
         onClose={onConfirmClose}
         heading="Challen Details"
       >
@@ -167,19 +167,19 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
       </IModal>
 
       <IDrawer
-        isLoading={isChecking}
-        isDisabled={isLoading}
+        loading={isChecking}
+        disabled={loading}
         onSubmit={findChallan}
         buttonTitle="Check"
         onClose={() => {
           onClose();
         }}
-        isOpen={isOpen}
+        open={open}
         heading="Payment History"
         size={"sm"}
       >
         <VStack w={"full"} h={"full"} justifyContent={"space-between"}>
-          <VStack spacing={0} w={"full"} h={"full"}>
+          <VStack gap={0} w={"full"} h={"full"}>
             {selectedFeeDetails[0]?.payment_history?.map((history) => {
               return <HistoryItem key={history.id} {...{ history }} />;
             })}
@@ -231,7 +231,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
                     w={"full"}
                     onClick={onUpdateTotal}
                     colorScheme={"green"}
-                    isLoading={isUpdating}
+                    loading={isUpdating}
                     leftIcon={<AiOutlineCheckCircle className="text-xl" />}
                   >
                     Update Total Fee

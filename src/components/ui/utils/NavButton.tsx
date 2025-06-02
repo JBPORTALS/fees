@@ -1,9 +1,10 @@
-import { Button, ButtonProps, ComponentWithAs } from "@chakra-ui/react";
+import { Button, ButtonProps } from "@chakra-ui/react";
 
-interface NavButtonProps extends ButtonProps {}
-interface NavButton extends ComponentWithAs<"button", NavButtonProps> {}
+interface NavButtonProps extends ButtonProps {
+  isActive: boolean;
+}
 
-export const NavButton: NavButton = ({ ...props }) => {
+export const NavButton = ({ ...props }: NavButtonProps) => {
   return (
     <Button
       colorScheme={props.isActive ? "facebook" : undefined}

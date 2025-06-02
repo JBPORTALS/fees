@@ -158,7 +158,7 @@ export default function Students() {
                     <Button
                       w={"full"}
                       target={"_blank"}
-                      isDisabled={!state.branch || !state.year}
+                      disabled={!state.branch || !state.year}
                       colorScheme="blue"
                       as={Link}
                       href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}&status=${state.status}`}
@@ -185,7 +185,7 @@ export default function Students() {
           </AddStudentsDetails>
         </HStack>
       </div>
-      <VStack className="w-full h-[82vh]" spacing={0}>
+      <VStack className="w-full h-[82vh]" gap={0}>
         {!state.branch ? (
           <InfoCard message="Select Branch" />
         ) : state.branch && !state.year ? (
@@ -193,7 +193,7 @@ export default function Students() {
         ) : (
           <VStack
             px={0}
-            spacing={0}
+            gap={0}
             className={"justify-start items-start flex w-full h-full"}
           >
             {/* displaying admin childrens */}

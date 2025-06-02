@@ -1,11 +1,16 @@
-"use client";
+import { auth } from "@/utils/auth-server";
+import { redirect } from "next/navigation";
 import { Flex } from "@chakra-ui/react";
 
-export default function SignInLayout({
+export default async function SignInLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { isLoggedIn } = await auth();
+
+  if (isLoggedIn) redirect("/dashboard");
+
   return (
     <Flex minH={"100vh"} align={"center"} justify={"center"} bg={"gray.50"}>
       {children}

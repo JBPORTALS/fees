@@ -4,8 +4,7 @@ import { useAppSelector } from "@/store";
 import { AgGridReact } from "ag-grid-react";
 import { columns, columnsForNonUpdate } from "../mock-data/fee-meta";
 import { Center, Heading, VStack } from "@chakra-ui/react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-material.css";
+
 import { useUser } from "@/utils/auth";
 
 function ClassDataGrid() {

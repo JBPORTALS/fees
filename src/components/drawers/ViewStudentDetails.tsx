@@ -111,10 +111,10 @@ export default function ViewStudentsDetails({
   });
 
   const dispatch = useAppDispatch();
-  const { onOpen, isOpen, onClose } = useDisclosure();
+  const { onOpen, open, onClose } = useDisclosure();
   const {
     onOpen: onPaymentOpen,
-    isOpen: isPaymentOpen,
+    open: isPaymentOpen,
     onClose: onPaymentClose,
   } = useDisclosure();
   const user = useUser();
@@ -123,15 +123,15 @@ export default function ViewStudentsDetails({
 
   useEffect(() => {
     console.log(id);
-    if (id && isOpen && user?.college) {
+    if (id && open && user?.college) {
       dispatch(
         fetchSelectedFeeSearchDetails({ id, regno, college: user?.college! })
       );
     }
-  }, [id, isOpen, regno, dispatch, user?.college]);
+  }, [id, open, regno, dispatch, user?.college]);
 
   useEffect(() => {
-    if (isOpen && id && !pending)
+    if (open && id && !pending)
       setFormikState({
         isSubmitting: false,
         values: {
@@ -152,7 +152,7 @@ export default function ViewStudentsDetails({
         status: "",
         isValidating: true,
       });
-  }, [pending, regno, isOpen, id]);
+  }, [pending, regno, open, id]);
 
   function changeStateValue() {
     setFieldValue(
@@ -302,12 +302,12 @@ export default function ViewStudentsDetails({
         heading="Payment Updation"
         buttonTitle="Update"
         size={"2xl"}
-        isOpen={isPaymentOpen}
+        open={isPaymentOpen}
         onSubmit={paymentUpdate}
         onClose={() => {
           onPaymentClose();
         }}
-        isDisabled={
+        disabled={
           !amount || !method || amount == "0" || !challanId || !date || !tid
         }
       >
@@ -383,8 +383,8 @@ export default function ViewStudentsDetails({
 
       <IDrawer
         size={"sm"}
-        isLoading={isSubmitting}
-        isDisabled={!!Object.keys(errors).length}
+        loading={isSubmitting}
+        disabled={!!Object.keys(errors).length}
         onSubmit={() => {
           handleSubmit();
         }}
@@ -401,7 +401,7 @@ export default function ViewStudentsDetails({
           });
           onClose();
         }}
-        isOpen={isOpen}
+        open={open}
         heading="Student Details"
       >
         {pending ? (
@@ -631,7 +631,7 @@ export default function ViewStudentsDetails({
                     </Alert>
                   )}
                   <Button
-                    isDisabled={!isValid}
+                    disabled={!isValid}
                     onClick={onPaymentOpen}
                     w={"full"}
                     colorScheme="purple"
@@ -639,7 +639,7 @@ export default function ViewStudentsDetails({
                     Update Payment
                   </Button>
                   <Button
-                    isLoading={isDeleting}
+                    loading={isDeleting}
                     onClick={() => deleteStudent()}
                     w={"full"}
                     colorScheme="red"

@@ -12,7 +12,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import "react-datepicker/dist/react-datepicker.css";
+
 import { Link } from "@chakra-ui/next-js";
 import { usePathname, useSearchParams } from "next/navigation";
 import { AiOutlineCheck } from "react-icons/ai";

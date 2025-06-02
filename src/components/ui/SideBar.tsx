@@ -1,39 +1,27 @@
 "use client";
-import {
-  MdList,
-  MdOutlineList,
-  MdOutlineSpaceDashboard,
-  MdSpaceDashboard,
-} from "react-icons/md";
+import { MdOutlineSpaceDashboard, MdSpaceDashboard } from "react-icons/md";
 import { NavButton } from "./utils/NavButton";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Button,
-  Divider,
-  FormControl,
-  Select,
+  Separator,
+  Field,
   VStack,
-  useColorMode,
-  useToast,
+  NativeSelect,
 } from "@chakra-ui/react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FaUsers } from "react-icons/fa";
 import { useAppDispatch } from "@/hooks";
 import { changeAcadYear } from "@/store/fees.slice";
 import { useAppSelector } from "@/store";
+import { toaster } from "./toaster";
 
 export default function SideBar() {
   const pathname = usePathname();
   const router = useRouter();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const dispatch = useAppDispatch();
-  const toast = useToast({
-    position: "bottom",
-    status: "info",
-    variant: "subtle",
-  });
-  const { toggleColorMode, colorMode, setColorMode } = useColorMode();
 
   return (
     <VStack
@@ -49,71 +37,63 @@ export default function SideBar() {
     >
       <VStack pb={15} pt={5} w={"full"} gap={4}>
         <NavButton
-          as={Link}
-          href={"/dashboard"}
+          asChild
           w={"full"}
           isActive={pathname.startsWith("/dashboard")}
-          leftIcon={
-            pathname.startsWith("/dashboard") ? (
+        >
+          <Link href={"/dashboard"}>
+            {pathname.startsWith("/dashboard") ? (
               <MdSpaceDashboard />
             ) : (
               <MdOutlineSpaceDashboard />
-            )
-          }
-        >
-          Dashboard
+            )}
+            Dashboard
+          </Link>
         </NavButton>
-        <Link href={"/students"} className="w-full">
-          <NavButton
-            w={"full"}
-            isActive={pathname.startsWith("/students")}
-            leftIcon={
-              pathname.startsWith("/students") ? <FaUsers /> : <FaUsers />
-            }
-          >
+        <NavButton
+          w={"full"}
+          asChild
+          isActive={pathname.startsWith("/students")}
+        >
+          <Link href={"/students"} className="w-full">
+            {pathname.startsWith("/students") ? <FaUsers /> : <FaUsers />}
             Students
-          </NavButton>
-        </Link>
+          </Link>
+        </NavButton>
       </VStack>
       <VStack w={"full"} gap={4}>
-        <Divider />
+        <Separator />
         <Button
-          as={Link}
+          asChild
           w={"full"}
-          href={"/generate-reciept/without-usn"}
           size={"md"}
           variant={"solid"}
           colorScheme="facebook"
-          leftIcon={<AiOutlinePlus className={"text-xl"} />}
         >
-          New Receipt
+          <Link href={"/generate-reciept/without-usn"}>
+            <AiOutlinePlus className={"text-xl"} />
+            New Receipt
+          </Link>
         </Button>
-        <FormControl>
-          <Select
-            value={acadYear}
-            onChange={(e) => {
-              dispatch(changeAcadYear(e.target.value));
-              toast({ title: `Academic year changed to "${e.target.value}"` });
-              router.refresh();
-            }}
-          >
-            <option value={"2025"}>2025</option>
-            <option value={"2024"}>2024</option>
-            <option value={"2023"}>2023</option>
-          </Select>
-        </FormControl>
+        <Field.Root>
+          <NativeSelect.Root>
+            <NativeSelect.Field
+              value={acadYear}
+              onChange={(e) => {
+                dispatch(changeAcadYear(e.target.value));
+                toaster.info({
+                  title: `Academic year changed to "${e.target.value}"`,
+                });
+                router.refresh();
+              }}
+            >
+              <option value={"2025"}>2025</option>
+              <option value={"2024"}>2024</option>
+              <option value={"2023"}>2023</option>
+            </NativeSelect.Field>
+          </NativeSelect.Root>
+        </Field.Root>
       </VStack>
-      {/* <Select
-        rounded={"full"}
-        value={colorMode}
-        onChange={(e) => {
-          setColorMode(e.target.value);
-        }}
-      >
-        <option value={"light"}>Light</option>
-        <option value={"dark"}>Dark</option>
-        <option value={"system"}>System</option>
-      </Select> */}
     </VStack>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Avatar,
   Button,
@@ -6,12 +8,7 @@ import {
   IconButton,
   Input,
   InputGroup,
-  InputRightElement,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
+  Dialog,
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
@@ -22,7 +19,7 @@ import {
   AiOutlineUser,
 } from "react-icons/ai";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
-import "react-datepicker/dist/react-datepicker.css";
+
 import SideBar from "../ui/SideBar";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -35,8 +32,8 @@ interface AttendanceLayoutProps {
 
 export default function HeaderLayout({ children }: AttendanceLayoutProps) {
   const {
-    isOpen: isProfileOpen,
-    onClose: onProfileClose,
+    open: isProfileOpen,
+    onToggle: onProfileClose,
     onOpen: onProfileOpen,
   } = useDisclosure();
 
@@ -84,7 +81,27 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
           </HStack>
         </Link>
         <HStack>
-          <InputGroup rounded={"2xl"}>
+          <InputGroup
+            rounded={"2xl"}
+            endElement={
+              <IconButton
+                onClick={async () => {
+                  router.push(
+                    `/dashboard/search?mode=QUERY&query=${query}&hash=${new Date(
+                      Date.now()
+                    ).getTime()}`
+                  );
+                }}
+                colorScheme="blue"
+                h={"full"}
+                w={"full"}
+                variant={"ghost"}
+                aria-label="search"
+              >
+                <AiOutlineSearch className="text-lg" />
+              </IconButton>
+            }
+          >
             <Input
               onChange={(e) => setQuery(e.target.value)}
               value={query}
@@ -101,23 +118,6 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
               }}
               placeholder="Search Student Name or Student USN"
             />
-            <InputRightElement>
-              <IconButton
-                onClick={async () => {
-                  router.push(
-                    `/dashboard/search?mode=QUERY&query=${query}&hash=${new Date(
-                      Date.now()
-                    ).getTime()}`
-                  );
-                }}
-                colorScheme="blue"
-                h={"full"}
-                w={"full"}
-                variant={"ghost"}
-                aria-label="search"
-                icon={<AiOutlineSearch className="text-lg" />}
-              />
-            </InputRightElement>
           </InputGroup>
         </HStack>
         <HStack>
@@ -126,68 +126,63 @@ export default function HeaderLayout({ children }: AttendanceLayoutProps) {
               <Heading size={"md"}>{user?.fullname}</Heading>
               <IconButton
                 onClick={onProfileOpen}
-                variant={"unstyled"}
+                variant={"plain"}
                 aria-label="avatar"
               >
-                <Avatar size={"sm"}></Avatar>
+                <Avatar.Root size={"sm"}>
+                  <Avatar.Icon />
+                </Avatar.Root>
               </IconButton>
             </HStack>
-            <Modal isOpen={isProfileOpen} size={"sm"} onClose={onProfileClose}>
-              <ModalOverlay className="backdrop-blur-sm" />
-              <ModalContent
+            <Dialog.Root
+              open={isProfileOpen}
+              size={"sm"}
+              onOpenChange={onProfileClose}
+            >
+              <Dialog.Content
                 position={"relative"}
                 zIndex={"toast"}
                 backdropBlur={"2xl"}
                 shadow={"2xl"}
               >
-                <ModalHeader fontWeight="semibold" fontSize={"lg"}>
+                <Dialog.Header fontWeight="semibold" fontSize={"lg"}>
                   Profile Info
-                </ModalHeader>
-                <ModalBody>
-                  <HStack spacing={"3"} py={"2"}>
+                </Dialog.Header>
+                <Dialog.Body>
+                  <HStack gap={"3"} py={"2"}>
                     <AiOutlineUser className="text-2xl" />
                     <Heading size={"sm"} fontWeight={"normal"}>
                       {user?.fullname}
                     </Heading>
                   </HStack>
-                  <HStack spacing={"3"} py={"2"}>
+                  <HStack gap={"3"} py={"2"}>
                     <AiOutlineMail className="text-2xl" />
                     <Heading size={"sm"} fontWeight={"normal"}>
                       {user?.email}
                     </Heading>
                   </HStack>
-                  <HStack spacing={"3"} py={"2"}>
+                  <HStack gap={"3"} py={"2"}>
                     <HiOutlineOfficeBuilding className="text-2xl" />
                     <Heading size={"sm"} fontWeight={"normal"}>
                       {user?.college}
                     </Heading>
                   </HStack>
-                  {/* <HStack spacing={"3"} py={"2"}>
-                    <AiOutlineFieldTime className="text-2xl" />
-                    <Heading size={"sm"} fontWeight={"normal"}>
-                      {moment(user?).format(
-                        "MMMM Do YYYY, h:mm a"
-                      )}
-                    </Heading>
-                  </HStack> */}
-                  <HStack spacing={"3"} py={"2"}>
-                    {/* <Button onClick={toggleColorMode} w={"full"}>
-                      Toggle {colorMode === "light" ? "Dark" : "Light"}
-                    </Button> */}
+
+                  <HStack gap={"3"} py={"2"}>
                     <Button
-                      leftIcon={<AiOutlineLogout />}
                       onClick={async () => {
                         await signOut();
                       }}
                       colorScheme="facebook"
                       w={"full"}
                     >
+                      <AiOutlineLogout />
                       SignOut
                     </Button>
                   </HStack>
-                </ModalBody>
-              </ModalContent>
-            </Modal>
+                </Dialog.Body>
+              </Dialog.Content>
+            </Dialog.Root>
           </HStack>
         </HStack>
       </HStack>

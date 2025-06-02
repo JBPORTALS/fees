@@ -17,10 +17,10 @@ interface IDrawerProps {
   children: React.ReactNode;
   onSubmit?: () => void;
   onClose: () => void;
-  isOpen: boolean;
+  open: boolean;
   buttonTitle?: string;
-  isDisabled?: boolean;
-  isLoading?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
   size?: ResponsiveValue<"sm" | "xs" | "lg" | "xl" | "md">;
 }
 
@@ -28,15 +28,15 @@ export default function IDrawer({
   heading,
   buttonTitle,
   children,
-  isLoading,
+  loading,
   onSubmit,
-  isOpen,
+  open,
   onClose,
-  isDisabled,
+  disabled,
   size,
 }: IDrawerProps) {
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} size={size}>
+    <Drawer open={open} onClose={onClose} size={size}>
       <DrawerOverlay
         bg={"rgba(246,246,246,0.2)"}
         className={"backdrop-blur-sm"}
@@ -60,8 +60,8 @@ export default function IDrawer({
           </Button>
 
           <Button
-            isLoading={isLoading}
-            isDisabled={isDisabled}
+            loading={loading}
+            disabled={disabled}
             colorScheme={"blue"}
             onClick={async () => {
               onSubmit && (await onSubmit());

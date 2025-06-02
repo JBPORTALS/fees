@@ -1,33 +1,25 @@
 import {
   Button,
-  ThemingProps,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  ResponsiveValue,
-  ModalProps,
-  ModalBodyProps,
+  ConditionalValue,
+  Dialog,
+  DialogBodyProps,
+  DialogRootProps,
 } from "@chakra-ui/react";
 import React from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 
-interface IDrawerProps extends ModalProps {
+interface IDrawerProps extends DialogRootProps {
   heading: string;
   children: React.ReactNode;
   onSubmit?: () => void;
   onClose: () => void;
-  isOpen: boolean;
+  open: boolean;
   buttonTitle?: string;
-  size?: ResponsiveValue<"xl" | "full" | "2xl" | "3xl" | "6xl">;
-  isLoading?: boolean;
+  loading?: boolean;
   colorBtn?: "blue" | "red" | "orange";
   hideBtn?: boolean;
-  isDisabled?: boolean;
-  modalBodyProps?: ModalBodyProps;
+  disabled?: boolean;
+  modalBodyProps?: DialogBodyProps;
 }
 
 export default function IModal({
@@ -36,36 +28,36 @@ export default function IModal({
   children,
   buttonTitle,
   onSubmit,
-  isOpen,
+  open,
   onClose,
-  isLoading,
+  loading,
   colorBtn,
   hideBtn,
-  isDisabled = false,
+  disabled = false,
   modalBodyProps,
   ...props
 }: IDrawerProps) {
   return (
-    <Modal size={size} isOpen={isOpen} onClose={onClose} {...props}>
-      <ModalOverlay
+    <Dialog.Root size={size} open={open} onOpenChange={onClose} {...props}>
+      <Dialog.Backdrop
         bg={"rgba(255,255,255,0.2)"}
         className={"backdrop-blur-sm"}
       />
-      <ModalContent className="w-fit min-h-fit h-fit">
-        <ModalHeader className="border-b border-lightgray">
+      <Dialog.Content className="w-fit min-h-fit h-fit">
+        <Dialog.Header className="border-b border-lightgray">
           {heading}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody
+        </Dialog.Header>
+        <Dialog.CloseTrigger />
+        <Dialog.Body
           {...modalBodyProps}
           className="w-full h-fit bg-primary flex justify-center"
         >
           <div className="w-full h-full">{children}</div>
-        </ModalBody>
+        </Dialog.Body>
         {!hideBtn && (
-          <ModalFooter className="border-t border-lightgray">
+          <Dialog.Footer className="border-t border-lightgray">
             <Button
-              isDisabled={isLoading}
+              disabled={loading}
               colorScheme="blue"
               variant={"outline"}
               mr={3}
@@ -74,18 +66,18 @@ export default function IModal({
               Close
             </Button>
             <Button
-              isDisabled={isDisabled}
+              disabled={disabled}
               onClick={async () => {
                 onSubmit && (await onSubmit());
               }}
-              isLoading={isLoading}
+              loading={loading}
               colorScheme={colorBtn || "blue"}
             >
               {buttonTitle || "Upload"}
             </Button>
-          </ModalFooter>
+          </Dialog.Footer>
         )}
-      </ModalContent>
-    </Modal>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }

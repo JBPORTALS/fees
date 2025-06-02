@@ -31,7 +31,7 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
   const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const {
-    isOpen: isConfirmDeleteOpen,
+    open: isConfirmDeleteOpen,
     onClose: onConfirmDeleteClose,
     onOpen: onConfirmDeleteOpen,
   } = useDisclosure();
@@ -80,10 +80,10 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
       justifyContent={"space-between"}
     >
       <IModal
-        isLoading={isDeleting}
+        loading={isDeleting}
         onSubmit={() => onRemoveChallan(history.id, history.challan_id)}
         buttonTitle="Remove"
-        isOpen={isConfirmDeleteOpen}
+        open={isConfirmDeleteOpen}
         onClose={onConfirmDeleteClose}
         heading="Are you sure?"
         colorBtn="red"

@@ -9,8 +9,6 @@ import {
   HStack,
   Heading,
   Stat,
-  StatLabel,
-  StatNumber,
   Tag,
   VStack,
 } from "@chakra-ui/react";
@@ -79,7 +77,7 @@ export default function BranchViewPage() {
       <VStack p={"5"} h={"fit"}>
         {branch == "All" || !branch ? (
           <HStack>
-            <Card width={"450px"} height={"450px"} p={"5"}>
+            <Card.Root width={"450px"} height={"450px"} p={"5"}>
               <Bar
                 width={"400px"}
                 height={"400px"}
@@ -101,22 +99,22 @@ export default function BranchViewPage() {
                   labels: branchFeeDetails?.map((value) => value.branch),
                 }}
               />
-            </Card>
+            </Card.Root>
           </HStack>
         ) : (
-          <HStack py={"5"} pb={"12"} flexWrap={"wrap"} spacing={0} gap={"3"}>
+          <HStack py={"5"} pb={"12"} flexWrap={"wrap"} gap={"3"}>
             {yearFeeDetails && yearFeeDetails.length == 0 && (
-              <Card w={"420px"} h={"420px"}>
+              <Card.Root w={"420px"} h={"420px"}>
                 <VStack w={"full"} justifyContent={"center"} h={"full"}>
                   <AiOutlineAim className="text-6xl text-purple-500" />
                   <Heading size={"lg"} color={"gray.600"}>
                     No Data Found !
                   </Heading>
                 </VStack>
-              </Card>
+              </Card.Root>
             )}
             {yearFeeDetails &&
-              yearFeeDetails.map((yearFee) => {
+              yearFeeDetails.map((yearFee: any) => {
                 return (
                   <HStack
                     key={yearFee.year}
@@ -126,7 +124,7 @@ export default function BranchViewPage() {
                     px={"10"}
                     py={"5"}
                   >
-                    <Stat
+                    <Stat.Root
                       h={"full"}
                       w={"full"}
                       display={"flex"}
@@ -138,21 +136,17 @@ export default function BranchViewPage() {
                         <h1 className="text-2xl font-bold text-black">
                           {yearFee.year} Year
                         </h1>{" "}
-                        <Tag
+                        <Tag.Root
                           variant={"solid"}
                           size={"lg"}
                           rounded={"full"}
                           colorScheme={"blue"}
                         >
                           {yearFee.total_students} Students
-                        </Tag>
+                        </Tag.Root>
                       </VStack>
-                      <VStack
-                        w={"full"}
-                        justifyContent={"center"}
-                        spacing={"5"}
-                      >
-                        <StatLabel
+                      <VStack w={"full"} justifyContent={"center"} gap={"5"}>
+                        <Stat.Label
                           py={"2"}
                           alignItems={"center"}
                           display={"flex"}
@@ -160,11 +154,11 @@ export default function BranchViewPage() {
                           fontSize={"md"}
                         >
                           Total{" "}
-                          <StatNumber fontSize={"2xl"}>
+                          <Stat.ValueUnit fontSize={"2xl"}>
                             ₹ {yearFee.total1}
-                          </StatNumber>
-                        </StatLabel>
-                        <StatLabel
+                          </Stat.ValueUnit>
+                        </Stat.Label>
+                        <Stat.Label
                           py={"2"}
                           alignItems={"center"}
                           display={"flex"}
@@ -172,11 +166,11 @@ export default function BranchViewPage() {
                           fontSize={"md"}
                         >
                           Paid{" "}
-                          <StatNumber fontSize={"2xl"}>
+                          <Stat.ValueUnit fontSize={"2xl"}>
                             ₹ {yearFee.paid1}
-                          </StatNumber>
-                        </StatLabel>
-                        <StatLabel
+                          </Stat.ValueUnit>
+                        </Stat.Label>
+                        <Stat.Label
                           py={"2"}
                           alignItems={"center"}
                           display={"flex"}
@@ -184,12 +178,12 @@ export default function BranchViewPage() {
                           fontSize={"md"}
                         >
                           Balance{" "}
-                          <StatNumber fontSize={"2xl"}>
+                          <Stat.ValueUnit fontSize={"2xl"}>
                             ₹ {yearFee.remaining1}
-                          </StatNumber>
-                        </StatLabel>
+                          </Stat.ValueUnit>
+                        </Stat.Label>
                       </VStack>
-                    </Stat>
+                    </Stat.Root>
                     <Box p={"10"}>
                       <div>
                         <Pie

@@ -7,8 +7,7 @@ import { VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-material.css";
+
 import { useUser } from "@/utils/auth";
 
 export default function BranchViewPage() {
@@ -63,7 +62,7 @@ export default function BranchViewPage() {
           />
         ) : null}
       </div>
-      <VStack className="w-full h-full" spacing={0}>
+      <VStack className="w-full h-full" gap={0}>
         {!state.branch ? (
           <InfoCard message="Select Branch" />
         ) : state.branch && !state.year ? (
@@ -71,7 +70,7 @@ export default function BranchViewPage() {
         ) : null}
         <VStack
           px={0}
-          spacing={0}
+          gap={0}
           className={
             "justify-start items-start flex w-full h-full overflow-scroll"
           }

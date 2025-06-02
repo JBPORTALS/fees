@@ -86,7 +86,7 @@ const Categories = [
 ];
 
 export default function AddStudentsDetails({ children }: props) {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
   const branch_list = useAppSelector(
     (state) => state.fees.branch_list.data
   ) as [];
@@ -153,8 +153,8 @@ export default function AddStudentsDetails({ children }: props) {
   return (
     <>
       <IDrawer
-        isLoading={isSubmitting}
-        isDisabled={!!Object.keys(errors).length}
+        loading={isSubmitting}
+        disabled={!!Object.keys(errors).length}
         onSubmit={() => {
           handleSubmit();
         }}
@@ -162,7 +162,7 @@ export default function AddStudentsDetails({ children }: props) {
         onClose={() => {
           onClose();
         }}
-        isOpen={isOpen}
+        open={open}
         heading="New Student"
       >
         <VStack

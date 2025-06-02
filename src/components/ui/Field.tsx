@@ -22,7 +22,7 @@ export type FieldProps = {
   label: string;
   description?: string;
   isReadonly?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
   validateField?: Yup.AnySchema;
   options?: Array<any>;
 } & HookProps &
@@ -55,7 +55,7 @@ export const Field = (props: FieldProps) => {
             dateFormat={"dd/MM/yyyy"}
             onBlur={fieldProps.onBlur}
             name={fieldProps.name}
-            isDisabled={props?.isDisabled}
+            disabled={props?.disabled}
             isReadOnly={props?.isReadonly}
             //  @ts-ignore
             onChange={(value: Date) =>
@@ -67,7 +67,7 @@ export const Field = (props: FieldProps) => {
         return (
           <Select
             {...fieldProps}
-            isDisabled={props?.isDisabled || props.isReadonly}
+            disabled={props?.disabled || props.isReadonly}
             isReadOnly={props?.isReadonly}
             _invalid={{
               background(theme) {
@@ -106,7 +106,7 @@ export const Field = (props: FieldProps) => {
             {...fieldProps}
             placeholder={props.placeholder}
             type={props.type}
-            isDisabled={props?.isDisabled}
+            disabled={props?.disabled}
             isReadOnly={props?.isReadonly}
           />
         );
@@ -117,7 +117,7 @@ export const Field = (props: FieldProps) => {
     <FormControl
       isInvalid={!!metaProps.touched && !!metaProps.error}
       isReadOnly={props.isReadonly}
-      isDisabled={props.isDisabled}
+      disabled={props.disabled}
       hidden={props.hidden}
     >
       <FormLabel>{props.label}</FormLabel>

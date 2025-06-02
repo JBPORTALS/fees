@@ -622,7 +622,7 @@ export default function WithoutUSNDynamicPage() {
   ];
 
   return (
-    <VStack spacing={"0"} w={"full"} h={"fit-content"} position={"relative"}>
+    <VStack gap={"0"} w={"full"} h={"fit-content"} position={"relative"}>
       <Formik
         {...{ initialValues }}
         onSubmit={async (state) => {
@@ -773,9 +773,9 @@ export default function WithoutUSNDynamicPage() {
               >
                 <Button
                   size={"lg"}
-                  isLoading={isSubmitting || isValidating}
+                  loading={isSubmitting || isValidating}
                   onClick={() => handleSubmit()}
-                  isDisabled={
+                  disabled={
                     Object.keys(errors).length > 0 ||
                     isSubmitting ||
                     isValidating

@@ -1,6 +1,6 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
-import { fetchBranchList, updateUSN } from "@/store/fees.slice";
+import { updateUSN } from "@/store/fees.slice";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,22 +14,13 @@ import {
 import {
   Box,
   Button,
-  FormControl,
-  FormLabel,
+  Field,
   Heading,
   HStack,
-  IconButton,
   Input,
   Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Select,
+  NativeSelect,
   Skeleton,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
   Tabs,
   Tag,
   Text,
@@ -41,8 +32,6 @@ import ReactDatePicker from "react-datepicker";
 import {
   AiOutlineArrowRight,
   AiOutlineDatabase,
-  AiOutlineDownload,
-  AiOutlineFilePdf,
   AiOutlineFilter,
   AiOutlineSearch,
 } from "react-icons/ai";
@@ -50,11 +39,11 @@ import IModal from "../ui/utils/IModal";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import moment from "moment";
-import "react-datepicker/dist/react-datepicker.css";
+
 import { usePathname, useRouter } from "next/navigation";
 import { shallowEqual } from "react-redux";
 import { FaBullseye, FaChevronDown } from "react-icons/fa";
-import { MdBarChart, MdOutlineAutoGraph } from "react-icons/md";
+import { MdBarChart } from "react-icons/md";
 import { SiGoogleclassroom } from "react-icons/si";
 import Link from "next/link";
 import { useUser } from "@/utils/auth";
@@ -75,7 +64,7 @@ ChartJS.register(
 
 export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const dispatch = useAppDispatch();
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
   const yearList = useAppSelector((state) => state.fees.year_list);
 
   const [state, setState] = useState({
@@ -142,7 +131,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
 
   // useEffect(() => {
   //   fetchBranchListCb();
-  // }, [isOpen]);
+  // }, [open]);
 
   const onDateFilter = async () => {
     setIsLoading(true);
@@ -210,24 +199,14 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
 
   return (
     <div className="bg-primary relative overflow-hidden w-full h-full flex flex-col">
-      <Tabs
-        index={
-          pathname == "/dashboard"
-            ? 0
-            : pathname === "/dashboard/branchview"
-            ? 1
-            : pathname === "/dashboard/classview"
-            ? 2
-            : pathname.startsWith("/dashboard/search")
-            ? 3
-            : -1
-        }
+      <Tabs.Root
+        defaultValue={pathname.split("/").pop()}
         colorScheme={"facebook"}
         size={"lg"}
         variant={"line"}
         h={"full"}
       >
-        <TabList
+        <Tabs.List
           zIndex={"sticky"}
           position={"sticky"}
           bg={"whiteAlpha.100"}
@@ -237,43 +216,46 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
         >
           <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
-              <Tab
+              <Tabs.Trigger
+                value="dashboard"
                 gap={2}
-                as={Link}
-                href={"/dashboard"}
+                asChild
                 _hover={{ textDecoration: "none" }}
               >
-                <FaBullseye />
-                <Text>Overall</Text>
-              </Tab>
-              <Tab
-                as={Link}
+                <Link href={"/dashboard"}>
+                  <FaBullseye />
+                  <Text>Overall</Text>
+                </Link>
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                value="branchview"
+                asChild
                 gap={2}
-                href={"/dashboard/branchview"}
                 _hover={{ textDecoration: "none" }}
               >
-                <MdBarChart />
-                <Text>Analytics</Text>
-              </Tab>
-              <Tab
-                as={Link}
+                <Link href={"/dashboard/branchview"}>
+                  <MdBarChart />
+                  <Text>Analytics</Text>
+                </Link>
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                value="classview"
+                asChild
                 gap={2}
-                href={"/dashboard/classview"}
                 _hover={{ textDecoration: "none" }}
               >
-                <SiGoogleclassroom />
-                <Text>Class Data</Text>
-              </Tab>
-              <Tab hidden _hover={{ textDecoration: "none" }}>
-                Search
-              </Tab>
+                <Link href={"/dashboard/classview"}>
+                  <SiGoogleclassroom />
+                  <Text>Class Data</Text>
+                </Link>
+              </Tabs.Trigger>
             </HStack>
 
             <HStack zIndex={"sticky"}>
               <IModal
                 hideBtn
                 size={"2xl"}
-                isOpen={isOpen}
+                open={open}
                 onClose={onClose}
                 heading={"Search Result"}
                 modalBodyProps={{
@@ -336,14 +318,16 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                         />
                                       )}
                                     </Heading>
-                                    <Tag
+                                    <Tag.Root
                                       size={"md"}
                                       variant={"outline"}
                                       colorScheme={"teal"}
                                       fontWeight={"bold"}
                                     >
-                                      CH No. {paymentData.challan_id}
-                                    </Tag>
+                                      <Tag.Label>
+                                        CH No. {paymentData.challan_id}
+                                      </Tag.Label>
+                                    </Tag.Root>
                                   </VStack>
                                 </HStack>
                                 <span className="text-sm">
@@ -387,7 +371,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                     onChallanFilter();
                                   });
                                 }}
-                                isLoading={isUpdatingUSN}
+                                loading={isUpdatingUSN}
                               >
                                 Save USN No.
                               </Button>
@@ -397,121 +381,146 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                       })}
                 </VStack>
               </IModal>
-              <Menu placement="bottom-end">
-                <MenuButton
-                  as={Button}
-                  leftIcon={<AiOutlineDatabase />}
-                  size={"sm"}
-                  variant={"ghost"}
-                  rightIcon={<FaChevronDown />}
-                  position={"sticky"}
-                  zIndex={"popover"}
-                >
-                  Download Class Data
-                </MenuButton>
-                <MenuList zIndex={"popover"} pos={"sticky"}>
+
+              {/** Menu #1 */}
+              <Menu.Root positioning={{ placement: "bottom-end" }}>
+                <Menu.Trigger asChild>
+                  <Button size={"sm"} variant={"ghost"}>
+                    <AiOutlineDatabase />
+                    Download Class Data <FaChevronDown />
+                  </Button>
+                </Menu.Trigger>
+                <Menu.Content zIndex={"popover"} pos={"sticky"}>
                   <VStack px={"4"}>
-                    <FormControl>
-                      <Select
-                        value={state.branch}
-                        onChange={(e) =>
-                          setState((prev) => ({
-                            ...prev,
-                            branch: e.target.value,
-                          }))
-                        }
-                      >
-                        <option value={""}>Select Branch</option>
-                        {branchList.map((option: any) => (
-                          <option key={option?.branch} value={option?.branch}>
-                            {option?.branch}
+                    <Field.Root>
+                      <NativeSelect.Root>
+                        <NativeSelect.Field
+                          value={state.branch}
+                          onChange={(e) =>
+                            setState((prev) => ({
+                              ...prev,
+                              branch: e.target.value,
+                            }))
+                          }
+                        >
+                          <option value={""}>NativeSelect.Root Branch</option>
+                          {branchList.map((option: any) => (
+                            <option key={option?.branch} value={option?.branch}>
+                              {option?.branch}
+                            </option>
+                          ))}
+                        </NativeSelect.Field>
+                      </NativeSelect.Root>
+                    </Field.Root>
+                    <Field.Root>
+                      <NativeSelect.Root>
+                        <NativeSelect.Field
+                          value={state.year}
+                          onChange={(e) =>
+                            setState((prev) => ({
+                              ...prev,
+                              year: e.target.value,
+                            }))
+                          }
+                        >
+                          <option value={""}>NativeSelect.Root Year</option>
+                          {(user?.college == "KSIT"
+                            ? [
+                                { year: 1 },
+                                { year: 2 },
+                                { year: 3 },
+                                { year: 4 },
+                              ]
+                            : yearList
+                          ).map((option: any) => (
+                            <option value={option?.year} key={option?.year}>
+                              {option?.year}
+                            </option>
+                          ))}
+                        </NativeSelect.Field>
+                      </NativeSelect.Root>
+                    </Field.Root>
+                    <Field.Root>
+                      <NativeSelect.Root>
+                        <NativeSelect.Field
+                          onChange={(e) =>
+                            setState((prev) => ({
+                              ...prev,
+                              status: e.target.value,
+                            }))
+                          }
+                          value={state.status}
+                        >
+                          <option value={""}>NativeSelect.Root Status</option>
+                          <option value={"ALL"}>All</option>
+                          <option value={"NOT PAID"}>Not Paid</option>
+                          <option value={"PARTIALLY PAID"}>
+                            Partially Paid
                           </option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    <FormControl>
-                      <Select
-                        value={state.year}
-                        onChange={(e) =>
-                          setState((prev) => ({
-                            ...prev,
-                            year: e.target.value,
-                          }))
-                        }
-                      >
-                        <option value={""}>Select Year</option>
-                        {(user?.college == "KSIT"
-                          ? [{ year: 1 }, { year: 2 }, { year: 3 }, { year: 4 }]
-                          : yearList
-                        ).map((option: any) => (
-                          <option value={option?.year} key={option?.year}>
-                            {option?.year}
-                          </option>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    <FormControl>
-                      <Select
-                        onChange={(e) =>
-                          setState((prev) => ({
-                            ...prev,
-                            status: e.target.value,
-                          }))
-                        }
-                        value={state.status}
-                      >
-                        <option value={""}>Select Status</option>
-                        <option value={"ALL"}>All</option>
-                        <option value={"NOT PAID"}>Not Paid</option>
-                        <option value={"PARTIALLY PAID"}>Partially Paid</option>
-                        <option value={"FULL PAID"}>Full Paid</option>
-                      </Select>
-                    </FormControl>
-                    <FormControl w={"full"}>
+                          <option value={"FULL PAID"}>Full Paid</option>
+                        </NativeSelect.Field>
+                      </NativeSelect.Root>
+                    </Field.Root>
+                    <Field.Root w={"full"}>
                       <Button
                         w={"full"}
-                        target={"_blank"}
-                        isDisabled={!state.branch || !state.year}
+                        disabled={!state.branch || !state.year}
                         colorScheme="blue"
-                        as={Link}
-                        href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}&status=${state.status}&acadYear=${acadYear}`}
+                        asChild
                       >
-                        Download Excel
+                        <Link
+                          target={"_blank"}
+                          href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}&status=${state.status}&acadYear=${acadYear}`}
+                        >
+                          Download Excel
+                        </Link>
                       </Button>
-                    </FormControl>
+                    </Field.Root>
                   </VStack>
-                </MenuList>
-              </Menu>
-              <Menu size={"lg"} closeOnSelect placement="bottom-end">
-                <MenuButton
-                  as={Button}
-                  size={"sm"}
-                  leftIcon={<AiOutlineFilter className={"text-xl"} />}
-                  variant={"ghost"}
-                  rightIcon={<FaChevronDown />}
-                  position={"sticky"}
-                  zIndex={"popover"}
-                >
-                  Filter
-                </MenuButton>
+                </Menu.Content>
+              </Menu.Root>
 
-                <MenuList zIndex={"popover"} pos={"sticky"}>
+              {/** Menu #2 */}
+              <Menu.Root
+                closeOnSelect
+                positioning={{ placement: "bottom-end" }}
+              >
+                <Menu.Trigger asChild>
+                  <Button
+                    size={"sm"}
+                    variant={"ghost"}
+                    position={"sticky"}
+                    zIndex={"popover"}
+                  >
+                    <AiOutlineFilter className={"text-xl"} />
+                    Filter
+                    <FaChevronDown />
+                  </Button>
+                </Menu.Trigger>
+
+                <Menu.Content zIndex={"popover"} pos={"sticky"}>
                   <VStack px={"4"}>
-                    <FormControl>
-                      <Select onChange={(e) => setFilterType(e.target.value)}>
-                        <option value={""}>Select Filter</option>
-                        <option value={"CHALLAN_DATE"}>By Challan Date</option>
-                        <option value={"PAID_DATE"}>By Paid Date</option>
-                        <option value={"CHALLAN"}>By Challan No.</option>
-                        <option value={"MODE"}>By Mode</option>
-                      </Select>
-                    </FormControl>
+                    <Field.Root>
+                      <NativeSelect.Root>
+                        <NativeSelect.Field
+                          onChange={(e) => setFilterType(e.target.value)}
+                        >
+                          <option value={""}>Select Root Filter</option>
+                          <option value={"CHALLAN_DATE"}>
+                            By Challan Date
+                          </option>
+                          <option value={"PAID_DATE"}>By Paid Date</option>
+                          <option value={"CHALLAN"}>By Challan No.</option>
+                          <option value={"MODE"}>By Mode</option>
+                        </NativeSelect.Field>
+                      </NativeSelect.Root>
+                    </Field.Root>
                     {filterType && (
                       <>
-                        <FormControl>
+                        <Field.Root>
                           {filterType == "CHALLAN" ? (
                             <>
-                              <FormLabel>Challan No.</FormLabel>
+                              <Field.Label>Challan No.</Field.Label>
                               <Input
                                 value={filterState.challan_no}
                                 type={"number"}
@@ -530,7 +539,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                           ) : filterType == "PAID_DATE" ||
                             filterType == "CHALLAN_DATE" ? (
                             <>
-                              <FormLabel>Date</FormLabel>
+                              <Field.Label>Date</Field.Label>
                               <ReactDatePicker
                                 className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                                 selected={
@@ -549,93 +558,109 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                             </>
                           ) : filterType == "MODE" ? (
                             <>
-                              <FormLabel>Select Branch</FormLabel>
-                              <Select
-                                onChange={(e) =>
-                                  setModeFilterState((prev) => ({
-                                    ...prev,
-                                    branch: e.target.value,
-                                  }))
-                                }
-                                value={modeFilterState.branch}
-                              >
-                                <option value={"ALL"}>All</option>
-                                {branchList?.map((value: any, index) => (
-                                  <option
-                                    value={value.branch}
-                                    key={value.branch}
-                                  >
-                                    {value?.branch}
+                              <Field.Label>
+                                NativeSelect.Root Branch
+                              </Field.Label>
+                              <NativeSelect.Root>
+                                <NativeSelect.Field
+                                  onChange={(e) =>
+                                    setModeFilterState((prev) => ({
+                                      ...prev,
+                                      branch: e.target.value,
+                                    }))
+                                  }
+                                  value={modeFilterState.branch}
+                                >
+                                  <option value={"ALL"}>All</option>
+                                  {branchList?.map((value: any, index) => (
+                                    <option
+                                      value={value.branch}
+                                      key={value.branch}
+                                    >
+                                      {value?.branch}
+                                    </option>
+                                  ))}
+                                </NativeSelect.Field>
+                              </NativeSelect.Root>
+                              <Field.Label>NativeSelect.Root Year</Field.Label>
+                              <NativeSelect.Root>
+                                <NativeSelect.Field
+                                  onChange={(e) =>
+                                    setModeFilterState((prev) => ({
+                                      ...prev,
+                                      year: e.target.value,
+                                    }))
+                                  }
+                                  value={modeFilterState.year}
+                                >
+                                  <option value={"ALL"}>All</option>
+                                  {(user?.college == "KSIT"
+                                    ? [
+                                        { year: 1 },
+                                        { year: 2 },
+                                        { year: 3 },
+                                        { year: 4 },
+                                      ]
+                                    : yearList
+                                  ).map((option: any) => (
+                                    <option
+                                      value={option?.year}
+                                      key={option?.year}
+                                    >
+                                      {option?.year}
+                                    </option>
+                                  ))}
+                                </NativeSelect.Field>
+                              </NativeSelect.Root>
+                              <Field.Label>
+                                NativeSelect.Root Fee Type
+                              </Field.Label>
+                              <NativeSelect.Root>
+                                <NativeSelect.Field
+                                  value={modeFilterState.type}
+                                  onChange={(e) =>
+                                    setModeFilterState((prev) => ({
+                                      ...prev,
+                                      type: e.target.value,
+                                    }))
+                                  }
+                                >
+                                  <option value={"ALL"}>All</option>
+                                  <option value={"FEE"}>Fee</option>
+                                  <option value={"MISCELLANEOUS"}>
+                                    Miscellaneous
                                   </option>
-                                ))}
-                              </Select>
-                              <FormLabel>Select Year</FormLabel>
-                              <Select
-                                onChange={(e) =>
-                                  setModeFilterState((prev) => ({
-                                    ...prev,
-                                    year: e.target.value,
-                                  }))
-                                }
-                                value={modeFilterState.year}
-                              >
-                                <option value={"ALL"}>All</option>
-                                {(user?.college == "KSIT"
-                                  ? [
-                                      { year: 1 },
-                                      { year: 2 },
-                                      { year: 3 },
-                                      { year: 4 },
-                                    ]
-                                  : yearList
-                                ).map((option: any) => (
-                                  <option
-                                    value={option?.year}
-                                    key={option?.year}
-                                  >
-                                    {option?.year}
+                                  <option value={"BUS_FEE"}>Bus Fee</option>
+                                  <option value={"EXCESS_FEE"}>
+                                    Excess Fee
                                   </option>
-                                ))}
-                              </Select>
-                              <FormLabel>Select Fee Type</FormLabel>
-                              <Select
-                                value={modeFilterState.type}
-                                onChange={(e) =>
-                                  setModeFilterState((prev) => ({
-                                    ...prev,
-                                    type: e.target.value,
-                                  }))
-                                }
-                              >
-                                <option value={"ALL"}>All</option>
-                                <option value={"FEE"}>Fee</option>
-                                <option value={"MISCELLANEOUS"}>
-                                  Miscellaneous
-                                </option>
-                                <option value={"BUS_FEE"}>Bus Fee</option>
-                                <option value={"EXCESS_FEE"}>Excess Fee</option>
-                                <option value={"SECURITY_DEPOSIT"}>
-                                  Security Deposit
-                                </option>
-                                <option value={"HOSTEL_FEE"}>Hostel Fee</option>
-                              </Select>
-                              <FormLabel>Select Mode</FormLabel>
-                              <Select
-                                value={modeFilterState.mode}
-                                onChange={(e) =>
-                                  setModeFilterState((prev) => ({
-                                    ...prev,
-                                    mode: e.target.value,
-                                  }))
-                                }
-                              >
-                                <option value={"ALL"}>All</option>
-                                <option value={"CASH"}>Cash</option>
-                                <option value={"ONLINE"}>Online</option>
-                                <option value={"CHEQUE"}>Cheque</option>
-                                <option value={"DD"}>DD</option>
-                              </Select>
-                              <FormLabel>From Date</FormLabel>
+                                  <option value={"SECURITY_DEPOSIT"}>
+                                    Security Deposit
+                                  </option>
+                                  <option value={"HOSTEL_FEE"}>
+                                    Hostel Fee
+                                  </option>
+                                </NativeSelect.Field>
+                              </NativeSelect.Root>
+                              <Field.Label>NativeSelect.Root Mode</Field.Label>
+                              <NativeSelect.Root>
+                                <NativeSelect.Field
+                                  value={modeFilterState.mode}
+                                  onChange={(e) =>
+                                    setModeFilterState((prev) => ({
+                                      ...prev,
+                                      mode: e.target.value,
+                                    }))
+                                  }
+                                >
+                                  <option value={"ALL"}>All</option>
+                                  <option value={"CASH"}>Cash</option>
+                                  <option value={"ONLINE"}>Online</option>
+                                  <option value={"CHEQUE"}>Cheque</option>
+                                  <option value={"DD"}>DD</option>
+                                </NativeSelect.Field>
+                              </NativeSelect.Root>
+                              <Field.Label>From Date</Field.Label>
                               <ReactDatePicker
                                 className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                                 selected={
@@ -651,7 +676,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                   }));
                                 }}
                               />
-                              <FormLabel>To Date</FormLabel>
+                              <Field.Label>To Date</Field.Label>
                               <ReactDatePicker
                                 className="px-3 flex shadow-md justify-self-end w-[100%] ml-auto py-2 border rounded-md outline-brand"
                                 selected={
@@ -669,11 +694,15 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                               />
                             </>
                           ) : null}
-                        </FormControl>
-                        <FormControl>
-                          <MenuItem p={"0"} _hover={{ bg: "transparent" }}>
+                        </Field.Root>
+                        <Field.Root>
+                          <Menu.Item
+                            value="mode"
+                            p={"0"}
+                            _hover={{ bg: "transparent" }}
+                          >
                             <Button
-                              isLoading={isPushing}
+                              loading={isPushing}
                               onClick={() => {
                                 switch (filterType) {
                                   case "CHALLAN":
@@ -696,25 +725,23 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                 }
                               }}
                               colorScheme={"blue"}
-                              rightIcon={
-                                <AiOutlineSearch className={"text-lg"} />
-                              }
                               w={"full"}
                             >
-                              Search
+                              Search <AiOutlineSearch className={"text-lg"} />
                             </Button>
-                          </MenuItem>
-                        </FormControl>
+                          </Menu.Item>
+                        </Field.Root>
                       </>
                     )}
                   </VStack>
-                </MenuList>
-              </Menu>
+                </Menu.Content>
+              </Menu.Root>
             </HStack>
           </HStack>
-        </TabList>
-        <TabPanels px={"0"} w={"full"} h={"full"}>
-          <TabPanel
+        </Tabs.List>
+        <Tabs.ContentGroup px={"0"} w={"full"} h={"full"}>
+          <Tabs.Content
+            value="dashboard"
             px={"5"}
             pb={"20"}
             w={"full"}
@@ -722,8 +749,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             overflowY={"scroll"}
           >
             {children}
-          </TabPanel>
-          <TabPanel
+          </Tabs.Content>
+          <Tabs.Content
+            value=""
             py={"0"}
             px={"0"}
             pb={"20"}
@@ -732,15 +760,21 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             overflowY={"scroll"}
           >
             {children}
-          </TabPanel>
-          <TabPanel px={0} py={"0"} w={"full"} h={"88vh"}>
+          </Tabs.Content>
+          <Tabs.Content
+            value="branchview"
+            px={0}
+            py={"0"}
+            w={"full"}
+            h={"88vh"}
+          >
             {children}
-          </TabPanel>
-          <TabPanel px={0} w={"full"} h={"88vh"} py={"0"}>
+          </Tabs.Content>
+          <Tabs.Content value="classview" px={0} w={"full"} h={"88vh"} py={"0"}>
             {children}
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+          </Tabs.Content>
+        </Tabs.ContentGroup>
+      </Tabs.Root>
     </div>
   );
 }

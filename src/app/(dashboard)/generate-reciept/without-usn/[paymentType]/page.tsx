@@ -72,7 +72,7 @@ const FormikContextProvider = () => {
   const { values, setFieldValue, handleReset } =
     useFormikContext<typeof initialValues>();
   const [appId, setAppId] = useState("");
-  const [isLoading, setIsloading] = useState(false);
+  const [loading, setIsloading] = useState(false);
   const user = useUser();
   const toast = useToast();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
@@ -167,7 +167,7 @@ const FormikContextProvider = () => {
         />
         <InputRightElement>
           <IconButton
-            {...{ isLoading }}
+            {...{ loading }}
             onClick={findStudent}
             aria-label="search"
             colorScheme="blue"
@@ -190,7 +190,7 @@ export default function WithoutUSNDynamicPage() {
   });
 
   const user = useUser();
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
   const [isAutoAddEnabled, setIsAutoAddEnabled] = useState(false);
   const params = useParams();
   const paymentType = params.paymentType;
@@ -910,7 +910,7 @@ export default function WithoutUSNDynamicPage() {
   ];
 
   return (
-    <VStack spacing={"0"} w={"full"} h={"fit-content"} position={"relative"}>
+    <VStack gap={"0"} w={"full"} h={"fit-content"} position={"relative"}>
       <Formik
         {...{ initialValues }}
         onSubmit={async (state) => {
@@ -1085,7 +1085,7 @@ export default function WithoutUSNDynamicPage() {
                 </HStack>
                 <Button
                   size={"lg"}
-                  isLoading={isSubmitting || isValidating}
+                  loading={isSubmitting || isValidating}
                   onClick={() => {
                     if (isAutoAddEnabled) {
                       onOpen();
@@ -1093,7 +1093,7 @@ export default function WithoutUSNDynamicPage() {
                       handleSubmit();
                     }
                   }}
-                  isDisabled={
+                  disabled={
                     Object.keys(errors).length > 0 ||
                     isSubmitting ||
                     isValidating
@@ -1104,7 +1104,7 @@ export default function WithoutUSNDynamicPage() {
                   Generate Reciept
                 </Button>
               </HStack>
-              <Modal onClose={onClose} isOpen={isOpen}>
+              <Modal onClose={onClose} open={open}>
                 <ModalOverlay />
                 <ModalContent>
                   <ModalHeader>📢 Are you sure?</ModalHeader>
