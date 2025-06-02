@@ -198,22 +198,14 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   };
 
   return (
-    <div className="bg-primary relative overflow-hidden w-full h-full flex flex-col">
+    <React.Fragment>
       <Tabs.Root
         defaultValue={pathname.split("/").pop()}
-        colorScheme={"facebook"}
         size={"lg"}
         variant={"line"}
         h={"full"}
       >
-        <Tabs.List
-          zIndex={"sticky"}
-          position={"sticky"}
-          bg={"whiteAlpha.100"}
-          backdropBlur={"sm"}
-          w={"full"}
-          className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm flex justify-between"
-        >
+        <Tabs.List w={"full"}>
           <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
               <Tabs.Trigger
@@ -254,7 +246,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             <HStack zIndex={"sticky"}>
               <IModal
                 hideBtn
-                size={"2xl"}
+                size={"lg"}
                 open={open}
                 onClose={onClose}
                 heading={"Search Result"}
@@ -739,42 +731,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             </HStack>
           </HStack>
         </Tabs.List>
-        <Tabs.ContentGroup px={"0"} w={"full"} h={"full"}>
-          <Tabs.Content
-            value="dashboard"
-            px={"5"}
-            pb={"20"}
-            w={"full"}
-            h={"83vh"}
-            overflowY={"scroll"}
-          >
-            {children}
-          </Tabs.Content>
-          <Tabs.Content
-            value=""
-            py={"0"}
-            px={"0"}
-            pb={"20"}
-            w={"full"}
-            h={"83vh"}
-            overflowY={"scroll"}
-          >
-            {children}
-          </Tabs.Content>
-          <Tabs.Content
-            value="branchview"
-            px={0}
-            py={"0"}
-            w={"full"}
-            h={"88vh"}
-          >
-            {children}
-          </Tabs.Content>
-          <Tabs.Content value="classview" px={0} w={"full"} h={"88vh"} py={"0"}>
-            {children}
-          </Tabs.Content>
-        </Tabs.ContentGroup>
       </Tabs.Root>
-    </div>
+
+      {children}
+    </React.Fragment>
   );
 }

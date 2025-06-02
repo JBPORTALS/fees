@@ -43,15 +43,17 @@ export function Header() {
   return (
     <HStack
       w={"full"}
-      zIndex={"banner"}
+      position={"sticky"}
       px={"5"}
       justifyContent={"space-between"}
-      h={"58px"}
-      top={"0"}
-      left={"0"}
-      bg={"Background"}
+      h={"16"}
+      gap={"3"}
       borderBottomColor={"border"}
       borderBottomWidth={"thin"}
+      backdropBlur={"sm"}
+      inset={0}
+      zIndex={"2"}
+      background={"Background"}
     >
       <Link href={"/dashboard"}>
         <Heading size={"xl"} fontWeight={"semibold"}>

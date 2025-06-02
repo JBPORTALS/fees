@@ -18,7 +18,15 @@ export default async function DashboardRootLayout(props: {
         gap={"0"}
       >
         <Sidebar />
-        <Box w={"full"} flex={"1"} asChild minW={"0"}>
+        <Box
+          w={"full"}
+          flex={"1"}
+          px={"5"}
+          spaceY={"4"}
+          py={"3"}
+          asChild
+          minW={"0"}
+        >
           <main>{props?.children}</main>
         </Box>
       </HStack>

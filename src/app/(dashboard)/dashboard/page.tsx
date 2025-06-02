@@ -4,6 +4,7 @@ import {
   Card,
   HStack,
   Heading,
+  SimpleGrid,
   Spinner,
   Stack,
   Stat,
@@ -67,85 +68,45 @@ export default function Home() {
   return (
     <React.Fragment>
       <VStack alignItems={"start"} h={"fit-content"}>
-        <Heading size={"lg"}>Grand Total</Heading>
+        <Heading size={"3xl"}>Grand Total</Heading>
         <HStack>
-          <Card.Root
-            style={{ borderWidth: 2, borderColor: "white" }}
-            w={"fit-content"}
-            p={"10"}
-            borderWidth={"2"}
-            borderColor={"purple.700"}
-            className={
-              "bg-gradient-to-tr from-gray-900 via-purple-900 to-violet-600"
-            }
-          >
-            <Stat.Root
-              as={"div"}
-              borderWidth={"1"}
-              borderColor={"purple.700"}
-              h={"full"}
-              w={"full"}
-              className={"backdrop-blur-lg bg-[rgba(255,255,255,0.8)"}
-              display={"flex"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <Stat.Label py={"2"} color={"white"} fontSize={"lg"}>
-                Amount
-              </Stat.Label>
-              <Stat.ValueUnit fontSize={"3xl"} className={"text-white"}>
-                ₹ {overallFeeDetails[0]?.total}
-              </Stat.ValueUnit>
-            </Stat.Root>
+          <Card.Root size={"lg"} minH={"130px"} minW={"2xs"}>
+            <Card.Body asChild>
+              <Stat.Root>
+                <Stat.Label>Amount</Stat.Label>
+                <Stat.ValueText>₹ {overallFeeDetails[0]?.total}</Stat.ValueText>
+              </Stat.Root>
+            </Card.Body>
           </Card.Root>
-          <Card.Root
-            style={{ borderWidth: 2, borderColor: "white" }}
-            w={"fit-content"}
-            p={"10"}
-            className={"bg-gradient-to-tr to-green-500 from-green-900"}
-          >
-            <Stat.Root
-              h={"full"}
-              w={"full"}
-              display={"flex"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <Stat.Label py={"2"} color={"white"} fontSize={"lg"}>
-                Amount Paid
-              </Stat.Label>
-              <Stat.ValueUnit fontSize={"3xl"} className={"text-white"}>
-                ₹ {overallFeeDetails[0]?.paid}
-              </Stat.ValueUnit>
-            </Stat.Root>
+
+          <Card.Root size={"lg"} minH={"130px"} minW={"2xs"}>
+            <Card.Body asChild>
+              <Stat.Root>
+                <Stat.Label>Amount Paid</Stat.Label>
+                <Stat.ValueText>₹ {overallFeeDetails[0]?.paid}</Stat.ValueText>
+              </Stat.Root>
+            </Card.Body>
           </Card.Root>
-          <Card.Root
-            style={{ borderWidth: 2, borderColor: "white" }}
-            width={"190px"}
-            className="bg-gradient-to-tr to-red-400 from-red-900"
-            w={"fit-content"}
-            p={"10"}
-          >
-            <Stat.Root
-              h={"full"}
-              w={"full"}
-              display={"flex"}
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <Stat.Label py={"2"} fontSize={"lg"} color={"white"}>
-                Amount To Be Paid
-              </Stat.Label>
-              <Stat.ValueUnit fontSize={"3xl"} className={"text-white"}>
-                ₹ {overallFeeDetails[0]?.remaining}
-              </Stat.ValueUnit>
-            </Stat.Root>
+
+          <Card.Root size={"lg"} minH={"130px"} minW={"2xs"}>
+            <Card.Body asChild>
+              <Stat.Root>
+                <Stat.Label>Amount To Be Paid</Stat.Label>
+                <Stat.ValueText>
+                  {" "}
+                  ₹ {overallFeeDetails[0]?.remaining}
+                </Stat.ValueText>
+              </Stat.Root>
+            </Card.Body>
           </Card.Root>
         </HStack>
       </VStack>
 
+      {/** Sub tabs */}
       <Tabs.Root
         defaultValue={"all-branches"}
+        size={"sm"}
+        variant={"enclosed"}
         onValueChange={({ value }) => setCurrentIndex(value)}
       >
         <Tabs.List>
@@ -159,27 +120,24 @@ export default function Home() {
                 <Spinner size={"lg"} color="blue" />
               </Stack>
             ) : (
-              <VStack py={"5"} w={"full"} alignItems={"start"}>
-                <Heading size={"lg"}>
+              <VStack w={"full"} alignItems={"start"}>
+                <Heading size={"2xl"}>
                   All {user?.college == "HOSTEL" ? "Colleges" : "Branches"}
                 </Heading>
-                <HStack
-                  py={"5"}
-                  pb={"12"}
-                  flexWrap={"wrap"}
+                <SimpleGrid
+                  w={"full"}
                   gap={"3"}
+                  columns={2}
                   justifyContent={"center"}
                 >
                   {branchFeeDetails.map((branchFee) => {
                     return (
                       <Card.Root
                         key={branchFee.branch}
-                        w={"580px"}
+                        w={"full"}
                         shadow={"lg"}
-                        style={{ borderWidth: 1, borderColor: "#dddd" }}
                         px={"10"}
                         py={"5"}
-                        display={"flex"}
                       >
                         <Stat.Root
                           h={"full"}
@@ -251,41 +209,39 @@ export default function Home() {
                                 </Stat.Label>
                               </VStack>
                             </VStack>
-                            <Box p={"10"}>
-                              <div>
-                                <Pie
-                                  className="chart-bar"
-                                  options={{ responsive: true }}
-                                  width={"250px"}
-                                  height={"250px"}
-                                  style={{ minHeight: 250, minWidth: 250 }}
-                                  data={{
-                                    datasets: [
-                                      {
-                                        data: [
-                                          branchFee?.total,
-                                          branchFee?.paid,
-                                          branchFee?.remaining,
-                                        ],
-                                        backgroundColor: [
-                                          "rgb(120,55,228,0.7)",
-                                          "rgba(33,191,91,0.7)",
-                                          "rgba(242,109,109,0.7)",
-                                        ],
-                                        type: "pie",
-                                      },
-                                    ],
-                                    labels: ["Total", "Paid", "Balance"],
-                                  }}
-                                />
-                              </div>
+                            <Box>
+                              <Pie
+                                className="chart-bar"
+                                options={{ responsive: true }}
+                                width={"50px"}
+                                height={"50px"}
+                                style={{ minHeight: 250, minWidth: 250 }}
+                                data={{
+                                  datasets: [
+                                    {
+                                      data: [
+                                        branchFee?.total,
+                                        branchFee?.paid,
+                                        branchFee?.remaining,
+                                      ],
+                                      backgroundColor: [
+                                        "rgb(120,55,228,0.7)",
+                                        "rgba(33,191,91,0.7)",
+                                        "rgba(242,109,109,0.7)",
+                                      ],
+                                      type: "pie",
+                                    },
+                                  ],
+                                  labels: ["Total", "Paid", "Balance"],
+                                }}
+                              />
                             </Box>
                           </HStack>
                         </Stat.Root>
                       </Card.Root>
                     );
                   })}
-                </HStack>
+                </SimpleGrid>
               </VStack>
             )}
           </Tabs.Content>
@@ -295,24 +251,22 @@ export default function Home() {
                 <Spinner size={"lg"} color="blue" />
               </Stack>
             ) : (
-              <VStack py={"5"} w={"full"} alignItems={"start"}>
-                <Heading size={"lg"}>
+              <VStack w={"full"} alignItems={"start"}>
+                <Heading size={"2xl"}>
                   All {user?.college == "HOSTEL" ? "Colleges" : "Years"}
                 </Heading>
-                <HStack
-                  py={"5"}
-                  pb={"12"}
-                  flexWrap={"wrap"}
+                <SimpleGrid
+                  w={"full"}
                   gap={"3"}
+                  columns={2}
                   justifyContent={"center"}
                 >
                   {feeYearsDetails.map((yearFee) => {
                     return (
                       <Card.Root
                         key={yearFee.branch}
-                        w={"580px"}
+                        w={"full"}
                         shadow={"lg"}
-                        style={{ borderWidth: 1, borderColor: "#dddd" }}
                         px={"10"}
                         py={"5"}
                         display={"flex"}
@@ -420,7 +374,7 @@ export default function Home() {
                       </Card.Root>
                     );
                   })}
-                </HStack>
+                </SimpleGrid>
               </VStack>
             )}
           </Tabs.Content>
