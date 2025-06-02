@@ -1,32 +1,27 @@
 import {
   Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   Heading,
   HStack,
   Input,
-  Select,
   SimpleGrid,
   Spinner,
   Tag,
+  Field,
   Text,
   useDisclosure,
   VStack,
+  NativeSelect,
 } from "@chakra-ui/react";
 import IDrawer from "../ui/utils/IDrawer";
-import { useFormik, Formik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useAppSelector } from "@/store";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import {
   fetchFeeDetails,
@@ -301,7 +296,7 @@ export default function ViewStudentsDetails({
       <IModal
         heading="Payment Updation"
         buttonTitle="Update"
-        size={"2xl"}
+        size={"xl"}
         open={isPaymentOpen}
         onSubmit={paymentUpdate}
         onClose={() => {
@@ -319,64 +314,64 @@ export default function ViewStudentsDetails({
             </Heading>
           </HStack>
           <HStack>
-            <Tag colorScheme="purple" size={"lg"}>
-              {values.branch} - {values.sem} Sem
-            </Tag>
-            <Tag colorScheme="purple" size={"lg"}>
-              {values.category}
-            </Tag>
+            <Tag.Root colorScheme="purple" size={"lg"}>
+              <Tag.Label>
+                {values.branch} - {values.sem} Sem
+              </Tag.Label>
+            </Tag.Root>
+            <Tag.Root colorScheme="purple" size={"lg"}>
+              <Tag.Label>{values.category}</Tag.Label>
+            </Tag.Root>
           </HStack>
           <SimpleGrid columns={2} gap={"3"}>
-            <FormControl>
-              <FormLabel>Challan ID</FormLabel>
+            <Field.Root>
+              <Field.Label>Challan ID</Field.Label>
               <Input
-                bg={"white"}
                 value={challanId}
                 onChange={(e) => setChallanId(e.target.value)}
                 type="text"
               />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Amount</FormLabel>
+            </Field.Root>
+            <Field.Root>
+              <Field.Label>Amount</Field.Label>
               <Input
-                bg={"white"}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 type="number"
               />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Payment Method</FormLabel>
-              <Select
-                bg={"white"}
-                value={method}
-                onChange={(e) => setMethod(e.target.value)}
-              >
-                <option value={""}>Select</option>
-                <option value={"UPI_SCAN"}>UPI SCAN</option>
-                <option value={"MANUAL_RECIEPT"}>MANUAL RECIEPT</option>
-                <option value={"EASYPAY_PAYMENT"}>EASYPAY PAYMENT</option>
-                <option value={"OTHERS"}>OTHERS</option>
-              </Select>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Transaction ID</FormLabel>
+            </Field.Root>
+            <Field.Root>
+              <Field.Label>Payment Method</Field.Label>
+              <NativeSelect.Root>
+                <NativeSelect.Field
+                  value={method}
+                  onChange={(e) => setMethod(e.target.value)}
+                >
+                  <option value={""}>Select</option>
+                  <option value={"UPI_SCAN"}>UPI SCAN</option>
+                  <option value={"MANUAL_RECIEPT"}>MANUAL RECIEPT</option>
+                  <option value={"EASYPAY_PAYMENT"}>EASYPAY PAYMENT</option>
+                  <option value={"OTHERS"}>OTHERS</option>
+                </NativeSelect.Field>
+                <NativeSelect.Indicator />
+              </NativeSelect.Root>
+            </Field.Root>
+            <Field.Root>
+              <Field.Label>Transaction ID</Field.Label>
               <Input
-                bg={"white"}
                 value={tid}
                 onChange={(e) => setTid(e.target.value)}
                 type="text"
               />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Payment Date</FormLabel>
+            </Field.Root>
+            <Field.Root>
+              <Field.Label>Payment Date</Field.Label>
               <Input
-                bg={"white"}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 type="date"
               />
-            </FormControl>
+            </Field.Root>
           </SimpleGrid>
         </VStack>
       </IModal>
@@ -426,187 +421,176 @@ export default function ViewStudentsDetails({
           >
             <>
               {/* <pre>{JSON.stringify(values)}</pre> */}
-              <FormControl
-                isInvalid={!!errors.usn?.length && touched.usn}
+              <Field.Root
+                invalid={!!errors.usn?.length && touched.usn}
                 px={"5"}
               >
-                <FormLabel flex={1}>
+                <Field.Label flex={1}>
                   <Text>USN</Text>
-                </FormLabel>
+                </Field.Label>
                 <Input
                   name="usn"
-                  bg={"white"}
-                  variant={"filled"}
                   flex={"1.5"}
                   value={values.usn}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-                <FormErrorMessage>{errors.usn}</FormErrorMessage>
-              </FormControl>
+                <Field.ErrorText>{errors.usn}</Field.ErrorText>
+              </Field.Root>
 
-              <FormControl
-                isInvalid={!!errors.name?.length && touched.name}
+              <Field.Root
+                invalid={!!errors.name?.length && touched.name}
                 px={"5"}
               >
-                <FormLabel flex={1}>
+                <Field.Label flex={1}>
                   <Text>Name</Text>
-                </FormLabel>
+                </Field.Label>
                 <Input
                   name="name"
-                  bg={"white"}
-                  variant={"filled"}
                   flex={"1.5"}
                   value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-                <FormErrorMessage>{errors.name}</FormErrorMessage>
-              </FormControl>
+                <Field.ErrorText>{errors.name}</Field.ErrorText>
+              </Field.Root>
 
-              <FormControl
-                isInvalid={!!errors.sem?.length && touched.sem}
+              <Field.Root
+                invalid={!!errors.sem?.length && touched.sem}
                 px={"5"}
               >
-                <FormLabel flex={1}>
+                <Field.Label flex={1}>
                   <Text>Sem</Text>
-                </FormLabel>
-                <Select
-                  name="sem"
-                  bg={"white"}
-                  variant={"filled"}
-                  flex={"1.5"}
-                  value={values.sem}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                >
-                  <option value={""}>Select Sem</option>
-                  {SEMS(user?.college).map((value) => (
-                    <option value={value.value} key={value.value}>
-                      {value.option}
-                    </option>
-                  ))}
-                </Select>
-                <FormErrorMessage>{errors.sem}</FormErrorMessage>
-              </FormControl>
+                </Field.Label>
+                <NativeSelect.Root>
+                  <NativeSelect.Field
+                    name="sem"
+                    flex={"1.5"}
+                    value={values.sem}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    <option value={""}>Select Sem</option>
+                    {SEMS(user?.college).map((value) => (
+                      <option value={value.value} key={value.value}>
+                        {value.option}
+                      </option>
+                    ))}
+                  </NativeSelect.Field>
+                  <NativeSelect.Indicator />
+                </NativeSelect.Root>
+                <Field.ErrorText>{errors.sem}</Field.ErrorText>
+              </Field.Root>
 
-              <FormControl
-                isInvalid={!!errors.branch?.length && touched.branch}
+              <Field.Root
+                invalid={!!errors.branch?.length && touched.branch}
                 px={"5"}
               >
-                <FormLabel flex={1}>
+                <Field.Label flex={1}>
                   <Text>Branch</Text>
-                </FormLabel>
-                <Select
-                  name="branch"
-                  bg={"white"}
-                  variant={"filled"}
-                  flex={"1.5"}
-                  value={values.branch}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                >
-                  <option value={""}>Select Branch</option>
-                  {branch_list.map((branch: any, key) => (
-                    <option key={branch + key} value={branch.branch}>
-                      {branch.branch}
-                    </option>
-                  ))}
-                </Select>
-                <FormErrorMessage>{errors.branch}</FormErrorMessage>
-              </FormControl>
+                </Field.Label>
+                <NativeSelect.Root>
+                  <NativeSelect.Field
+                    name="branch"
+                    flex={"1.5"}
+                    value={values.branch}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    <option value={""}>Select Branch</option>
+                    {branch_list.map((branch: any, key) => (
+                      <option key={branch + key} value={branch.branch}>
+                        {branch.branch}
+                      </option>
+                    ))}
+                  </NativeSelect.Field>
+                </NativeSelect.Root>
+                <Field.ErrorText>{errors.branch}</Field.ErrorText>
+              </Field.Root>
 
-              <FormControl
-                isInvalid={!!errors.category?.length && touched.category}
+              <Field.Root
+                invalid={!!errors.category?.length && touched.category}
                 px={"5"}
               >
-                <FormLabel flex={1}>
+                <Field.Label flex={1}>
                   <Text>Category</Text>
-                </FormLabel>
-                <Select
-                  name="category"
-                  bg={"white"}
-                  variant={"filled"}
-                  flex={"1.5"}
-                  value={values.category}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                >
-                  <option value={""}>Select Category</option>
-                  {Categories.map((category, key) => (
-                    <option key={category.value + key} value={category.value}>
-                      {category.option}
-                    </option>
-                  ))}
-                </Select>
-                <FormErrorMessage>{errors.category}</FormErrorMessage>
-              </FormControl>
+                </Field.Label>
+                <NativeSelect.Root>
+                  <NativeSelect.Field
+                    name="category"
+                    flex={"1.5"}
+                    value={values.category}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    <option value={""}>Select Category</option>
+                    {Categories.map((category, key) => (
+                      <option key={category.value + key} value={category.value}>
+                        {category.option}
+                      </option>
+                    ))}
+                  </NativeSelect.Field>
+                </NativeSelect.Root>
+                <Field.ErrorText>{errors.category}</Field.ErrorText>
+              </Field.Root>
 
-              <FormControl
-                isInvalid={!!errors.total?.length && touched.total}
+              <Field.Root
+                invalid={!!errors.total?.length && touched.total}
                 px={"5"}
               >
-                <FormLabel flex={1}>
+                <Field.Label flex={1}>
                   <Text>Total Amount</Text>
-                </FormLabel>
+                </Field.Label>
                 <Input
                   name="total"
-                  bg={"white"}
-                  variant={"filled"}
                   flex={"1.5"}
                   value={values.total}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-                <FormErrorMessage>{errors.total}</FormErrorMessage>
-              </FormControl>
+                <Field.ErrorText>{errors.total}</Field.ErrorText>
+              </Field.Root>
 
-              <FormControl px={"5"}>
-                <FormLabel flex={1}>
+              <Field.Root px={"5"}>
+                <Field.Label flex={1}>
                   <Text>Paid Amount</Text>
-                </FormLabel>
+                </Field.Label>
                 <Input
                   name="paid"
-                  bg={"white"}
-                  variant={"filled"}
                   flex={"1.5"}
                   value={values.paid}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-                <FormErrorMessage>{errors.total}</FormErrorMessage>
-              </FormControl>
+                <Field.ErrorText>{errors.total}</Field.ErrorText>
+              </Field.Root>
 
-              <FormControl px={"5"}>
-                <FormLabel flex={1}>
+              <Field.Root px={"5"}>
+                <Field.Label flex={1}>
                   <Text>Balance Amount</Text>
-                </FormLabel>
+                </Field.Label>
                 <Input
                   name="remaining"
-                  bg={"white"}
-                  variant={"filled"}
                   flex={"1.5"}
                   value={values.remaining}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-              </FormControl>
+              </Field.Root>
 
-              <FormControl isReadOnly px={"5"}>
-                <FormLabel flex={1}>
+              <Field.Root readOnly px={"5"}>
+                <Field.Label flex={1}>
                   <Text>Status</Text>
-                </FormLabel>
+                </Field.Label>
                 <Input
-                  isReadOnly
+                  readOnly
                   name="status"
-                  bg={"white"}
-                  variant={"filled"}
                   flex={"1.5"}
                   value={values.status}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-              </FormControl>
+              </Field.Root>
             </>
             <VStack
               position={"sticky"}
@@ -619,16 +603,16 @@ export default function ViewStudentsDetails({
               {values.id && (
                 <>
                   {values.remaining < 0 && (
-                    <Alert status="warning">
-                      <AlertIcon />
+                    <Alert.Root status="warning">
+                      <Alert.Indicator />
                       <Box>
-                        <AlertTitle fontSize={"small"}>Warning !</AlertTitle>
-                        <AlertDescription fontSize={"smaller"}>
+                        <Alert.Title fontSize={"small"}>Warning !</Alert.Title>
+                        <Alert.Description fontSize={"smaller"}>
                           Remaining Amount is less than zero. You still may
                           continue to save the changes.
-                        </AlertDescription>
+                        </Alert.Description>
                       </Box>
-                    </Alert>
+                    </Alert.Root>
                   )}
                   <Button
                     disabled={!isValid}
@@ -643,8 +627,8 @@ export default function ViewStudentsDetails({
                     onClick={() => deleteStudent()}
                     w={"full"}
                     colorScheme="red"
-                    leftIcon={<AiOutlineUserDelete />}
                   >
+                    <AiOutlineUserDelete />
                     Remove
                   </Button>
                 </>

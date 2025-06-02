@@ -1,22 +1,12 @@
 "use client";
 import AddStudentsDetails from "@/components/drawers/AddStudentDetails";
-import StudentDataGrid from "@/components/layouts/StudentDataGrid";
-import ISelect from "@/components/ui/utils/ISelect";
+import { MenuContent, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails, fetchYearList } from "@/store/fees.slice";
 import { useUser } from "@/utils/auth";
-import {
-  Button,
-  FormControl,
-  HStack,
-  Menu,
-  MenuButton,
-  MenuList,
-  Select,
-  VStack,
-} from "@chakra-ui/react";
+import { Button, Field, HStack, NativeSelect, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { AiOutlineDatabase, AiOutlineUserAdd } from "react-icons/ai";
@@ -54,138 +44,165 @@ export default function Students() {
 
   return (
     <>
-      <div className="w-full flex justify-between border-b py-3 space-x-3 px-5">
-        <div className="flex space-x-3 px-5">
-          <ISelect
-            placeHolder={user?.college == "HOSTEL" ? "College" : "Branch"}
-            value={state.branch}
-            onChange={(value) =>
-              setState((prev) => ({ ...prev, branch: value as string }))
-            }
-            options={branch_list.map((option: any) => ({
-              option: option[user?.college == "HOSTEL" ? "college" : "branch"],
-              value: option[user?.college == "HOSTEL" ? "college" : "branch"],
-            }))}
-          />
+      <HStack gap={"3"} justifyContent={"space-between"}>
+        <HStack gap={"3"}>
+          <NativeSelect.Root w={"250px"}>
+            <NativeSelect.Field
+              value={state.branch}
+              onChange={(e) =>
+                setState((prev) => ({ ...prev, branch: e.target.value }))
+              }
+            >
+              <option>Select Branch</option>
+              {branch_list
+                .map((option: any) => ({
+                  option:
+                    option[user?.college == "HOSTEL" ? "college" : "branch"],
+                  value:
+                    option[user?.college == "HOSTEL" ? "college" : "branch"],
+                }))
+                .map((item) => (
+                  <option value={item.value}>{item.option}</option>
+                ))}
+            </NativeSelect.Field>
+            <NativeSelect.Indicator />
+          </NativeSelect.Root>
 
           {state.branch ? (
-            <ISelect
-              placeHolder="Year"
-              value={state.year}
-              onChange={(value) =>
-                setState((prev) => ({ ...prev, year: value as string }))
-              }
-              options={yearList.map((option: any) => ({
-                value: option.year,
-                option: option.year,
-              }))}
-            />
+            <NativeSelect.Root w={"250px"}>
+              <NativeSelect.Field
+                value={state.year}
+                onChange={(e) =>
+                  setState((prev) => ({ ...prev, year: e.target.value }))
+                }
+              >
+                <option>Select Year</option>
+                {yearList
+                  .map((option: any) => ({
+                    value: option.year,
+                    option: option.year,
+                  }))
+                  .map((item) => (
+                    <option value={item.value}>{item.option}</option>
+                  ))}
+              </NativeSelect.Field>
+              <NativeSelect.Indicator />
+            </NativeSelect.Root>
           ) : null}
-        </div>
+        </HStack>
+
         <HStack>
           {state.branch && state.year && (
-            <Menu placement="bottom-end">
-              <MenuButton
-                as={Button}
-                leftIcon={<AiOutlineDatabase />}
-                size={"sm"}
-                variant={"ghost"}
-                rightIcon={<FaChevronDown />}
-                position={"sticky"}
-                zIndex={"dropdown"}
-              >
-                Download Class Data
-              </MenuButton>
-              <MenuList zIndex={"popover"} pos={"sticky"}>
+            <MenuRoot positioning={{ placement: "bottom-end" }}>
+              <MenuTrigger asChild>
+                <Button size={"sm"} variant={"ghost"}>
+                  <AiOutlineDatabase />
+                  Download Class Data <FaChevronDown />
+                </Button>
+              </MenuTrigger>
+              <MenuContent zIndex={"popover"} pos={"sticky"}>
                 <VStack px={"4"}>
-                  <FormControl>
-                    <Select
-                      value={state.branch}
-                      onChange={(e) =>
-                        setState((prev) => ({
-                          ...prev,
-                          branch: e.target.value,
-                        }))
-                      }
-                    >
-                      <option value={""}>Select Branch</option>
-                      {branch_list.map((option: any) => (
-                        <option key={option?.branch} value={option?.branch}>
-                          {option?.branch}
-                        </option>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl>
-                    <Select
-                      value={state.year}
-                      onChange={(e) =>
-                        setState((prev) => ({
-                          ...prev,
-                          year: e.target.value,
-                        }))
-                      }
-                    >
-                      <option value={""}>Select Year</option>
-                      {(user?.college == "KSIT"
-                        ? [{ year: 1 }, { year: 2 }, { year: 3 }, { year: 4 }]
-                        : yearList
-                      ).map((option: any) => (
-                        <option value={option?.year} key={option?.year}>
-                          {option?.year}
-                        </option>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl>
-                    <Select
-                      onChange={(e) =>
-                        setState((prev) => ({
-                          ...prev,
-                          status: e.target.value,
-                        }))
-                      }
-                      value={state.status}
-                    >
-                      <option value={""}>Select Status</option>
-                      <option value={"ALL"}>All</option>
-                      <option value={"NOT PAID"}>Not Paid</option>
-                      <option value={"PARTIALLY PAID"}>Partially Paid</option>
-                      <option value={"FULL PAID"}>Full Paid</option>
-                    </Select>
-                  </FormControl>
-                  <FormControl w={"full"}>
+                  <Field.Root>
+                    <NativeSelect.Root>
+                      <NativeSelect.Field
+                        value={state.branch}
+                        onChange={(e) =>
+                          setState((prev) => ({
+                            ...prev,
+                            branch: e.target.value,
+                          }))
+                        }
+                      >
+                        <option value={""}>NativeSelect.Root Branch</option>
+                        {branch_list.map((option: any) => (
+                          <option key={option?.branch} value={option?.branch}>
+                            {option?.branch}
+                          </option>
+                        ))}
+                      </NativeSelect.Field>
+                      <NativeSelect.Indicator />
+                    </NativeSelect.Root>
+                  </Field.Root>
+                  <Field.Root>
+                    <NativeSelect.Root>
+                      <NativeSelect.Field
+                        value={state.year}
+                        onChange={(e) =>
+                          setState((prev) => ({
+                            ...prev,
+                            year: e.target.value,
+                          }))
+                        }
+                      >
+                        <option value={""}>NativeSelect.Root Year</option>
+                        {(user?.college == "KSIT"
+                          ? [{ year: 1 }, { year: 2 }, { year: 3 }, { year: 4 }]
+                          : yearList
+                        ).map((option: any) => (
+                          <option value={option?.year} key={option?.year}>
+                            {option?.year}
+                          </option>
+                        ))}
+                      </NativeSelect.Field>
+                      <NativeSelect.Indicator />
+                    </NativeSelect.Root>
+                  </Field.Root>
+                  <Field.Root>
+                    <NativeSelect.Root>
+                      <NativeSelect.Field
+                        onChange={(e) =>
+                          setState((prev) => ({
+                            ...prev,
+                            status: e.target.value,
+                          }))
+                        }
+                        value={state.status}
+                      >
+                        <option value={""}>NativeSelect.Root Status</option>
+                        <option value={"ALL"}>All</option>
+                        <option value={"NOT PAID"}>Not Paid</option>
+                        <option value={"PARTIALLY PAID"}>Partially Paid</option>
+                        <option value={"FULL PAID"}>Full Paid</option>
+                      </NativeSelect.Field>
+                      <NativeSelect.Indicator />
+                    </NativeSelect.Root>
+                  </Field.Root>
+                  <Field.Root w={"full"}>
                     <Button
                       w={"full"}
-                      target={"_blank"}
                       disabled={!state.branch || !state.year}
                       colorScheme="blue"
-                      as={Link}
-                      href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}&status=${state.status}`}
+                      asChild
                     >
-                      Download Excel
+                      <Link
+                        target={"_blank"}
+                        href={`${process.env.NEXT_PUBLIC_ADMIN_URL}downloadclassexcel.php?college=${user?.college}&branch=${state.branch}&year=${state.year}&status=${state.status}`}
+                      >
+                        Download Excel
+                      </Link>
                     </Button>
-                  </FormControl>
+                  </Field.Root>
                 </VStack>
-              </MenuList>
-            </Menu>
+              </MenuContent>
+            </MenuRoot>
           )}
           <AddStudentsDetails>
             {({ onOpen }) => (
               <Button
-                leftIcon={<AiOutlineUserAdd />}
                 onClick={onOpen}
                 marginLeft={"auto"}
                 size={"sm"}
                 colorScheme="facebook"
               >
+                <AiOutlineUserAdd />
                 New Student
               </Button>
             )}
           </AddStudentsDetails>
         </HStack>
-      </div>
-      <VStack className="w-full h-[82vh]" gap={0}>
+      </HStack>
+
+      <VStack gap={0}>
         {!state.branch ? (
           <InfoCard message="Select Branch" />
         ) : state.branch && !state.year ? (
@@ -199,7 +216,7 @@ export default function Students() {
             {/* displaying admin childrens */}
             {state.branch && state.year && (
               <VStack h={"full"} w={"full"}>
-                <StudentDataGrid />
+                {/* <StudentDataGrid /> */}
               </VStack>
             )}
           </VStack>

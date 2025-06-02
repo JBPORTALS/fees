@@ -1,9 +1,7 @@
 import {
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
+  Field,
   Input,
-  Select,
+  NativeSelect,
   Text,
   useDisclosure,
   VStack,
@@ -175,141 +173,126 @@ export default function AddStudentsDetails({ children }: props) {
           position={"relative"}
         >
           <>
-            <FormControl
-              isInvalid={!!errors.usn?.length && touched.usn}
-              px={"5"}
-            >
-              <FormLabel flex={1}>
+            <Field.Root invalid={!!errors.usn?.length && touched.usn} px={"5"}>
+              <Field.Label flex={1}>
                 <Text>USN</Text>
-              </FormLabel>
+              </Field.Label>
               <Input
                 name="usn"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
                 value={values.usn}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              <FormErrorMessage>{errors.usn}</FormErrorMessage>
-            </FormControl>
+              <Field.ErrorText>{errors.usn}</Field.ErrorText>
+            </Field.Root>
 
-            <FormControl
-              isInvalid={!!errors.name?.length && touched.name}
+            <Field.Root
+              invalid={!!errors.name?.length && touched.name}
               px={"5"}
             >
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Name</Text>
-              </FormLabel>
+              </Field.Label>
               <Input
                 name="name"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
                 value={values.name}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              <FormErrorMessage>{errors.name}</FormErrorMessage>
-            </FormControl>
+              <Field.ErrorText>{errors.name}</Field.ErrorText>
+            </Field.Root>
 
-            <FormControl
-              isInvalid={!!errors.sem?.length && touched.sem}
-              px={"5"}
-            >
-              <FormLabel flex={1}>
+            <Field.Root invalid={!!errors.sem?.length && touched.sem} px={"5"}>
+              <Field.Label flex={1}>
                 <Text>Sem</Text>
-              </FormLabel>
-              <Select
-                name="sem"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.sem}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value={""}>Select Sem</option>
-                {SEMS(user?.college).map((value, index) => (
-                  <option key={value.value} value={value.value}>
-                    {value.option}
-                  </option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.sem}</FormErrorMessage>
-            </FormControl>
+              </Field.Label>
+              <NativeSelect.Root>
+                <NativeSelect.Indicator />
+                <NativeSelect.Field
+                  name="sem"
+                  value={values.sem}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  <option value={""}>Select Sem</option>
+                  {SEMS(user?.college).map((value, index) => (
+                    <option key={value.value} value={value.value}>
+                      {value.option}
+                    </option>
+                  ))}
+                </NativeSelect.Field>
+              </NativeSelect.Root>
+              <Field.ErrorText>{errors.sem}</Field.ErrorText>
+            </Field.Root>
 
-            <FormControl
-              isInvalid={!!errors.branch?.length && touched.branch}
+            <Field.Root
+              invalid={!!errors.branch?.length && touched.branch}
               px={"5"}
             >
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Branch</Text>
-              </FormLabel>
-              <Select
-                name="branch"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.branch}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value={""}>Select Branch</option>
-                {branch_list.map((branch: any) => (
-                  <option key={branch} value={branch.branch}>
-                    {branch.branch}
-                  </option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.branch}</FormErrorMessage>
-            </FormControl>
+              </Field.Label>
+              <NativeSelect.Root>
+                <NativeSelect.Indicator />
+                <NativeSelect.Field
+                  name="branch"
+                  value={values.branch}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  <option value={""}>Select Branch</option>
+                  {branch_list.map((branch: any) => (
+                    <option key={branch} value={branch.branch}>
+                      {branch.branch}
+                    </option>
+                  ))}
+                </NativeSelect.Field>
+              </NativeSelect.Root>
+              <Field.ErrorText>{errors.branch}</Field.ErrorText>
+            </Field.Root>
 
-            <FormControl
-              isInvalid={!!errors.category?.length && touched.category}
+            <Field.Root
+              invalid={!!errors.category?.length && touched.category}
               px={"5"}
             >
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Category</Text>
-              </FormLabel>
-              <Select
-                name="category"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
-                value={values.category}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
-                <option value={""}>Select Category</option>
-                {Categories.map((category) => (
-                  <option key={category.value} value={category.value}>
-                    {category.option}
-                  </option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.category}</FormErrorMessage>
-            </FormControl>
+              </Field.Label>
+              <NativeSelect.Root>
+                <NativeSelect.Indicator />
+                <NativeSelect.Field
+                  name="category"
+                  value={values.category}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  <option value={""}>Select Category</option>
+                  {Categories.map((category) => (
+                    <option key={category.value} value={category.value}>
+                      {category.option}
+                    </option>
+                  ))}
+                </NativeSelect.Field>
+              </NativeSelect.Root>
+              <Field.ErrorText>{errors.category}</Field.ErrorText>
+            </Field.Root>
 
-            <FormControl
-              isInvalid={!!errors.total?.length && touched.total}
+            <Field.Root
+              invalid={!!errors.total?.length && touched.total}
               px={"5"}
               pb={"5"}
             >
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Total Amount</Text>
-              </FormLabel>
+              </Field.Label>
               <Input
                 name="total"
-                bg={"white"}
-                variant={"filled"}
-                flex={"1.5"}
                 value={values.total}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              <FormErrorMessage>{errors.total}</FormErrorMessage>
-            </FormControl>
+              <Field.ErrorText>{errors.total}</Field.ErrorText>
+            </Field.Root>
           </>
         </VStack>
       </IDrawer>

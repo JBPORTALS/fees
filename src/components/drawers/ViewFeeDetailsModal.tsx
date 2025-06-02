@@ -11,7 +11,6 @@ import {
   Center,
   Heading,
   HStack,
-  IconButton,
   Input,
   Tag,
   useDisclosure,
@@ -23,9 +22,9 @@ import { toast } from "react-hot-toast";
 import { AiOutlineCheckCircle, AiOutlineFileProtect } from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
-import { MdRemove, MdRemoveCircle } from "react-icons/md";
 import HistoryItem from "../ui/HistoryItem";
 import { useUser } from "@/utils/auth";
+import Link from "next/link";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -160,9 +159,9 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
       >
         <Center>
           <Heading>₹{challanState?.amount_paid1}</Heading>
-          <Tag ml={"3"} size={"lg"} colorScheme={"purple"}>
-            {challanState?.method}
-          </Tag>
+          <Tag.Root ml={"3"} size={"lg"} colorScheme={"purple"}>
+            <Tag.Label>{challanState?.method}</Tag.Label>
+          </Tag.Root>
         </Center>
       </IModal>
 
@@ -232,8 +231,8 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
                     onClick={onUpdateTotal}
                     colorScheme={"green"}
                     loading={isUpdating}
-                    leftIcon={<AiOutlineCheckCircle className="text-xl" />}
                   >
+                    <AiOutlineCheckCircle className="text-xl" />
                     Update Total Fee
                   </Button>
                 </HStack>
@@ -241,19 +240,18 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
             )}
             {selectedFeeDetails[0]?.payment_history?.length && (
               <HStack w={"full"}>
-                <Button
-                  w={"full"}
-                  as={"a"}
-                  download
-                  target={"_blank"}
-                  href={
-                    process.env.NEXT_PUBLIC_ADMIN_URL +
-                    `feedownload.php?college=${user?.college}&id=${selectedFeeDetails[0]?.id}&acadyear=${acadYear}`
-                  }
-                  colorScheme={"purple"}
-                  leftIcon={<AiOutlineFileProtect className="text-xl" />}
-                >
-                  Download Invoice
+                <Button w={"full"} asChild colorScheme={"purple"}>
+                  <Link
+                    download
+                    target={"_blank"}
+                    href={
+                      process.env.NEXT_PUBLIC_ADMIN_URL +
+                      `feedownload.php?college=${user?.college}&id=${selectedFeeDetails[0]?.id}&acadyear=${acadYear}`
+                    }
+                  >
+                    <AiOutlineFileProtect className="text-xl" />
+                    Download Invoice
+                  </Link>
                 </Button>
               </HStack>
             )}
