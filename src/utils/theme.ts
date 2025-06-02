@@ -9,4 +9,9 @@ export const system = createSystem(defaultConfig, {
       },
     },
   },
+  globalCss: {
+    html: {
+      colorPalette: "blue",
+    },
+  },
 });

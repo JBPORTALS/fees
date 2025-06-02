@@ -27,6 +27,7 @@ import {
 import { useAppSelector } from "@/store";
 import { useUser } from "@/utils/auth";
 import { useQueryState, parseAsString, parseAsInteger } from "nuqs";
+import React from "react";
 
 ChartJS.register(
   CategoryScale,
@@ -64,7 +65,7 @@ export default function Home() {
   );
 
   return (
-    <Stack h={"full"} w={"full"} justifyContent={"start"}>
+    <React.Fragment>
       <VStack alignItems={"start"} h={"fit-content"}>
         <Heading size={"lg"}>Grand Total</Heading>
         <HStack>
@@ -425,6 +426,6 @@ export default function Home() {
           </Tabs.Content>
         </Tabs.ContentGroup>
       </Tabs.Root>
-    </Stack>
+    </React.Fragment>
   );
 }
