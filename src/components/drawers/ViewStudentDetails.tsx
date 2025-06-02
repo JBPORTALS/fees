@@ -430,7 +430,6 @@ export default function ViewStudentsDetails({
                 </Field.Label>
                 <Input
                   name="usn"
-                  flex={"1.5"}
                   value={values.usn}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -447,7 +446,6 @@ export default function ViewStudentsDetails({
                 </Field.Label>
                 <Input
                   name="name"
-                  flex={"1.5"}
                   value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -465,7 +463,6 @@ export default function ViewStudentsDetails({
                 <NativeSelect.Root>
                   <NativeSelect.Field
                     name="sem"
-                    flex={"1.5"}
                     value={values.sem}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -492,7 +489,6 @@ export default function ViewStudentsDetails({
                 <NativeSelect.Root>
                   <NativeSelect.Field
                     name="branch"
-                    flex={"1.5"}
                     value={values.branch}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -518,7 +514,6 @@ export default function ViewStudentsDetails({
                 <NativeSelect.Root>
                   <NativeSelect.Field
                     name="category"
-                    flex={"1.5"}
                     value={values.category}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -543,7 +538,6 @@ export default function ViewStudentsDetails({
                 </Field.Label>
                 <Input
                   name="total"
-                  flex={"1.5"}
                   value={values.total}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -557,7 +551,6 @@ export default function ViewStudentsDetails({
                 </Field.Label>
                 <Input
                   name="paid"
-                  flex={"1.5"}
                   value={values.paid}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -571,7 +564,6 @@ export default function ViewStudentsDetails({
                 </Field.Label>
                 <Input
                   name="remaining"
-                  flex={"1.5"}
                   value={values.remaining}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -585,7 +577,6 @@ export default function ViewStudentsDetails({
                 <Input
                   readOnly
                   name="status"
-                  flex={"1.5"}
                   value={values.status}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -594,8 +585,7 @@ export default function ViewStudentsDetails({
             </>
             <VStack
               position={"sticky"}
-              className="backdrop-blur-sm"
-              bg={"rgba(255,255,255,0.4)"}
+              backdropFilter={"blur(5px)"}
               bottom={"0"}
               w={"full"}
               p={"5"}
@@ -618,7 +608,8 @@ export default function ViewStudentsDetails({
                     disabled={!isValid}
                     onClick={onPaymentOpen}
                     w={"full"}
-                    colorScheme="purple"
+                    colorPalette={"purple"}
+                    variant={"surface"}
                   >
                     Update Payment
                   </Button>
@@ -626,7 +617,7 @@ export default function ViewStudentsDetails({
                     loading={isDeleting}
                     onClick={() => deleteStudent()}
                     w={"full"}
-                    colorScheme="red"
+                    colorPalette="red"
                   >
                     <AiOutlineUserDelete />
                     Remove

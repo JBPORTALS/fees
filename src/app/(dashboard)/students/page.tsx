@@ -1,5 +1,6 @@
 "use client";
 import AddStudentsDetails from "@/components/drawers/AddStudentDetails";
+import StudentDataGrid from "@/components/layouts/StudentDataGrid";
 import { MenuContent, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 import { useAppDispatch } from "@/hooks";
@@ -212,11 +213,12 @@ export default function Students() {
             px={0}
             gap={0}
             className={"justify-start items-start flex w-full h-full"}
+            w={"full"}
           >
             {/* displaying admin childrens */}
             {state.branch && state.year && (
               <VStack h={"full"} w={"full"}>
-                {/* <StudentDataGrid /> */}
+                <StudentDataGrid />
               </VStack>
             )}
           </VStack>
