@@ -8,8 +8,6 @@ import {
   IconButton,
   Input,
   InputGroup,
-  Dialog,
-  Box,
   useDisclosure,
 } from "@chakra-ui/react";
 import {
@@ -20,12 +18,18 @@ import {
 } from "react-icons/ai";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useSignIn, useUser } from "@/utils/auth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ColorModeButton } from "./ui/color-mode";
+import {
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+} from "./ui/dialog";
 
 export function Header() {
   const {
@@ -116,21 +120,21 @@ export function Header() {
 
             <ColorModeButton />
           </HStack>
-          <Dialog.Root
+          <DialogRoot
             open={isProfileOpen}
             size={"sm"}
             onOpenChange={onProfileClose}
           >
-            <Dialog.Content
+            <DialogContent
               position={"relative"}
               zIndex={"toast"}
               backdropBlur={"2xl"}
               shadow={"2xl"}
             >
-              <Dialog.Header fontWeight="semibold" fontSize={"lg"}>
-                Profile Info
-              </Dialog.Header>
-              <Dialog.Body>
+              <DialogHeader>
+                <DialogTitle>Profile Info</DialogTitle>
+              </DialogHeader>
+              <DialogBody>
                 <HStack gap={"3"} py={"2"}>
                   <AiOutlineUser className="text-2xl" />
                   <Heading size={"sm"} fontWeight={"normal"}>
@@ -162,9 +166,9 @@ export function Header() {
                     SignOut
                   </Button>
                 </HStack>
-              </Dialog.Body>
-            </Dialog.Content>
-          </Dialog.Root>
+              </DialogBody>
+            </DialogContent>
+          </DialogRoot>
         </HStack>
       </HStack>
     </HStack>
