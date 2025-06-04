@@ -24,7 +24,6 @@ import {
   LuLayoutGrid,
   LuMailPlus,
   LuMessageSquare,
-  LuPlus,
   LuUserCog,
   LuWorkflow,
 } from "react-icons/lu";
