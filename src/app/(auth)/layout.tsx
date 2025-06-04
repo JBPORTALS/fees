@@ -12,7 +12,7 @@ export default async function SignInLayout({
   if (isLoggedIn) redirect("/dashboard");
 
   return (
-    <Flex minH={"100vh"} align={"center"} justify={"center"} bg={"gray.50"}>
+    <Flex minH={"100vh"} align={"center"} justify={"center"}>
       {children}
     </Flex>
   );
