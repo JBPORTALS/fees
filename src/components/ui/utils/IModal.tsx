@@ -1,12 +1,19 @@
 import {
   Button,
-  ConditionalValue,
   Dialog,
   DialogBodyProps,
+  DialogPositionerProps,
   DialogRootProps,
 } from "@chakra-ui/react";
 import React from "react";
-import { AiOutlineCloudUpload } from "react-icons/ai";
+import {
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+} from "../dialog";
 
 interface IDrawerProps extends DialogRootProps {
   heading: string;
@@ -20,6 +27,7 @@ interface IDrawerProps extends DialogRootProps {
   hideBtn?: boolean;
   disabled?: boolean;
   modalBodyProps?: DialogBodyProps;
+  contentProps?: React.ComponentProps<typeof DialogContent>;
 }
 
 export default function IModal({
@@ -35,30 +43,22 @@ export default function IModal({
   hideBtn,
   disabled = false,
   modalBodyProps,
+  contentProps,
   ...props
 }: IDrawerProps) {
   return (
-    <Dialog.Root size={size} open={open} onOpenChange={onClose} {...props}>
-      <Dialog.Backdrop
-        bg={"rgba(255,255,255,0.2)"}
-        className={"backdrop-blur-sm"}
-      />
-      <Dialog.Content className="w-fit min-h-fit h-fit">
-        <Dialog.Header className="border-b border-lightgray">
-          {heading}
-        </Dialog.Header>
-        <Dialog.CloseTrigger />
-        <Dialog.Body
-          {...modalBodyProps}
-          className="w-full h-fit bg-primary flex justify-center"
-        >
-          <div className="w-full h-full">{children}</div>
-        </Dialog.Body>
+    <DialogRoot size={size} open={open} onOpenChange={onClose} {...props}>
+      <DialogContent {...contentProps}>
+        <DialogHeader>
+          <DialogTitle>{heading}</DialogTitle>
+        </DialogHeader>
+        <DialogCloseTrigger />
+        <DialogBody {...modalBodyProps}>{children}</DialogBody>
         {!hideBtn && (
           <Dialog.Footer className="border-t border-lightgray">
             <Button
               disabled={loading}
-              colorScheme="blue"
+              colorPalette="blue"
               variant={"outline"}
               mr={3}
               onClick={onClose}
@@ -71,13 +71,13 @@ export default function IModal({
                 onSubmit && (await onSubmit());
               }}
               loading={loading}
-              colorScheme={colorBtn || "blue"}
+              colorPalette={colorBtn || "blue"}
             >
               {buttonTitle || "Upload"}
             </Button>
           </Dialog.Footer>
         )}
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </DialogRoot>
   );
 }

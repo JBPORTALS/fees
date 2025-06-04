@@ -16,7 +16,7 @@ export default function Home() {
           <Image alt={"nexus"} src={"/nexuss.png"} priority sizes="10vh" fill />
         </div>
         <HStack>
-          <Button size={"sm"} variant={"ghost"} colorScheme="blue" asChild>
+          <Button size={"sm"} variant={"ghost"} colorPalette="blue" asChild>
             <Link href={"/signin"}>Signin</Link>
           </Button>
         </HStack>
@@ -26,7 +26,7 @@ export default function Home() {
           mt={"4"}
           size={"md"}
           variant={"outline"}
-          colorScheme="blue"
+          colorPalette="blue"
           asChild
         >
           <Link href={"/signin"}>Signin</Link>

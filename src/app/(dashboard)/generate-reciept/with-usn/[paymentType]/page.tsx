@@ -173,7 +173,7 @@ const FormikContextProvider = () => {
             {...{ loading }}
             onClick={findStudent}
             aria-label="search"
-            colorScheme="blue"
+            colorPalette="blue"
             variant={"ghost"}
           >
             <AiOutlineSearch />
@@ -1186,7 +1186,7 @@ export default function WithUSNDynamicPage() {
                         isSubmitting ||
                         isValidating
                       }
-                      colorScheme="purple"
+                      colorPalette="purple"
                     >
                       <AiOutlineFileDone className="text-xl" />
                       Generate Reciept
@@ -1242,7 +1242,7 @@ export default function WithUSNDynamicPage() {
                         isSubmitting ||
                         isValidating
                       }
-                      colorScheme="purple"
+                      colorPalette="purple"
                     >
                       Save <AiOutlineCheck className="text-xl" />
                     </Button>
@@ -1262,7 +1262,7 @@ export default function WithUSNDynamicPage() {
                       Cancel
                     </Button>
                     <Button
-                      colorScheme="facebook"
+                      colorPalette="facebook"
                       onClick={() => {
                         handleSubmit();
                         onToggle();
@@ -1285,7 +1285,7 @@ export default function WithUSNDynamicPage() {
                       Cancel
                     </Button>
                     <Button
-                      colorScheme="facebook"
+                      colorPalette="facebook"
                       onClick={() => {
                         handleSubmit();
                         onLinkedClose();
@@ -1312,7 +1312,7 @@ export default function WithUSNDynamicPage() {
                     </Button>
                     <Button
                       loading={isDeleting}
-                      colorScheme="red"
+                      colorPalette="red"
                       onClick={() => {
                         deleteReciept();
                         onLinkedClose();

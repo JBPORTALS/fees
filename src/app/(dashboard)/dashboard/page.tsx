@@ -151,7 +151,7 @@ export default function Home() {
                                   variant={"solid"}
                                   size={"lg"}
                                   rounded={"full"}
-                                  colorScheme={"blue"}
+                                  colorPalette={"blue"}
                                 >
                                   <Tag.Label>
                                     {branchFee.total_students} Students
@@ -277,7 +277,7 @@ export default function Home() {
                                   variant={"solid"}
                                   size={"lg"}
                                   rounded={"full"}
-                                  colorScheme={"blue"}
+                                  colorPalette={"blue"}
                                 >
                                   <Tag.Label>
                                     {yearFee.total_students} Students

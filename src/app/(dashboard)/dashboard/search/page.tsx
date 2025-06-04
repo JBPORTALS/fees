@@ -1,31 +1,27 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import {
   Button,
   Center,
+  EmptyState,
   HStack,
   Heading,
   Spinner,
-  Stack,
   Tag,
   VStack,
 } from "@chakra-ui/react";
 
 import { useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/store";
-import { AgGridReact } from "ag-grid-react";
-import {
-  SearchColumns,
-  feeSearchColumns,
-} from "@/components/mock-data/fee-meta";
-import { FcSearch } from "react-icons/fc";
 import { AiOutlineFileExcel } from "react-icons/ai";
 import { trpc } from "@/utils/trpc-cleint";
 import { isEmpty } from "lodash";
 import { useUser } from "@/utils/auth";
 import Link from "next/link";
+import { columns, columnsWithFee } from "./columns";
+import { DataTable } from "@/components/data-table";
+import React from "react";
+import { LuSearchX } from "react-icons/lu";
 
 export default function Home() {
   const params = useSearchParams();
@@ -40,7 +36,7 @@ export default function Home() {
   const feeType = params.get("feeType");
   const query = params.get("query");
 
-  const { data: feeFilter, loading } = trpc.searchData.useQuery(
+  const { data: feeFilter, isLoading } = trpc.searchData.useQuery(
     {
       acadYear,
       college: college ?? "",
@@ -50,7 +46,7 @@ export default function Home() {
       enabled: mode === "QUERY",
     }
   );
-  const { data: feeFilterByMode, loading: isFilterByModeLoading } =
+  const { data: feeFilterByMode, isLoading: isFilterByModeLoading } =
     trpc.searchDataByMode.useQuery(
       {
         acadYear,
@@ -76,7 +72,7 @@ export default function Home() {
       }
     );
 
-  const isDataFetching = mode !== "QUERY" ? isFilterByModeLoading : loading;
+  const isDataFetching = mode !== "QUERY" ? isFilterByModeLoading : isLoading;
   const isDataEmpty =
     mode !== "QUERY" ? isEmpty(feeFilterByMode) : isEmpty(feeFilter);
 
@@ -93,124 +89,102 @@ export default function Home() {
     );
 
   return (
-    <Stack h={"100%"} w={"full"} justifyContent={"start"}>
-      <HStack
-        py={"3"}
-        px={"5"}
-        w={"full"}
-        bg={"white"}
-        className="border-gray-300 border-b"
-      >
-        <HStack w={"full"}>
-          {mode !== "QUERY" ? (
-            <>
-              <Tag.Root pl={"0"} borderRadius={"full"} colorScheme="facebook">
-                <Tag.Root
-                  borderRadius={"full"}
-                  colorScheme="facebook"
-                  variant={"solid"}
-                >
-                  Branch
-                </Tag.Root>
-                <Tag.Label ml={"2"}>{branch}</Tag.Label>
+    <React.Fragment>
+      <HStack pb={"3"} w={"full"} borderBottomWidth={"thin"}>
+        {mode !== "QUERY" ? (
+          <React.Fragment>
+            <Tag.Root pl={"0"}>
+              <Tag.Root variant={"solid"}>
+                <Tag.Label>Branch</Tag.Label>
               </Tag.Root>
-              <Tag.Root pl={"0"} borderRadius={"full"} colorScheme="facebook">
-                <Tag.Root
-                  borderRadius={"full"}
-                  colorScheme="facebook"
-                  variant={"solid"}
-                >
-                  Year
-                </Tag.Root>
-                <Tag.Label ml={"2"}>{year}</Tag.Label>
+              <Tag.Label ml={"2"}>{branch}</Tag.Label>
+            </Tag.Root>
+
+            <Tag.Root pl={"0"}>
+              <Tag.Root variant={"solid"}>
+                <Tag.Label>Year</Tag.Label>
               </Tag.Root>
-              <Tag.Root pl={"0"} borderRadius={"full"} colorScheme="facebook">
-                <Tag.Root
-                  borderRadius={"full"}
-                  colorScheme="facebook"
-                  variant={"solid"}
-                >
-                  Fee Type
-                </Tag.Root>
-                <Tag.Label ml={"2"}>{feeType}</Tag.Label>
+              <Tag.Label ml={"2"}>{year}</Tag.Label>
+            </Tag.Root>
+
+            <Tag.Root pl={"0"}>
+              <Tag.Root variant={"solid"}>
+                <Tag.Label>Fee Type</Tag.Label>
               </Tag.Root>
-              <Tag.Root pl={"0"} borderRadius={"full"} colorScheme="facebook">
-                <Tag.Root
-                  borderRadius={"full"}
-                  colorScheme="facebook"
-                  variant={"solid"}
-                >
-                  Mode
-                </Tag.Root>
-                <Tag.Label ml={"2"}>{mode}</Tag.Label>
+              <Tag.Label ml={"2"}>{feeType}</Tag.Label>
+            </Tag.Root>
+
+            <Tag.Root pl={"0"}>
+              <Tag.Root variant={"solid"}>
+                <Tag.Label>Mode</Tag.Label>
               </Tag.Root>
-              <Tag.Root pl={"0"} borderRadius={"full"} colorScheme="facebook">
-                <Tag.Root
-                  borderRadius={"full"}
-                  colorScheme="facebook"
-                  variant={"solid"}
-                >
-                  From Date
-                </Tag.Root>
-                <Tag.Label ml={"2"}>{fromDate}</Tag.Label>
+              <Tag.Label ml={"2"}>{mode}</Tag.Label>
+            </Tag.Root>
+
+            <Tag.Root pl={"0"}>
+              <Tag.Root variant={"solid"}>
+                <Tag.Label>From Date</Tag.Label>
               </Tag.Root>
-              <Tag.Root pl={"0"} borderRadius={"full"} colorScheme="facebook">
-                <Tag.Root
-                  borderRadius={"full"}
-                  colorScheme="facebook"
-                  variant={"solid"}
-                >
-                  To Date
-                </Tag.Root>
-                <Tag.Label ml={"2"}>{toDate}</Tag.Label>
+              <Tag.Label ml={"2"}>{fromDate}</Tag.Label>
+            </Tag.Root>
+
+            <Tag.Root pl={"0"}>
+              <Tag.Root variant={"solid"}>
+                <Tag.Label>To Date</Tag.Label>
               </Tag.Root>
-              <Button ml={"2"} asChild size={"sm"} colorScheme="facebook">
-                <Link
-                  target="_blank"
-                  href={
-                    process.env.NEXT_PUBLIC_ADMIN_URL +
-                    `feedownloadexcel.php?branch=${branch}&year=${year}&mode=${mode}&type=${feeType}&fromdate=${fromDate}&todate=${toDate}&college=${college}`
-                  }
-                >
-                  <AiOutlineFileExcel className={"text-lg"} />
-                  Download Excel
-                </Link>
-              </Button>
-            </>
-          ) : (
-            <>
-              <Heading size={"sm"} color={"gray.600"}>
-                Search results for - `{query}`
-              </Heading>
-              <Tag.Root>
-                Total {feeFilter && feeFilter.length} records found
-              </Tag.Root>
-            </>
-          )}
-        </HStack>
+              <Tag.Label ml={"2"}>{toDate}</Tag.Label>
+            </Tag.Root>
+
+            <Button ml={"auto"} asChild size={"xs"} variant={"surface"}>
+              <Link
+                target="_blank"
+                href={
+                  process.env.NEXT_PUBLIC_ADMIN_URL +
+                  `feedownloadexcel.php?branch=${branch}&year=${year}&mode=${mode}&type=${feeType}&fromdate=${fromDate}&todate=${toDate}&college=${college}`
+                }
+              >
+                <AiOutlineFileExcel className={"text-lg"} />
+                Download Excel
+              </Link>
+            </Button>
+          </React.Fragment>
+        ) : (
+          <>
+            <Heading size={"sm"} color={"fg.muted"}>
+              Search results for - `{query}`
+            </Heading>
+            <Tag.Root>
+              <Tag.Label>
+                Total {feeFilter && feeFilter.length} Records Found
+              </Tag.Label>
+            </Tag.Root>
+          </>
+        )}
       </HStack>
+
       {(feeFilter && feeFilter.length > 0) ||
       (feeFilterByMode && feeFilterByMode.length > 0) ? (
-        <AgGridReact
-          className="w-full h-full  pb-6 ag-theme-material"
-          animateRows={true}
-          rowData={mode !== "QUERY" ? feeFilterByMode : feeFilter}
-          columnDefs={
-            mode !== "QUERY"
-              ? (SearchColumns as any)
-              : (feeSearchColumns as any)
-          }
-          alwaysShowHorizontalScroll
-          onRowEditingStarted={(e) => {}}
+        <DataTable
+          columns={mode !== "QUERY" ? columnsWithFee : columns}
+          data={mode !== "QUERY" ? feeFilterByMode ?? [] : feeFilter ?? []}
         />
       ) : isDataEmpty ? (
-        <Center h={"100%"} pb={"20"} flexDir={"column"}>
-          <VStack>
-            <FcSearch className="text-8xl" />
-            <Heading size={"lg"}>No Data Found</Heading>
-          </VStack>
+        <Center py={"20"}>
+          <EmptyState.Root>
+            <EmptyState.Content>
+              <EmptyState.Indicator>
+                <LuSearchX />
+              </EmptyState.Indicator>
+              <VStack>
+                <EmptyState.Title>No Data Found</EmptyState.Title>
+                <EmptyState.Description>
+                  Try diffrent keywords or remove applied filters
+                </EmptyState.Description>
+              </VStack>
+            </EmptyState.Content>
+          </EmptyState.Root>
         </Center>
       ) : null}
-    </Stack>
+    </React.Fragment>
   );
 }

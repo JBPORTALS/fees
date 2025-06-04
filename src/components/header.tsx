@@ -72,7 +72,7 @@ export function Header() {
                   ).getTime()}`
                 );
               }}
-              colorScheme="blue"
+              colorPalette="blue"
               h={"full"}
               w={"full"}
               variant={"ghost"}
@@ -155,7 +155,7 @@ export function Header() {
                     onClick={async () => {
                       await signOut();
                     }}
-                    colorScheme="facebook"
+                    colorPalette="facebook"
                     w={"full"}
                   >
                     <AiOutlineLogout />

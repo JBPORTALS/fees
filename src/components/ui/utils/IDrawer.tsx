@@ -47,14 +47,14 @@ export default function IDrawer({
           py={"2"}
           className="flex space-x-4 bg-primary border-t border-t-gray-300"
         >
-          <Button colorScheme={"blue"} variant={"outline"} onClick={onClose}>
+          <Button colorPalette={"blue"} variant={"outline"} onClick={onClose}>
             Cancel
           </Button>
 
           <Button
             loading={loading}
             disabled={disabled}
-            colorScheme={"blue"}
+            colorPalette={"blue"}
             onClick={async () => {
               onSubmit && (await onSubmit());
             }}

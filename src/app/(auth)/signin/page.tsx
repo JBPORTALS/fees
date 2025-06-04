@@ -66,7 +66,7 @@ export default function Home() {
               loading={loading}
               onClick={onSignin}
               disabled={!state.email || !state.password}
-              colorScheme="blue"
+              colorPalette="blue"
               color={"white"}
               loadingText={"Signing in..."}
             >

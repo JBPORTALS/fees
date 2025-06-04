@@ -146,7 +146,7 @@ export default function BranchViewPage() {
                           variant={"solid"}
                           size={"lg"}
                           rounded={"full"}
-                          colorScheme={"blue"}
+                          colorPalette={"blue"}
                         >
                           {yearFee.total_students} Students
                         </Tag.Root>

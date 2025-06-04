@@ -86,7 +86,7 @@ export default function WithUSNLayout({
             <React.Fragment>
               <Separator />
               <AbsoluteCenter px="4">
-                <Tag.Root colorScheme={"green"}>
+                <Tag.Root colorPalette={"green"}>
                   <Tag.Label>
                     Edit Mode: Challan ID-{searchParams.get("challan_id")}
                   </Tag.Label>

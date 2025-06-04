@@ -1,18 +1,14 @@
-import { Tooltip } from "@chakra-ui/react";
 import { AiOutlineEye, AiOutlineUser } from "react-icons/ai";
 import { CiReceipt } from "react-icons/ci";
 import ViewFeeDetailsModal from "../drawers/ViewFeeDetailsModal";
 import ViewChallanDetails from "../drawers/ViewChallanDetails";
 import ViewStudentsDetails from "../drawers/ViewStudentDetails";
 import Link from "next/link";
+import { Tooltip } from "../ui/tooltip";
 
 const CustomViewButton = (data: any) => {
   return (
-    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full">
-      <ViewFeeDetailsModal id={data.value.id} regno={data.value.regno}>
-        {({ onOpen }) => <AiOutlineEye onClick={onOpen} />}
-      </ViewFeeDetailsModal>
-    </div>
+    <div className="flex hover:cursor-pointer hover:scale-110 active:scale-95 justify-center items-center text-2xl text-brand h-full w-full"></div>
   );
 };
 
@@ -52,7 +48,7 @@ const StatusView = (data: {
   value: "NOT PAID" | "FULLY PAID" | "PARTIALLY PAID";
 }) => {
   return (
-    <Tooltip placement={"right"} hasArrow label={data.value}>
+    <Tooltip showArrow content={data.value}>
       <div className="flex hover:cursor-pointer hover:scale-110 justify-center items-center text-2xl text-brand h-full w-full">
         <div
           className={

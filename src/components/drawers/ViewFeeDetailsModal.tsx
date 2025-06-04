@@ -18,13 +18,13 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { AiOutlineCheckCircle, AiOutlineFileProtect } from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
 import HistoryItem from "../ui/HistoryItem";
 import { useUser } from "@/utils/auth";
 import Link from "next/link";
+import { toaster } from "../ui/toaster";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -91,7 +91,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
       setChallanState(response.data[0]);
       onConfirmOpen();
     } catch (e: any) {
-      toast.error(e.response?.data?.msg);
+      toaster.error({ title: e.response?.data?.msg });
     }
     setIsChecking(false);
   };
@@ -131,8 +131,8 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
         method: "POST",
         data: formData,
       });
-      toast.success("Total fee updated successfully", {
-        position: "top-right",
+      toaster.success({
+        title: "Total fee updated successfully",
       });
       dispatch(
         fetchFeeDetails({
@@ -159,7 +159,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
       >
         <Center>
           <Heading>₹{challanState?.amount_paid1}</Heading>
-          <Tag.Root ml={"3"} size={"lg"} colorScheme={"purple"}>
+          <Tag.Root ml={"3"} size={"lg"} colorPalette={"purple"}>
             <Tag.Label>{challanState?.method}</Tag.Label>
           </Tag.Root>
         </Center>
@@ -229,8 +229,9 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
                   <Button
                     w={"full"}
                     onClick={onUpdateTotal}
-                    colorScheme={"green"}
+                    colorPalette={"green"}
                     loading={isUpdating}
+                    variant={"surface"}
                   >
                     <AiOutlineCheckCircle className="text-xl" />
                     Update Total Fee
@@ -240,7 +241,12 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
             )}
             {selectedFeeDetails[0]?.payment_history?.length && (
               <HStack w={"full"}>
-                <Button w={"full"} asChild colorScheme={"purple"}>
+                <Button
+                  w={"full"}
+                  asChild
+                  variant={"surface"}
+                  colorPalette={"purple"}
+                >
                   <Link
                     download
                     target={"_blank"}

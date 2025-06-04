@@ -314,12 +314,12 @@ export default function ViewStudentsDetails({
             </Heading>
           </HStack>
           <HStack>
-            <Tag.Root colorScheme="purple" size={"lg"}>
+            <Tag.Root colorPalette="purple" size={"lg"}>
               <Tag.Label>
                 {values.branch} - {values.sem} Sem
               </Tag.Label>
             </Tag.Root>
-            <Tag.Root colorScheme="purple" size={"lg"}>
+            <Tag.Root colorPalette="purple" size={"lg"}>
               <Tag.Label>{values.category}</Tag.Label>
             </Tag.Root>
           </HStack>
@@ -407,7 +407,7 @@ export default function ViewStudentsDetails({
             alignContent={"center"}
             alignItems={"center"}
           >
-            <Spinner colorScheme="facebook" color="blue" size={"lg"} />
+            <Spinner colorPalette="facebook" color="blue" size={"lg"} />
           </VStack>
         ) : (
           <VStack

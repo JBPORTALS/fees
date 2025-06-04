@@ -4,10 +4,10 @@ import { useAppSelector } from "@/store";
 import { fetchFeeDetails } from "@/store/fees.slice";
 import { HStack, NativeSelect, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import ClassDataGrid from "@/components/layouts/ClassDataGrid";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 
 import { useUser } from "@/utils/auth";
+import { ClassDataTable } from "./data-table";
 
 export default function BranchViewPage() {
   const [state, setState] = useState({
@@ -84,14 +84,12 @@ export default function BranchViewPage() {
         ) : state.branch && !state.year ? (
           <InfoCard message="Select Year" />
         ) : null}
-        <VStack px={0} gap={0}>
-          {/* displaying admin childrens */}
-          {state.branch && state.year && (
-            <VStack h={"90vh"} w={"full"}>
-              {/* <ClassDataGrid /> */}
-            </VStack>
-          )}
-        </VStack>
+        {/* displaying admin childrens */}
+        {state.branch && state.year && (
+          <VStack w={"full"}>
+            <ClassDataTable />
+          </VStack>
+        )}
       </VStack>
     </>
   );

@@ -172,7 +172,7 @@ export default function Students() {
                     <Button
                       w={"full"}
                       disabled={!state.branch || !state.year}
-                      colorScheme="blue"
+                      colorPalette="blue"
                       asChild
                     >
                       <Link
@@ -193,7 +193,7 @@ export default function Students() {
                 onClick={onOpen}
                 marginLeft={"auto"}
                 size={"sm"}
-                colorScheme="facebook"
+                colorPalette="facebook"
               >
                 <AiOutlineUserAdd />
                 New Student

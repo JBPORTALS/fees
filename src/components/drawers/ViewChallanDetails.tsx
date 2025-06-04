@@ -286,7 +286,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             bottom={"0"}
             w={"full"}
           >
-            <Button asChild w={"full"} colorScheme="purple">
+            <Button asChild w={"full"} colorPalette="purple">
               <Link
                 target="_blank"
                 href={`${process.env.NEXT_PUBLIC_ADMIN_URL}${
@@ -303,7 +303,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             </Button>
             <Button
               w={"full"}
-              colorScheme="red"
+              colorPalette="red"
               loading={isDeleting}
               onClick={onDelete}
             >

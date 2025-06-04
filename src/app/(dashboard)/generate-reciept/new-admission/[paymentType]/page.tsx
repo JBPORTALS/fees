@@ -780,7 +780,7 @@ export default function WithoutUSNDynamicPage() {
                     isSubmitting ||
                     isValidating
                   }
-                  colorScheme="purple"
+                  colorPalette="purple"
                   leftIcon={<AiOutlineFileDone className="text-xl" />}
                 >
                   Generate Reciept

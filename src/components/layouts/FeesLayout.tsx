@@ -306,7 +306,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                     <Tag.Root
                                       size={"md"}
                                       variant={"outline"}
-                                      colorScheme={"teal"}
+                                      colorPalette={"teal"}
                                       fontWeight={"bold"}
                                     >
                                       <Tag.Label>
@@ -344,7 +344,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                             {!paymentData.usn && (
                               <Button
                                 w={"full"}
-                                colorScheme="blue"
+                                colorPalette="blue"
                                 onClick={() => {
                                   dispatch(
                                     updateUSN({
@@ -453,7 +453,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                       <Button
                         w={"full"}
                         disabled={!state.branch || !state.year}
-                        colorScheme="blue"
+                        colorPalette="blue"
                         asChild
                       >
                         <Link
@@ -695,7 +695,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                     return;
                                 }
                               }}
-                              colorScheme={"blue"}
+                              colorPalette={"blue"}
                               w={"full"}
                             >
                               Search <AiOutlineSearch className={"text-lg"} />

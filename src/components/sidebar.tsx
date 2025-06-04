@@ -74,7 +74,7 @@ export function Sidebar() {
             w={"full"}
             size={"md"}
             variant={"solid"}
-            colorScheme="facebook"
+            colorPalette="facebook"
           >
             <Link href={"/generate-reciept/without-usn"}>
               <AiOutlinePlus className={"text-xl"} />

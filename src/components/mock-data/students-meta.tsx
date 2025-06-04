@@ -11,6 +11,7 @@ import {
   LuCircleDashed,
   LuView,
 } from "react-icons/lu";
+import { Status } from "../status";
 
 export type Student = {
   id: string;
@@ -64,39 +65,7 @@ export const StudentColumnDefs: ColumnDef<Student>[] = [
     cell: (props) => {
       const original = props.row.original;
 
-      const renderIcon = () => {
-        switch (original.status) {
-          case "FULLY PAID":
-            return (
-              <Icon color={"fg.success"} fontSize={"xl"}>
-                <LuCheckCircle2 />
-              </Icon>
-            );
-
-          case "NOT PAID":
-            return (
-              <Icon color={"fg.subtle"} fontSize={"xl"}>
-                <LuCircleDashed />
-              </Icon>
-            );
-          case "PARTIALLY PAID":
-            return (
-              <Icon color={"fg.warning"} fontSize={"xl"}>
-                <LuCircle />
-              </Icon>
-            );
-        }
-      };
-
-      return (
-        <Tooltip
-          positioning={{ placement: "right" }}
-          showArrow
-          content={original.status}
-        >
-          {renderIcon()}
-        </Tooltip>
-      );
+      return <Status status={original.status} />;
     },
   },
   {

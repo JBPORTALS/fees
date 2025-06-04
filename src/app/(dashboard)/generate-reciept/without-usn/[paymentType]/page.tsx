@@ -140,7 +140,7 @@ const FormikContextProvider = () => {
             {...{ loading }}
             onClick={findStudent}
             aria-label="search"
-            colorScheme="blue"
+            colorPalette="blue"
             variant={"ghost"}
           >
             {<AiOutlineSearch />}
@@ -148,7 +148,7 @@ const FormikContextProvider = () => {
         }
         startElement={
           values.byApplicationId && (
-            <Tag.Root colorScheme="gray">
+            <Tag.Root colorPalette="gray">
               <Tag.Label>By App. ID</Tag.Label>
               <Tag.CloseTrigger
                 onClick={() => {
@@ -1101,7 +1101,7 @@ export default function WithoutUSNDynamicPage() {
                   <DialogFooter gap={3}>
                     <Button variant={"ghost"}>Cancel</Button>
                     <Button
-                      colorScheme="facebook"
+                      colorPalette="facebook"
                       onClick={() => {
                         handleSubmit();
                         onClose();

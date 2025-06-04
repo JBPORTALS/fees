@@ -16,7 +16,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { MdRemove } from "react-icons/md";
 import IModal from "./utils/IModal";
@@ -35,6 +35,8 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
     onClose: onConfirmDeleteClose,
     onOpen: onConfirmDeleteOpen,
   } = useDisclosure();
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const onRemoveChallan = async (history_id: string, challan_id: string) => {
     setIsDeleting(true);
@@ -70,14 +72,16 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
 
   return (
     <HStack
+      ref={containerRef}
       key={history.id}
       w={"full"}
       className={"border-b border-b-lightgray"}
-      bg={"gray.50"}
       px={"5"}
       py={"2"}
       gap={"3"}
       justifyContent={"space-between"}
+      borderBottomWidth={"thin"}
+      borderBottomColor={"border.muted"}
     >
       <IModal
         loading={isDeleting}
@@ -97,15 +101,15 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
       <VStack flex={1} alignItems={"start"}>
         <HStack>
           <h1 className="text-md">{history.paymentno}</h1>
-          <Tag
+          <Tag.Root
             size={"sm"}
             whiteSpace={"nowrap"}
             variant={"outline"}
-            colorScheme={"teal"}
+            colorPalette={"teal"}
             fontWeight={"bold"}
           >
-            CH No. {history.challan_id}
-          </Tag>
+            <Tag.Label>CH No. {history.challan_id}</Tag.Label>
+          </Tag.Root>
         </HStack>
         <span className="text-sm">{history.date}</span>
       </VStack>
@@ -119,14 +123,15 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
       </VStack>
       <IconButton
         aria-label="remove"
-        icon={<MdRemove />}
-        colorScheme="red"
+        colorPalette="red"
         size={"sm"}
         variant={"outline"}
         onClick={() => {
           onConfirmDeleteOpen();
         }}
-      />
+      >
+        <MdRemove />
+      </IconButton>
     </HStack>
   );
 }
