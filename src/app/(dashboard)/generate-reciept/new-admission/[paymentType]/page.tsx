@@ -1,5 +1,5 @@
 "use client";
-import { Button, HStack, SimpleGrid, VStack, useToast } from "@chakra-ui/react";
+import { Button, HStack, SimpleGrid, VStack } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
 import React, { useEffect } from "react";
@@ -16,6 +16,7 @@ import {
   SEMS,
 } from "@/components/mock-data/constants";
 import { useUser } from "@/utils/auth";
+import { toaster } from "@/components/ui/toaster";
 
 const initialValues = {
   name: "", //✅
@@ -69,10 +70,6 @@ export default function WithoutUSNDynamicPage() {
   const branchList = useAppSelector((state) => state.fees.branch_list.data) as {
     branch: string;
   }[];
-
-  const toast = useToast({
-    position: "bottom-left",
-  });
 
   const user = useUser();
 
@@ -673,9 +670,8 @@ export default function WithoutUSNDynamicPage() {
             document.body.appendChild(link);
             link.click();
           } catch (e: any) {
-            toast({
+            toaster.error({
               title: e.response?.data?.msg,
-              status: "error",
             });
           }
         }}
@@ -781,8 +777,8 @@ export default function WithoutUSNDynamicPage() {
                     isValidating
                   }
                   colorPalette="purple"
-                  leftIcon={<AiOutlineFileDone className="text-xl" />}
                 >
+                  <AiOutlineFileDone className="text-xl" />
                   Generate Reciept
                 </Button>
               </HStack>
