@@ -2,7 +2,6 @@ import {
   Button,
   Dialog,
   DialogBodyProps,
-  DialogPositionerProps,
   DialogRootProps,
 } from "@chakra-ui/react";
 import React from "react";

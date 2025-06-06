@@ -4,8 +4,8 @@ export const system = createSystem(defaultConfig, {
   theme: {
     tokens: {
       fonts: {
-        heading: { value: `'Figtree', sans-serif` },
-        body: { value: `'Figtree', sans-serif` },
+        heading: { value: `'Open Sans', sans-serif` },
+        body: { value: `'Open Sans', sans-serif` },
       },
     },
   },
