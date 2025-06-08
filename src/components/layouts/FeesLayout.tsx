@@ -110,7 +110,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
         name: string;
         date: string;
         method: string;
-        amount_paid: string;
+        amount_paid1: string;
         type: string;
       }[]
     | null
@@ -237,6 +237,8 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             </HStack>
 
             <HStack zIndex={"sticky"}>
+
+              {/** Update & Challans for particular date */}
               <IModal
                 hideBtn
                 size={"lg"}
@@ -322,7 +324,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                               <VStack flex={1} alignItems={"end"}>
                                 <Box>
                                   <h1 className="text-xl font-bold text-green-600">
-                                    ₹{paymentData.amount_paid}
+                                    ₹{paymentData.amount_paid1}
                                   </h1>
                                   <span className="text-md font-medium">
                                     <i>{paymentData.method}</i>
