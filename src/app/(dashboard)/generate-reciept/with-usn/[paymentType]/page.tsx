@@ -40,6 +40,19 @@ import { useAppSelector } from "@/store";
 import { trpc } from "@/utils/trpc-cleint";
 import { useUser } from "@/utils/auth";
 import { toaster } from "@/components/ui/toaster";
+import {
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+} from "@/components/ui/dialog";
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from "@/components/ui/menu";
 
 const initialValues = {
   usn: "", //✅
@@ -1194,8 +1207,8 @@ export default function WithUSNDynamicPage() {
                   </>
                 ) : (
                   <HStack width={"100%"} justifyContent={"space-between"}>
-                    <Menu.Root>
-                      <Menu.Trigger asChild>
+                    <MenuRoot>
+                      <MenuTrigger asChild>
                         <IconButton
                           size={"lg"}
                           variant={"outline"}
@@ -1203,9 +1216,9 @@ export default function WithUSNDynamicPage() {
                         >
                           <AiOutlineMore className="text-2xl" />
                         </IconButton>
-                      </Menu.Trigger>
-                      <Menu.Content className="hover:no-underline ">
-                        <Menu.Item
+                      </MenuTrigger>
+                      <MenuContent className="hover:no-underline ">
+                        <MenuItem
                           value="download-reciept"
                           onClick={() => {
                             window.open(
@@ -1215,17 +1228,17 @@ export default function WithUSNDynamicPage() {
                         >
                           <AiOutlineFileText className="text-lg" />
                           Download Reciept
-                        </Menu.Item>
-                        <Menu.Item
+                        </MenuItem>
+                        <MenuItem
                           value="delete-challen"
                           color={"darkred"}
                           onClick={onDeleteConfirmOpen}
                         >
                           <AiOutlineDelete className="text-lg" />
                           Delete Challan
-                        </Menu.Item>
-                      </Menu.Content>
-                    </Menu.Root>
+                        </MenuItem>
+                      </MenuContent>
+                    </MenuRoot>
                     <Button
                       size={"lg"}
                       loading={isSubmitting || isValidating}
@@ -1249,15 +1262,15 @@ export default function WithUSNDynamicPage() {
                   </HStack>
                 )}
               </HStack>
-              <Dialog.Root onOpenChange={onToggle} open={open}>
-                <Dialog.Content>
-                  <Dialog.Header>📢 Are you sure?</Dialog.Header>
-                  <Dialog.Body>
+              <DialogRoot onOpenChange={onToggle} open={open}>
+                <DialogContent>
+                  <DialogHeader>📢 Are you sure?</DialogHeader>
+                  <DialogBody>
                     {`Generating the receipt will permanently alter the student's
                     total fee. Confirm only after reviewing the details
                     carefully.`}
-                  </Dialog.Body>
-                  <Dialog.Footer gap={3}>
+                  </DialogBody>
+                  <DialogFooter gap={3}>
                     <Button onClick={onToggle} variant={"ghost"}>
                       Cancel
                     </Button>
@@ -1270,17 +1283,17 @@ export default function WithUSNDynamicPage() {
                     >
                       Yes, Generate
                     </Button>
-                  </Dialog.Footer>
-                </Dialog.Content>
-              </Dialog.Root>
+                  </DialogFooter>
+                </DialogContent>
+              </DialogRoot>
 
-              <Dialog.Root onOpenChange={onLinkedClose} open={isLinkedOpen}>
-                <Dialog.Content>
-                  <Dialog.Header>📢 Are you sure?</Dialog.Header>
-                  <Dialog.Body>
+              <DialogRoot onOpenChange={onLinkedClose} open={isLinkedOpen}>
+                <DialogContent>
+                  <DialogHeader>📢 Are you sure?</DialogHeader>
+                  <DialogBody>
                     {`Updating the receipt will unlink the challan from student transactions, it may lead you to again link the challan to respective student.`}
-                  </Dialog.Body>
-                  <Dialog.Footer gap={3}>
+                  </DialogBody>
+                  <DialogFooter gap={3}>
                     <Button onClick={onLinkedClose} variant={"ghost"}>
                       Cancel
                     </Button>
@@ -1293,20 +1306,20 @@ export default function WithUSNDynamicPage() {
                     >
                       Save Changes
                     </Button>
-                  </Dialog.Footer>
-                </Dialog.Content>
-              </Dialog.Root>
+                  </DialogFooter>
+                </DialogContent>
+              </DialogRoot>
 
-              <Dialog.Root
+              <DialogRoot
                 onOpenChange={onDeleteConfirmClose}
                 open={isDeleteConfirmOpen}
               >
-                <Dialog.Content>
-                  <Dialog.Header fontSize={"medium"}>
+                <DialogContent>
+                  <DialogHeader fontSize={"medium"}>
                     📢 Are you sure, you want to delete this challan?
-                  </Dialog.Header>
-                  <Dialog.Body>{`This is irreversable action, you can't undo this action at anytime.`}</Dialog.Body>
-                  <Dialog.Footer gap={3}>
+                  </DialogHeader>
+                  <DialogBody>{`This is irreversable action, you can't undo this action at anytime.`}</DialogBody>
+                  <DialogFooter gap={3}>
                     <Button onClick={onDeleteConfirmClose} variant={"ghost"}>
                       Cancel
                     </Button>
@@ -1320,9 +1333,9 @@ export default function WithUSNDynamicPage() {
                     >
                       Delete
                     </Button>
-                  </Dialog.Footer>
-                </Dialog.Content>
-              </Dialog.Root>
+                  </DialogFooter>
+                </DialogContent>
+              </DialogRoot>
             </React.Fragment>
           );
         }}
