@@ -20,6 +20,7 @@ import {
   Input,
   Menu,
   NativeSelect,
+  NumberInput,
   Skeleton,
   Tabs,
   Tag,
@@ -101,7 +102,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
     date: string | null;
   }>({
     date: new Date().toDateString(),
-    challan_no: "0",
+    challan_no: "",
   });
   const [filteredData, setFilteredData] = useState<
     | {
@@ -237,7 +238,6 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
             </HStack>
 
             <HStack zIndex={"sticky"}>
-
               {/** Update & Challans for particular date */}
               <IModal
                 hideBtn
@@ -510,20 +510,21 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                           {filterType == "CHALLAN" ? (
                             <>
                               <Field.Label>Challan No.</Field.Label>
-                              <Input
+                              <NumberInput.Root
+                                w={"full"}
                                 value={filterState.challan_no}
-                                type={"number"}
-                                onChange={(e) => {
-                                  const value = Math.max(
-                                    0,
-                                    Math.min(1500000, Number(e.target.value))
-                                  );
+                                min={0}
+                                max={15000000}
+                                onValueChange={({ value }) => {
                                   setFilterState((prev) => ({
                                     ...prev,
-                                    challan_no: value.toString(),
+                                    challan_no: value,
                                   }));
                                 }}
-                              />
+                              >
+                                <NumberInput.Control />
+                                <NumberInput.Input />
+                              </NumberInput.Root>
                             </>
                           ) : filterType == "PAID_DATE" ||
                             filterType == "CHALLAN_DATE" ? (
