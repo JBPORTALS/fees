@@ -25,6 +25,7 @@ export default function Students() {
   ) as [];
   const dispatch = useAppDispatch();
   const yearList = useAppSelector((state) => state.fees.year_list);
+  const acadYear = useAppSelector((state) => state.fees.acadYear);
   const user = useUser();
 
   useEffect(() => {
@@ -42,6 +43,14 @@ export default function Students() {
     if (user?.college == "HOSTEL" && state.branch)
       dispatch(fetchYearList({ college: state.branch }));
   }, [state.branch, user?.college]);
+
+  useEffect(() => {
+    setState({
+      branch: "",
+      status: "ALL",
+      year: "",
+    });
+  }, [acadYear]);
 
   return (
     <>
