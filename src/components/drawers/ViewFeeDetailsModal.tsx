@@ -131,6 +131,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
         method: "POST",
         data: formData,
       });
+      console.log("Reached");
       toaster.success({
         title: "Total fee updated successfully",
       });
@@ -143,6 +144,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
       );
     } catch (e: any) {
       console.log(e);
+      toaster.error({ title: e.response.data.msg });
     }
     setIsLoading(false);
   };
