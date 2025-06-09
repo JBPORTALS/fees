@@ -200,6 +200,7 @@ export default function ViewStudentsDetails({
       router.refresh();
       onClose();
     } catch (e: any) {
+      console.log(e);
       e.response.data?.msg && toast.error(e.response.data?.msg);
     }
   };

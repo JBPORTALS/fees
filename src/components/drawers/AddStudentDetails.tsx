@@ -12,11 +12,11 @@ import * as Yup from "yup";
 import { useAppSelector } from "@/store";
 import { useCallback } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import { useAppDispatch } from "@/hooks";
 import { fetchFeeDetails } from "@/store/fees.slice";
 import { SEMS } from "../mock-data/constants";
 import { useUser } from "@/utils/auth";
+import { toaster } from "../ui/toaster";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -129,9 +129,8 @@ export default function AddStudentsDetails({ children }: props) {
             data: formData,
           }
         );
-        if (!response || response.status !== 201)
-          throw Error("Something went wrong !");
-        toast.success("Student Added successfully", { position: "top-right" });
+
+        toaster.success({ title: "Student Added successfully" });
         handleReset(values);
         dispatch(
           fetchFeeDetails({
@@ -142,10 +141,11 @@ export default function AddStudentsDetails({ children }: props) {
         );
         onClose();
       } catch (e: any) {
-        toast.error(e.response?.data?.msg);
+        console.log("error occurs while adding the student", e);
+        toaster.error({ title: e.response.data.msg });
       }
     },
-    [user?.college]
+    [user?.college, toaster]
   );
 
   return (
@@ -242,7 +242,7 @@ export default function AddStudentsDetails({ children }: props) {
                 >
                   <option value={""}>Select Branch</option>
                   {branch_list.map((branch: any) => (
-                    <option key={branch} value={branch.branch}>
+                    <option key={branch.branch} value={branch.branch}>
                       {branch.branch}
                     </option>
                   ))}

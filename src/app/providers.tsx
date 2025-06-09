@@ -13,8 +13,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <ChakraProvider>
-            <Toaster />
             {children}
+            <Toaster />
           </ChakraProvider>
         </Provider>
       </QueryClientProvider>
