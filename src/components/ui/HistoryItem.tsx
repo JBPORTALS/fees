@@ -17,10 +17,10 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 import { MdRemove } from "react-icons/md";
 import IModal from "./utils/IModal";
 import { useUser } from "@/utils/auth";
+import { toaster } from "./toaster";
 
 export default function HistoryItem({ history }: { history: PaymentHistory }) {
   const dispatch = useAppDispatch();
@@ -51,9 +51,7 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
         method: "POST",
         data: formData,
       });
-      toast.success("Fee updated Successfully", {
-        position: "top-right",
-      });
+      toaster.info({ title: "Fee updated Successfully" });
       dispatch(
         fetchFeeDetails({
           branch: selectedFeeDetails[0].branch,
@@ -63,9 +61,7 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
       );
       onConfirmDeleteClose();
     } catch (e: any) {
-      toast.error("unable to remove challan", {
-        position: "top-right",
-      });
+      toaster.error({ title: "unable to remove challan" });
     }
     setIsDeleting(false);
   };

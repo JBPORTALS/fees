@@ -29,8 +29,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { MenuContent, MenuRoot, MenuTrigger } from "../ui/menu";
-import React, { useCallback, useEffect, useState } from "react";
-import ReactDatePicker from "react-datepicker";
+import React, { useState } from "react";
 import {
   AiOutlineArrowRight,
   AiOutlineDatabase,
@@ -38,7 +37,6 @@ import {
   AiOutlineSearch,
 } from "react-icons/ai";
 import IModal from "../ui/utils/IModal";
-import { toast } from "react-hot-toast";
 import axios from "axios";
 import moment from "moment";
 
@@ -49,6 +47,7 @@ import { MdBarChart } from "react-icons/md";
 import { SiGoogleclassroom } from "react-icons/si";
 import Link from "next/link";
 import { useUser } from "@/utils/auth";
+import { toaster } from "../ui/toaster";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -133,6 +132,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
       const formData = new FormData();
       formData.append("date", moment(filterState.date).format("yyyy-MM-DD"));
       formData.append("college", user?.college!);
+      formData.append("acadYear", acadYear);
       const response = await axios(
         process.env.NEXT_PUBLIC_ADMIN_URL +
           `${
@@ -146,7 +146,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
       setFilteredData(response.data);
     } catch (e: any) {
       onClose();
-      toast.error(e.response?.data?.msg);
+      toaster.error({ title: e.response?.data?.msg });
       setFilteredData(null);
     }
     setIsLoading(false);
@@ -169,7 +169,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
       setFilteredData(response.data);
     } catch (e: any) {
       onClose();
-      toast.error(e.response?.data?.msg);
+      toaster.error({ title: e.response?.data?.msg });
       setFilteredData(null);
     }
     setIsLoading(false);

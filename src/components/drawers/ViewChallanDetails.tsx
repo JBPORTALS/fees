@@ -11,13 +11,13 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { AiOutlineDelete, AiOutlineFilePdf } from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
 import { useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/store";
 import { useUser } from "@/utils/auth";
 import Link from "next/link";
+import { toaster } from "../ui/toaster";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -74,7 +74,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
       setChallanState(response.data[0]);
       setUsn(response.data[0]?.usn);
     } catch (e: any) {
-      toast.error(e.response?.data?.msg);
+      toaster.error({ title: e.response?.data?.msg });
     }
     setIsChecking(false);
   }, [challan_id, user?.college]);
@@ -93,7 +93,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
       axios
         .post(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php", formData)
         .then(async (res: any) => {
-          toast.success(res.data.msg);
+          toaster.success({ title: res.data.msg });
           await findChallan();
           setIsChecking(false);
           if (branch && mode && fromDate && toDate && year && feeType)
@@ -118,7 +118,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             );
         })
         .catch((e) => {
-          toast.error(e.response?.data?.msg);
+          toaster.error({ title: e.response?.data?.msg });
           setIsChecking(false);
         });
     }
@@ -148,7 +148,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           formData
         )
         .then(async (res: any) => {
-          toast.success(res.data.msg);
+          toaster.success({ title: res.data.msg });
           await findChallan();
           setIsDeleting(false);
           if (branch && mode && fromDate && toDate && year && feeType)
@@ -173,7 +173,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             );
         })
         .catch((e) => {
-          toast.error(e.response?.data?.msg);
+          toaster.error({ title: e.response?.data?.msg });
           setIsDeleting(false);
         });
     }

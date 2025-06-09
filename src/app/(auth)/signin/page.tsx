@@ -8,7 +8,6 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
 import { useSignIn } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
@@ -22,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PasswordInput } from "@/components/ui/password-input";
+import { toaster } from "@/components/ui/toaster";
 
 const signInSchema = z.object({
   emailAddress: z.string().email(),
@@ -47,7 +47,7 @@ export default function Home() {
         router.refresh();
       }
     } catch (e) {
-      toast.error("Invalid credentials !");
+      toaster.error({ title: "Invalid credentials !" });
     }
   }
 

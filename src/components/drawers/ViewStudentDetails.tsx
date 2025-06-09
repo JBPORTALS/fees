@@ -20,7 +20,6 @@ import * as Yup from "yup";
 import { useAppSelector } from "@/store";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { AiOutlineUserDelete } from "react-icons/ai";
 import {
@@ -32,6 +31,7 @@ import { CATS, SEMS } from "../mock-data/constants";
 import IModal from "../ui/utils/IModal";
 import moment from "moment";
 import { useUser } from "@/utils/auth";
+import { toaster } from "../ui/toaster";
 
 const Schema = Yup.object().shape({
   name: Yup.string().required().min(2),
@@ -189,7 +189,7 @@ export default function ViewStudentsDetails({
       );
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
-      toast.success("Updated successfully", { position: "top-right" });
+      toaster.success({ title: "Updated successfully" });
       dispatch(
         fetchFeeDetails({
           branch: values.branch,
@@ -201,7 +201,7 @@ export default function ViewStudentsDetails({
       onClose();
     } catch (e: any) {
       console.log(e);
-      e.response.data?.msg && toast.error(e.response.data?.msg);
+      toaster.error({ title: e.response.data?.msg });
     }
   };
 
@@ -222,7 +222,7 @@ export default function ViewStudentsDetails({
       );
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
-      toast.success("Deleted successfully", { position: "top-right" });
+      toaster.info({ title: "Deleted successfully" });
       dispatch(
         fetchFeeDetails({
           branch: values.branch,
@@ -234,7 +234,7 @@ export default function ViewStudentsDetails({
       onClose();
       onClose();
     } catch (e: any) {
-      e.response.data?.msg && toast.error(e.response.data?.msg);
+      toaster.error({ title: e.response.data?.msg });
     }
     setIsDeleting(false);
   }, [
@@ -277,7 +277,7 @@ export default function ViewStudentsDetails({
       );
       if (!response || response.status !== 201)
         throw Error("Something went wrong !");
-      toast.success("Updated successfully", { position: "top-right" });
+      toaster.success({ title: "Updated successfully" });
       dispatch(
         fetchFeeDetails({
           branch: values.branch,
@@ -288,7 +288,7 @@ export default function ViewStudentsDetails({
       router.refresh();
       onPaymentClose();
     } catch (e: any) {
-      e.response.data?.msg && toast.error(e.response.data?.msg);
+      toaster.error({ title: e.response.data?.msg });
     }
   };
 
