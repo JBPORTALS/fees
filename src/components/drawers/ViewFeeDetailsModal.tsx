@@ -253,6 +253,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
             >
               <NumberInput.Root
                 onValueChange={({ value }) => setChallanId(value)}
+                value={challanId}
                 variant={"subtle"}
                 w={"full"}
                 size={"lg"}
