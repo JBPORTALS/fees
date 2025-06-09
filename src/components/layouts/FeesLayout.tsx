@@ -30,24 +30,24 @@ import {
 } from "@chakra-ui/react";
 import { MenuContent, MenuRoot, MenuTrigger } from "../ui/menu";
 import React, { useState } from "react";
-import {
-  AiOutlineArrowRight,
-  AiOutlineDatabase,
-  AiOutlineFilter,
-  AiOutlineSearch,
-} from "react-icons/ai";
+import { AiOutlineArrowRight, AiOutlineSearch } from "react-icons/ai";
 import IModal from "../ui/utils/IModal";
 import axios from "axios";
 import moment from "moment";
 
 import { usePathname, useRouter } from "next/navigation";
 import { shallowEqual } from "react-redux";
-import { FaBullseye, FaChevronDown } from "react-icons/fa";
-import { MdBarChart } from "react-icons/md";
-import { SiGoogleclassroom } from "react-icons/si";
 import Link from "next/link";
 import { useUser } from "@/utils/auth";
 import { toaster } from "../ui/toaster";
+import {
+  LuBarChart,
+  LuChevronDown,
+  LuDatabase,
+  LuLayoutDashboard,
+  LuListFilter,
+  LuListOrdered,
+} from "react-icons/lu";
 
 interface AttendanceLayoutProps {
   children: React.ReactNode;
@@ -196,10 +196,21 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
       <Tabs.Root
         defaultValue={pathname.split("/").pop()}
         size={"lg"}
-        variant={"line"}
+        variant={"enclosed"}
         h={"full"}
+        position={"sticky"}
+        inset={"0"}
+        top={"20"}
+        zIndex={"banner"}
       >
-        <Tabs.List w={"full"}>
+        <Tabs.List
+          backdropFilter={"blur(5px)"}
+          bg={"AppWorkspace/60"}
+          shadow={"xs"}
+          w={"full"}
+          borderWidth={"thin"}
+          borderColor={"border.muted"}
+        >
           <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
               <Tabs.Trigger
@@ -209,7 +220,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                 _hover={{ textDecoration: "none" }}
               >
                 <Link href={"/dashboard"}>
-                  <FaBullseye />
+                  <LuLayoutDashboard />
                   <Text>Overall</Text>
                 </Link>
               </Tabs.Trigger>
@@ -220,7 +231,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                 _hover={{ textDecoration: "none" }}
               >
                 <Link href={"/dashboard/branchview"}>
-                  <MdBarChart />
+                  <LuBarChart />
                   <Text>Analytics</Text>
                 </Link>
               </Tabs.Trigger>
@@ -231,7 +242,7 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                 _hover={{ textDecoration: "none" }}
               >
                 <Link href={"/dashboard/classview"}>
-                  <SiGoogleclassroom />
+                  <LuListOrdered />
                   <Text>Class Data</Text>
                 </Link>
               </Tabs.Trigger>
@@ -372,9 +383,9 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
               {/** Menu #1 */}
               <MenuRoot positioning={{ placement: "bottom-end" }}>
                 <MenuTrigger asChild>
-                  <Button size={"sm"} variant={"ghost"}>
-                    <AiOutlineDatabase />
-                    Download Class Data <FaChevronDown />
+                  <Button size={"sm"} colorPalette={"gray"} variant={"ghost"}>
+                    <LuDatabase />
+                    Download Class Data <LuChevronDown />
                   </Button>
                 </MenuTrigger>
                 <MenuContent w={"250px"}>
@@ -478,10 +489,11 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                     variant={"ghost"}
                     position={"sticky"}
                     zIndex={"popover"}
+                    colorPalette={"gray"}
                   >
-                    <AiOutlineFilter className={"text-xl"} />
+                    <LuListFilter className={"text-xl"} />
                     Filter
-                    <FaChevronDown />
+                    <LuChevronDown />
                   </Button>
                 </MenuTrigger>
 

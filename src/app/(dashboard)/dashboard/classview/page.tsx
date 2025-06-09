@@ -34,7 +34,18 @@ export default function BranchViewPage() {
 
   return (
     <>
-      <HStack gap={"3"}>
+      <HStack
+        gap={"3"}
+        shadow={"xs"}
+        position={"sticky"}
+        top={"36"}
+        p={"2"}
+        rounded={"lg"}
+        bg={"AppWorkspace/60"}
+        backdropFilter={"blur(5px)"}
+        borderWidth={"thin"}
+        borderColor={"border.muted"}
+      >
         <NativeSelect.Root w={"250px"}>
           <NativeSelect.Field
             value={state.branch}

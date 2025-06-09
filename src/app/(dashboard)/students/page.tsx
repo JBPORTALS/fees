@@ -10,8 +10,8 @@ import { useUser } from "@/utils/auth";
 import { Button, Field, HStack, NativeSelect, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { AiOutlineDatabase, AiOutlineUserAdd } from "react-icons/ai";
-import { FaChevronDown } from "react-icons/fa";
+import { AiOutlineUserAdd } from "react-icons/ai";
+import { LuChevronDown, LuDatabase } from "react-icons/lu";
 
 export default function Students() {
   const [state, setState] = useState({
@@ -54,7 +54,19 @@ export default function Students() {
 
   return (
     <>
-      <HStack gap={"3"} justifyContent={"space-between"}>
+      <HStack
+        gap={"3"}
+        shadow={"xs"}
+        position={"sticky"}
+        top={"20"}
+        p={"2"}
+        rounded={"lg"}
+        bg={"AppWorkspace/60"}
+        backdropFilter={"blur(5px)"}
+        borderWidth={"thin"}
+        borderColor={"border.muted"}
+        justifyContent={"space-between"}
+      >
         <HStack gap={"3"}>
           <NativeSelect.Root w={"250px"}>
             <NativeSelect.Field
@@ -105,9 +117,9 @@ export default function Students() {
           {state.branch && state.year && (
             <MenuRoot positioning={{ placement: "bottom-end" }}>
               <MenuTrigger asChild>
-                <Button size={"sm"} variant={"ghost"}>
-                  <AiOutlineDatabase />
-                  Download Class Data <FaChevronDown />
+                <Button size={"sm"} colorPalette={"gray"} variant={"ghost"}>
+                  <LuDatabase />
+                  Download Class Data <LuChevronDown />
                 </Button>
               </MenuTrigger>
               <MenuContent zIndex={"popover"} pos={"sticky"}>
