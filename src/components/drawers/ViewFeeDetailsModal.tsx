@@ -11,20 +11,22 @@ import {
   Center,
   Heading,
   HStack,
-  Input,
+  NumberInput,
+  Stat,
   Tag,
+  Text,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { AiOutlineCheckCircle, AiOutlineFileProtect } from "react-icons/ai";
+import { useEffect, useState } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
 import HistoryItem from "../ui/HistoryItem";
 import { useUser } from "@/utils/auth";
 import Link from "next/link";
 import { toaster } from "../ui/toaster";
+import { LuFileDown } from "react-icons/lu";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -189,92 +191,82 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
             px={"5"}
             py={"3"}
             w={"full"}
-            className="border-t bg-secondary"
+            borderTopWidth={"thin"}
+            borderTopColor={"border.emphasized"}
             position={"sticky"}
             bottom={"0"}
           >
-            <HStack
-              borderBottom={"1px"}
-              borderColor={"gray.200"}
+            <VStack
+              borderBottomWidth={"thin"}
+              borderBottomColor={"border"}
               py={"2"}
+              gap={"3"}
               w={"full"}
-              justifyContent={"center"}
+              align={"start"}
             >
-              <span className="font-medium">
+              <Heading size={"md"}>
                 {selectedFeeDetails[0]?.name} - {selectedFeeDetails[0]?.regno}
-              </span>
-            </HStack>
-            {user?.can_update_total && (
-              <>
-                <HStack w={"full"} justifyContent={"space-between"}>
-                  <h1>Total Amount</h1>
-                  <Input
-                    fontSize={"lg"}
-                    fontWeight={"bold"}
-                    value={state.total}
-                    type={"number"}
-                    w={"50%"}
-                    onChange={(e) => {
-                      const value = Math.max(
-                        0,
-                        Math.min(1500000, Number(e.target.value))
-                      );
-                      setState((prev) => ({
-                        ...prev,
-                        total: value.toString(),
-                      }));
-                    }}
-                    variant={"flushed"}
-                  />
-                </HStack>
+              </Heading>
+              <Stat.Root>
+                <Stat.Label>Total Amount</Stat.Label>
+                <Stat.ValueText>
+                  {parseInt(state.total).toLocaleString("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                    maximumFractionDigits: 0,
+                  })}
+                </Stat.ValueText>
+                <Stat.HelpText>
+                  You can update total amount directly in students details
+                  drawer
+                </Stat.HelpText>
+              </Stat.Root>
+              {selectedFeeDetails[0]?.payment_history?.length > 0 && (
                 <HStack w={"full"}>
                   <Button
                     w={"full"}
-                    onClick={onUpdateTotal}
-                    colorPalette={"green"}
-                    loading={isUpdating}
+                    asChild
                     variant={"surface"}
+                    colorPalette={"purple"}
                   >
-                    <AiOutlineCheckCircle className="text-xl" />
-                    Update Total Fee
+                    <Link
+                      download
+                      target={"_blank"}
+                      href={
+                        process.env.NEXT_PUBLIC_ADMIN_URL +
+                        `feedownload.php?college=${user?.college}&id=${selectedFeeDetails[0]?.id}&acadyear=${acadYear}`
+                      }
+                    >
+                      <LuFileDown className="text-xl" />
+                      Download Payments History
+                    </Link>
                   </Button>
                 </HStack>
-              </>
-            )}
-            {selectedFeeDetails[0]?.payment_history?.length && (
-              <HStack w={"full"}>
-                <Button
-                  w={"full"}
-                  asChild
-                  variant={"surface"}
-                  colorPalette={"purple"}
-                >
-                  <Link
-                    download
-                    target={"_blank"}
-                    href={
-                      process.env.NEXT_PUBLIC_ADMIN_URL +
-                      `feedownload.php?college=${user?.college}&id=${selectedFeeDetails[0]?.id}&acadyear=${acadYear}`
-                    }
-                  >
-                    <AiOutlineFileProtect className="text-xl" />
-                    Download Invoice
-                  </Link>
-                </Button>
-              </HStack>
-            )}
+              )}
+            </VStack>
 
-            <HStack w={"full"} py={"2"} justifyContent={"space-between"}>
-              <h1>Challan Id:</h1>
-              <Input
-                onChange={(e) => setChallanId(e.target.value)}
-                variant={"flushed"}
-                fontSize={"xl"}
-                placeholder={"000000"}
-                type={"number"}
-                w={"50%"}
-              />
-            </HStack>
+            <VStack
+              w={"full"}
+              align={"start"}
+              py={"2"}
+              justifyContent={"space-between"}
+            >
+              <NumberInput.Root
+                onValueChange={({ value }) => setChallanId(value)}
+                variant={"subtle"}
+                w={"full"}
+                size={"lg"}
+              >
+                <NumberInput.Input
+                  autoFocus
+                  fontWeight={"bold"}
+                  placeholder="Enter Challan Number"
+                />
+              </NumberInput.Root>
+              <Text fontSize={"sm"} color={"fg.muted"}>
+                Update payments by challan ID of this student
+              </Text>
+            </VStack>
           </VStack>
         </VStack>
       </IDrawer>
