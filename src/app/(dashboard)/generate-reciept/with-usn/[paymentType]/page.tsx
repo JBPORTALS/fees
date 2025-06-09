@@ -852,6 +852,81 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
+  const registrationFeeTemplate = [
+    {
+      name: "usn",
+      label:
+        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(
+          /^[Aa-zZ0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: SEMS(user?.college),
+    },
+    {
+      name: "chaAcadYear",
+      label: "Academic Year",
+      type: "select",
+      placeholder: "Select Academic Year",
+      validateField: Yup.string().required("Fill the field !"),
+      options: ACADYEARS(),
+    },
+    {
+      name: "total",
+      label: "Total Amount",
+      type: "number",
+      validateField: Yup.number()
+        .typeError("Invalid amount")
+        .moreThan(0, "Amount should be more than 0")
+        .required(),
+    },
+    {
+      name: "bank",
+      label: "Bank",
+      type: "select",
+      placeholder: "Select Bank",
+      options: BANKS(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+    {
+      name: "paymentMode",
+      label: "Payment Mode",
+      type: "select",
+      placeholder: "Select Payment Mode",
+      options: PAYMENTMODES(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+  ];
+
   const chequeTemplate: FieldProps[] = [
     {
       name: "chequeNo",
@@ -1099,6 +1174,8 @@ export default function WithUSNDynamicPage() {
               ? securityFeeTemplate
               : paymentType == "HOSTEL_FEE"
               ? hostelFeeTemplate
+              : paymentType == "REGISTRATION_FEE"
+              ? registrationFeeTemplate
               : undefined;
 
           return (
