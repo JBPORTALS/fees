@@ -1,7 +1,6 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import {
-  fetchFeeDetails,
   fetchSelectedFeeDeatails,
   SelectedFee,
   updateFeeDetail,
@@ -53,7 +52,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
   const dispatch = useAppDispatch();
   const [challanId, setChallanId] = useState("");
   const [state, setState] = useState({ total: "" });
-  const [isUpdating, setIsLoading] = useState(false);
+  // const [isUpdating, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
@@ -114,42 +113,45 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
         college: user?.college!,
       })
     ).then(() => {
-      if (!error) onConfirmClose();
+      if (!error) {
+        setChallanId("");
+        onConfirmClose();
+      }
     });
     onOpen();
   };
 
-  const onUpdateTotal = async () => {
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("regno", selectedFeeDetails[0].regno);
-    formData.append("sem", selectedFeeDetails[0].sem);
-    formData.append("year", selectedFeeDetails[0].year);
-    formData.append("total", state.total);
-    formData.append("college", user?.college!);
-    formData.append("acadYear", acadYear);
-    try {
-      await axios(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdatetotal.php", {
-        method: "POST",
-        data: formData,
-      });
-      console.log("Reached");
-      toaster.success({
-        title: "Total fee updated successfully",
-      });
-      dispatch(
-        fetchFeeDetails({
-          branch: selectedFeeDetails[0].branch,
-          year: selectedFeeDetails[0].year,
-          college: user?.college!,
-        })
-      );
-    } catch (e: any) {
-      console.log(e);
-      toaster.error({ title: e.response.data.msg });
-    }
-    setIsLoading(false);
-  };
+  // const onUpdateTotal = async () => {
+  //   setIsLoading(true);
+  //   const formData = new FormData();
+  //   formData.append("regno", selectedFeeDetails[0].regno);
+  //   formData.append("sem", selectedFeeDetails[0].sem);
+  //   formData.append("year", selectedFeeDetails[0].year);
+  //   formData.append("total", state.total);
+  //   formData.append("college", user?.college!);
+  //   formData.append("acadYear", acadYear);
+  //   try {
+  //     await axios(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdatetotal.php", {
+  //       method: "POST",
+  //       data: formData,
+  //     });
+  //     console.log("Reached");
+  //     toaster.success({
+  //       title: "Total fee updated successfully",
+  //     });
+  //     dispatch(
+  //       fetchFeeDetails({
+  //         branch: selectedFeeDetails[0].branch,
+  //         year: selectedFeeDetails[0].year,
+  //         college: user?.college!,
+  //       })
+  //     );
+  //   } catch (e: any) {
+  //     console.log(e);
+  //     toaster.error({ title: e.response.data.msg });
+  //   }
+  //   setIsLoading(false);
+  // };
 
   return (
     <>
