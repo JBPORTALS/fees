@@ -1,24 +1,10 @@
 "use client";
 import { store } from "@/store";
-import { CacheProvider } from "@chakra-ui/next-js";
-import {
-  ChakraProvider,
-  ColorModeScript,
-  ThemeConfig,
-  extendTheme,
-  localStorageManager,
-} from "@chakra-ui/react";
-import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";
 import { QueryClientProvider, QueryClient } from "react-query";
 import TRPCProvider from "@/utils/trpc-provider";
-
-const config: ThemeConfig = {
-  initialColorMode: "light", // 'dark' | 'light'
-  useSystemColorMode: false,
-};
-
-const theme = extendTheme(config);
+import { Provider as ChakraProvider } from "@/components/ui/provider";
+import { Toaster } from "@/components/ui/toaster";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
@@ -26,16 +12,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <TRPCProvider>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
-          <CacheProvider prepend={false}>
+          <ChakraProvider>
+            {children}
             <Toaster />
-            <ChakraProvider
-              // colorModeManager={localStorageManager}
-              theme={theme}
-            >
-              {/* <ColorModeScript initialColorMode={"dark"} /> */}
-              {children}
-            </ChakraProvider>
-          </CacheProvider>
+          </ChakraProvider>
         </Provider>
       </QueryClientProvider>
     </TRPCProvider>

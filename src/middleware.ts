@@ -5,12 +5,7 @@ import { sessionOptions, SessionData } from "@/utils/session";
 
 export default async function middleware(req: NextRequest) {
   const res = NextResponse.next();
-  const session = await getIronSession<SessionData>(req, res, sessionOptions);
-
-  // Protect routes that require authentication
-  if (!session.id && !req.nextUrl.pathname.startsWith("/signin")) {
-    return NextResponse.redirect(new URL("/signin", req.url));
-  }
+  // const session = await getIronSession<SessionData>(req, res, sessionOptions);
 
   return res;
 }

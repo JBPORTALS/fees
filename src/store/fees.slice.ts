@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import { RootState } from ".";
 import { AuthSession } from "@supabase/supabase-js";
 import { SC } from "@/utils/supabase";
+import { toaster } from "@/components/ui/toaster";
 
 export const fetchFeeDetails = createAsyncThunk<
   Fee[],
@@ -714,7 +714,7 @@ export const FeesSlice = createSlice({
         .addCase(fetchFeeDetails.rejected, (state, action) => {
           state.all_fee.pending = false;
           state.all_fee.error = action.payload?.msg ?? null;
-          toast.error(action.payload?.msg ?? "");
+          toaster.error({ title: action.payload?.msg ?? "" });
         }),
       builder
         .addCase(fetchSearchRecord.pending, (state, _action) => {
@@ -728,7 +728,7 @@ export const FeesSlice = createSlice({
         .addCase(fetchSearchRecord.rejected, (state, action) => {
           state.search_by_mode.pending = false;
           state.search_by_mode.error = action.payload?.msg ?? null;
-          toast.error(action.payload?.msg ?? "");
+          toaster.error({ title: action.payload?.msg ?? "" });
         }),
       builder
         .addCase(fetchSelectedFeeDeatails.pending, (state, action) => {
@@ -741,7 +741,7 @@ export const FeesSlice = createSlice({
         .addCase(fetchSelectedFeeDeatails.rejected, (state, action) => {
           state.selected_fee.pending = false;
           state.selected_fee.error = action.payload?.msg ?? null;
-          toast.error(action.payload?.msg ?? "");
+          toaster.error({ title: action.payload?.msg ?? "" });
         }),
       builder
         .addCase(fetchSelectedFeeSearchDetails.pending, (state, action) => {
@@ -762,12 +762,12 @@ export const FeesSlice = createSlice({
         })
         .addCase(updateFeeDetail.fulfilled, (state, action) => {
           state.selected_fee.pending = false;
-          toast.success(action.payload?.msg);
+          toaster.success({ title: action.payload?.msg });
         })
         .addCase(updateFeeDetail.rejected, (state, action) => {
           state.selected_fee.pending = false;
           state.selected_fee.error = action.payload?.msg ?? null;
-          toast.error(action.payload?.msg ?? "");
+          toaster.error({ title: action.payload?.msg ?? "" });
         }),
       builder
         .addCase(updateUSN.pending, (state, _action) => {
@@ -775,11 +775,11 @@ export const FeesSlice = createSlice({
         })
         .addCase(updateUSN.fulfilled, (state, action) => {
           state.update_usn.pending = false;
-          toast.success(action.payload?.msg);
+          toaster.success({ title: action.payload?.msg });
         })
         .addCase(updateUSN.rejected, (state, action) => {
           state.update_usn.pending = false;
-          toast.error(action.payload?.msg ?? "");
+          toaster.error({ title: action.payload?.msg ?? "" });
         }),
       builder
         .addCase(fetchBranchFeeDetails.pending, (state, _action) => {
@@ -792,7 +792,7 @@ export const FeesSlice = createSlice({
         .addCase(fetchBranchFeeDetails.rejected, (state, action) => {
           state.branch_fee.pending = false;
           state.branch_fee.error = action.payload?.msg ?? null;
-          toast.error(action.payload?.msg ?? "");
+          toaster.error({ title: action.payload?.msg ?? "" });
         }),
       builder
         .addCase(fetchOverAllFee.pending, (state, _action) => {
@@ -805,7 +805,7 @@ export const FeesSlice = createSlice({
         .addCase(fetchOverAllFee.rejected, (state, action) => {
           state.overall_fee.pending = false;
           state.overall_fee.error = action.payload?.msg ?? null;
-          toast.error(action.payload?.msg ?? "");
+          toaster.error({ title: action.payload?.msg ?? "" });
         }),
       builder
         .addCase(fetchFeeYearView.pending, (state, _action) => {
@@ -818,7 +818,7 @@ export const FeesSlice = createSlice({
         .addCase(fetchFeeYearView.rejected, (state, action) => {
           state.year_fee.pending = false;
           state.year_fee.error = action.payload?.msg ?? "";
-          toast.error(action.payload?.msg ?? "");
+          toaster.error({ title: action.payload?.msg ?? "" });
         });
 
     builder

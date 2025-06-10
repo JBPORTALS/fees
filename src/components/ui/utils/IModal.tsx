@@ -1,33 +1,32 @@
 import {
   Button,
-  ThemingProps,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  ResponsiveValue,
-  ModalProps,
-  ModalBodyProps,
+  Dialog,
+  DialogBodyProps,
+  DialogRootProps,
 } from "@chakra-ui/react";
 import React from "react";
-import { AiOutlineCloudUpload } from "react-icons/ai";
+import {
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+} from "../dialog";
 
-interface IDrawerProps extends ModalProps {
+interface IDrawerProps extends DialogRootProps {
   heading: string;
   children: React.ReactNode;
   onSubmit?: () => void;
   onClose: () => void;
-  isOpen: boolean;
+  open: boolean;
   buttonTitle?: string;
-  size?: ResponsiveValue<"xl" | "full" | "2xl" | "3xl" | "6xl">;
-  isLoading?: boolean;
+  loading?: boolean;
   colorBtn?: "blue" | "red" | "orange";
   hideBtn?: boolean;
-  isDisabled?: boolean;
-  modalBodyProps?: ModalBodyProps;
+  disabled?: boolean;
+  modalBodyProps?: DialogBodyProps;
+  contentProps?: React.ComponentProps<typeof DialogContent>;
 }
 
 export default function IModal({
@@ -36,37 +35,29 @@ export default function IModal({
   children,
   buttonTitle,
   onSubmit,
-  isOpen,
+  open,
   onClose,
-  isLoading,
+  loading,
   colorBtn,
   hideBtn,
-  isDisabled = false,
+  disabled = false,
   modalBodyProps,
+  contentProps,
   ...props
 }: IDrawerProps) {
   return (
-    <Modal size={size} isOpen={isOpen} onClose={onClose} {...props}>
-      <ModalOverlay
-        bg={"rgba(255,255,255,0.2)"}
-        className={"backdrop-blur-sm"}
-      />
-      <ModalContent className="w-fit min-h-fit h-fit">
-        <ModalHeader className="border-b border-lightgray">
-          {heading}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody
-          {...modalBodyProps}
-          className="w-full h-fit bg-primary flex justify-center"
-        >
-          <div className="w-full h-full">{children}</div>
-        </ModalBody>
+    <DialogRoot size={size} open={open} onOpenChange={onClose} {...props}>
+      <DialogContent {...contentProps}>
+        <DialogHeader>
+          <DialogTitle>{heading}</DialogTitle>
+        </DialogHeader>
+        <DialogCloseTrigger />
+        <DialogBody {...modalBodyProps}>{children}</DialogBody>
         {!hideBtn && (
-          <ModalFooter className="border-t border-lightgray">
+          <Dialog.Footer className="border-t border-lightgray">
             <Button
-              isDisabled={isLoading}
-              colorScheme="blue"
+              disabled={loading}
+              colorPalette="blue"
               variant={"outline"}
               mr={3}
               onClick={onClose}
@@ -74,18 +65,18 @@ export default function IModal({
               Close
             </Button>
             <Button
-              isDisabled={isDisabled}
+              disabled={disabled}
               onClick={async () => {
                 onSubmit && (await onSubmit());
               }}
-              isLoading={isLoading}
-              colorScheme={colorBtn || "blue"}
+              loading={loading}
+              colorPalette={colorBtn || "blue"}
             >
               {buttonTitle || "Upload"}
             </Button>
-          </ModalFooter>
+          </Dialog.Footer>
         )}
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </DialogRoot>
   );
 }

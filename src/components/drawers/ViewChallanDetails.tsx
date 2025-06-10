@@ -2,23 +2,22 @@ import { useAppDispatch } from "@/hooks";
 import { fetchFeeDetails, fetchSearchByMode } from "@/store/fees.slice";
 import {
   Button,
-  FormControl,
-  FormLabel,
   HStack,
   Input,
   Text,
   useDisclosure,
   VStack,
+  Field,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { AiOutlineDelete, AiOutlineFilePdf } from "react-icons/ai";
 import IDrawer from "../ui/utils/IDrawer";
 import { useSearchParams } from "next/navigation";
-import { Link } from "@chakra-ui/next-js";
 import { useAppSelector } from "@/store";
 import { useUser } from "@/utils/auth";
+import Link from "next/link";
+import { toaster } from "../ui/toaster";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -28,7 +27,7 @@ interface props {
 }
 
 export default function ViewChallanDetails({ children, challan_id }: props) {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
   const [isChecking, setIsChecking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const user = useUser();
@@ -75,14 +74,14 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
       setChallanState(response.data[0]);
       setUsn(response.data[0]?.usn);
     } catch (e: any) {
-      toast.error(e.response?.data?.msg);
+      toaster.error({ title: e.response?.data?.msg });
     }
     setIsChecking(false);
   }, [challan_id, user?.college]);
 
   useEffect(() => {
-    isOpen && findChallan();
-  }, [isOpen, findChallan]);
+    open && findChallan();
+  }, [open, findChallan]);
 
   const submit = useCallback(() => {
     if (usn) {
@@ -94,7 +93,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
       axios
         .post(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdateusn.php", formData)
         .then(async (res: any) => {
-          toast.success(res.data.msg);
+          toaster.success({ title: res.data.msg });
           await findChallan();
           setIsChecking(false);
           if (branch && mode && fromDate && toDate && year && feeType)
@@ -119,7 +118,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             );
         })
         .catch((e) => {
-          toast.error(e.response?.data?.msg);
+          toaster.error({ title: e.response?.data?.msg });
           setIsChecking(false);
         });
     }
@@ -149,7 +148,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           formData
         )
         .then(async (res: any) => {
-          toast.success(res.data.msg);
+          toaster.success({ title: res.data.msg });
           await findChallan();
           setIsDeleting(false);
           if (branch && mode && fromDate && toDate && year && feeType)
@@ -174,7 +173,7 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             );
         })
         .catch((e) => {
-          toast.error(e.response?.data?.msg);
+          toaster.error({ title: e.response?.data?.msg });
           setIsDeleting(false);
         });
     }
@@ -183,14 +182,14 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
   return (
     <>
       <IDrawer
-        isLoading={isChecking}
-        isDisabled={false}
+        loading={isChecking}
+        disabled={false}
         onSubmit={submit}
         buttonTitle="Save"
         onClose={() => {
           onClose();
         }}
-        isOpen={isOpen}
+        open={open}
         heading="Challan Details"
       >
         <VStack
@@ -202,133 +201,83 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
           justifyContent={"start"}
           position={"relative"}
         >
-          <FormControl px={"5"}>
+          <Field.Root px={"5"}>
             <HStack>
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Challan Id</Text>
-              </FormLabel>
-              <Input
-                bg={"white"}
-                isReadOnly
-                value={challanState?.challan_id}
-                variant={"filled"}
-                flex={"1.5"}
-              />
+              </Field.Label>
+              <Input readOnly value={challanState?.challan_id} flex={"1.5"} />
             </HStack>
-          </FormControl>
-          <FormControl px={"5"}>
+          </Field.Root>
+          <Field.Root px={"5"}>
             <HStack>
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>USN</Text>
-              </FormLabel>
+              </Field.Label>
               <Input
-                bg={"white"}
-                isReadOnly={!!challanState?.usn}
+                readOnly={!!challanState?.usn}
                 value={usn}
                 onChange={(e) => setUsn(e.target.value)}
-                variant={"filled"}
                 flex={"1.5"}
               />
             </HStack>
-          </FormControl>
-          <FormControl px={"5"}>
+          </Field.Root>
+          <Field.Root px={"5"}>
             <HStack>
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Name</Text>
-              </FormLabel>
-              <Input
-                bg={"white"}
-                isReadOnly
-                value={challanState?.name}
-                variant={"filled"}
-                flex={"1.5"}
-              />
+              </Field.Label>
+              <Input readOnly value={challanState?.name} flex={"1.5"} />
             </HStack>
-          </FormControl>
-          <FormControl px={"5"}>
+          </Field.Root>
+          <Field.Root px={"5"}>
             <HStack>
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Branch</Text>
-              </FormLabel>
-              <Input
-                variant={"filled"}
-                isReadOnly
-                bg={"white"}
-                value={challanState?.branch}
-                flex={"1.5"}
-              />
+              </Field.Label>
+              <Input readOnly value={challanState?.branch} flex={"1.5"} />
             </HStack>
-          </FormControl>
-          <FormControl px={"5"}>
+          </Field.Root>
+          <Field.Root px={"5"}>
             <HStack>
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Sem</Text>
-              </FormLabel>
-              <Input
-                variant={"filled"}
-                isReadOnly
-                bg={"white"}
-                flex={"1.5"}
-                value={challanState?.sem}
-              />
+              </Field.Label>
+              <Input readOnly flex={"1.5"} value={challanState?.sem} />
             </HStack>
-          </FormControl>
-          <FormControl px={"5"}>
+          </Field.Root>
+          <Field.Root px={"5"}>
             <HStack>
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Bank</Text>
-              </FormLabel>
-              <Input
-                variant={"filled"}
-                isReadOnly
-                bg={"white"}
-                flex={"1.5"}
-                value={challanState?.bank}
-              />
+              </Field.Label>
+              <Input readOnly flex={"1.5"} value={challanState?.bank} />
             </HStack>
-          </FormControl>
-          <FormControl px={"5"}>
+          </Field.Root>
+          <Field.Root px={"5"}>
             <HStack>
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Date</Text>
-              </FormLabel>
-              <Input
-                variant={"filled"}
-                isReadOnly
-                bg={"white"}
-                flex={"1.5"}
-                value={challanState?.date}
-              />
+              </Field.Label>
+              <Input readOnly flex={"1.5"} value={challanState?.date} />
             </HStack>
-          </FormControl>
-          <FormControl px={"5"}>
+          </Field.Root>
+          <Field.Root px={"5"}>
             <HStack>
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Method</Text>
-              </FormLabel>
-              <Input
-                variant={"filled"}
-                isReadOnly
-                bg={"white"}
-                flex={"1.5"}
-                value={challanState?.method}
-              />
+              </Field.Label>
+              <Input readOnly flex={"1.5"} value={challanState?.method} />
             </HStack>
-          </FormControl>
-          <FormControl px={"5"}>
+          </Field.Root>
+          <Field.Root px={"5"}>
             <HStack w={"full"}>
-              <FormLabel flex={1}>
+              <Field.Label flex={1}>
                 <Text>Amount Paid</Text>
-              </FormLabel>
-              <Input
-                flex={"1.5"}
-                variant={"filled"}
-                isReadOnly
-                bg={"white"}
-                value={challanState?.amount_paid1}
-              />
+              </Field.Label>
+              <Input flex={"1.5"} readOnly value={challanState?.amount_paid1} />
             </HStack>
-          </FormControl>
+          </Field.Root>
           <VStack
             position={"sticky"}
             p={"5"}
@@ -337,29 +286,28 @@ export default function ViewChallanDetails({ children, challan_id }: props) {
             bottom={"0"}
             w={"full"}
           >
-            <Button
-              as={Link}
-              target="_blank"
-              href={`${process.env.NEXT_PUBLIC_ADMIN_URL}${
-                user?.college == "KSPT"
-                  ? "feekspreceiptdownload"
-                  : "feedownloadreciept"
-              }.php?challan_id=${challanState?.challan_id}&college=${
-                user?.college
-              }`}
-              w={"full"}
-              colorScheme="purple"
-              leftIcon={<AiOutlineFilePdf className={"text-xl"} />}
-            >
-              Download Challan
+            <Button asChild w={"full"} colorPalette="purple">
+              <Link
+                target="_blank"
+                href={`${process.env.NEXT_PUBLIC_ADMIN_URL}${
+                  user?.college == "KSPT"
+                    ? "feekspreceiptdownload"
+                    : "feedownloadreciept"
+                }.php?challan_id=${challanState?.challan_id}&college=${
+                  user?.college
+                }`}
+              >
+                <AiOutlineFilePdf className={"text-xl"} />
+                Download Challan
+              </Link>
             </Button>
             <Button
               w={"full"}
-              colorScheme="red"
-              isLoading={isDeleting}
+              colorPalette="red"
+              loading={isDeleting}
               onClick={onDelete}
-              leftIcon={<AiOutlineDelete className={"text-xl"} />}
             >
+              <AiOutlineDelete className={"text-xl"} />
               Delete Challan
             </Button>
           </VStack>

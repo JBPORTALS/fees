@@ -1,52 +1,44 @@
+import { Button, DrawerRootProps } from "@chakra-ui/react";
+import React from "react";
 import {
-  Drawer,
-  DrawerOverlay,
-  Button,
+  DrawerBody,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
-  DrawerBody,
-  useDisclosure,
-  ThemingProps,
-  ResponsiveValue,
-} from "@chakra-ui/react";
-import React, { useState } from "react";
+  DrawerRoot,
+  DrawerTitle,
+} from "../drawer";
 
-interface IDrawerProps {
+interface IDrawerProps extends DrawerRootProps {
   heading: string;
   children: React.ReactNode;
   onSubmit?: () => void;
   onClose: () => void;
-  isOpen: boolean;
+  open: boolean;
   buttonTitle?: string;
-  isDisabled?: boolean;
-  isLoading?: boolean;
-  size?: ResponsiveValue<"sm" | "xs" | "lg" | "xl" | "md">;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
 export default function IDrawer({
   heading,
   buttonTitle,
   children,
-  isLoading,
+  loading,
   onSubmit,
-  isOpen,
+  open,
   onClose,
-  isDisabled,
+  disabled,
   size,
 }: IDrawerProps) {
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} size={size}>
-      <DrawerOverlay
-        bg={"rgba(246,246,246,0.2)"}
-        className={"backdrop-blur-sm"}
-      />
+    <DrawerRoot open={open} onOpenChange={onClose} size={size}>
       <DrawerContent>
         <DrawerHeader
           className="border-b bg-primary border-b-gray-300"
           py={"2"}
         >
-          {heading}
+          <DrawerTitle>{heading}</DrawerTitle>
         </DrawerHeader>
         <DrawerBody className="px-0 bg-primary" px={"0"} py={"0"}>
           {children}
@@ -55,14 +47,14 @@ export default function IDrawer({
           py={"2"}
           className="flex space-x-4 bg-primary border-t border-t-gray-300"
         >
-          <Button colorScheme={"blue"} variant={"outline"} onClick={onClose}>
+          <Button colorPalette={"blue"} variant={"outline"} onClick={onClose}>
             Cancel
           </Button>
 
           <Button
-            isLoading={isLoading}
-            isDisabled={isDisabled}
-            colorScheme={"blue"}
+            loading={loading}
+            disabled={disabled}
+            colorPalette={"blue"}
             onClick={async () => {
               onSubmit && (await onSubmit());
             }}
@@ -71,6 +63,6 @@ export default function IDrawer({
           </Button>
         </DrawerFooter>
       </DrawerContent>
-    </Drawer>
+    </DrawerRoot>
   );
 }

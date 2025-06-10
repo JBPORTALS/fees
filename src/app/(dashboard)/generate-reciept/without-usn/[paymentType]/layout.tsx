@@ -1,5 +1,3 @@
-"use client";
-
 import WithoutUSNLayout from "@/components/layouts/WithoutUSNLayout";
 
 export default async function GenerateRecieptRootLayout(props: {

@@ -1,7 +1,6 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import {
-  fetchFeeDetails,
   fetchSelectedFeeDeatails,
   SelectedFee,
   updateFeeDetail,
@@ -11,21 +10,22 @@ import {
   Center,
   Heading,
   HStack,
-  IconButton,
-  Input,
+  NumberInput,
+  Stat,
   Tag,
+  Text,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
-import { AiOutlineCheckCircle, AiOutlineFileProtect } from "react-icons/ai";
+import { useEffect, useState } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
-import { MdRemove, MdRemoveCircle } from "react-icons/md";
 import HistoryItem from "../ui/HistoryItem";
 import { useUser } from "@/utils/auth";
+import Link from "next/link";
+import { toaster } from "../ui/toaster";
+import { LuFileDown } from "react-icons/lu";
 
 interface props {
   children: ({ onOpen }: { onOpen: () => void }) => JSX.Element;
@@ -35,9 +35,9 @@ interface props {
 }
 
 export default function ViewFeeDetailsModal({ children, regno, id }: props) {
-  const { isOpen, onClose, onOpen: onModalOpen } = useDisclosure();
+  const { open, onClose, onOpen: onModalOpen } = useDisclosure();
   const {
-    isOpen: isConfirmOpen,
+    open: isConfirmOpen,
     onClose: onConfirmClose,
     onOpen: onConfirmOpen,
   } = useDisclosure();
@@ -46,13 +46,13 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
     (state) => state.fees.selected_fee.data
   ) as SelectedFee[];
   const error = useAppSelector((state) => state.fees.selected_fee.error);
-  const isLoading = useAppSelector(
+  const loading = useAppSelector(
     (state) => state.fees.selected_fee.pending
   ) as boolean;
   const dispatch = useAppDispatch();
   const [challanId, setChallanId] = useState("");
   const [state, setState] = useState({ total: "" });
-  const [isUpdating, setIsLoading] = useState(false);
+  // const [isUpdating, setIsLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
@@ -92,7 +92,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
       setChallanState(response.data[0]);
       onConfirmOpen();
     } catch (e: any) {
-      toast.error(e.response?.data?.msg);
+      toaster.error({ title: e.response?.data?.msg });
     }
     setIsChecking(false);
   };
@@ -113,73 +113,78 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
         college: user?.college!,
       })
     ).then(() => {
-      if (!error) onConfirmClose();
+      if (!error) {
+        setChallanId("");
+        onConfirmClose();
+      }
     });
     onOpen();
   };
 
-  const onUpdateTotal = async () => {
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("regno", selectedFeeDetails[0].regno);
-    formData.append("sem", selectedFeeDetails[0].sem);
-    formData.append("year", selectedFeeDetails[0].year);
-    formData.append("total", state.total);
-    formData.append("college", user?.college!);
-    formData.append("acadYear", acadYear);
-    try {
-      await axios(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdatetotal.php", {
-        method: "POST",
-        data: formData,
-      });
-      toast.success("Total fee updated successfully", {
-        position: "top-right",
-      });
-      dispatch(
-        fetchFeeDetails({
-          branch: selectedFeeDetails[0].branch,
-          year: selectedFeeDetails[0].year,
-          college: user?.college!,
-        })
-      );
-    } catch (e: any) {
-      console.log(e);
-    }
-    setIsLoading(false);
-  };
+  // const onUpdateTotal = async () => {
+  //   setIsLoading(true);
+  //   const formData = new FormData();
+  //   formData.append("regno", selectedFeeDetails[0].regno);
+  //   formData.append("sem", selectedFeeDetails[0].sem);
+  //   formData.append("year", selectedFeeDetails[0].year);
+  //   formData.append("total", state.total);
+  //   formData.append("college", user?.college!);
+  //   formData.append("acadYear", acadYear);
+  //   try {
+  //     await axios(process.env.NEXT_PUBLIC_ADMIN_URL + "feeupdatetotal.php", {
+  //       method: "POST",
+  //       data: formData,
+  //     });
+  //     console.log("Reached");
+  //     toaster.success({
+  //       title: "Total fee updated successfully",
+  //     });
+  //     dispatch(
+  //       fetchFeeDetails({
+  //         branch: selectedFeeDetails[0].branch,
+  //         year: selectedFeeDetails[0].year,
+  //         college: user?.college!,
+  //       })
+  //     );
+  //   } catch (e: any) {
+  //     console.log(e);
+  //     toaster.error({ title: e.response.data.msg });
+  //   }
+  //   setIsLoading(false);
+  // };
 
   return (
     <>
       <IModal
-        isLoading={isLoading}
+        loading={loading}
         onSubmit={onsubmit}
         buttonTitle="Save"
-        isOpen={isConfirmOpen}
+        open={isConfirmOpen}
         onClose={onConfirmClose}
         heading="Challen Details"
       >
         <Center>
           <Heading>₹{challanState?.amount_paid1}</Heading>
-          <Tag ml={"3"} size={"lg"} colorScheme={"purple"}>
-            {challanState?.method}
-          </Tag>
+          <Tag.Root ml={"3"} size={"lg"} colorPalette={"purple"}>
+            <Tag.Label>{challanState?.method}</Tag.Label>
+          </Tag.Root>
         </Center>
       </IModal>
 
       <IDrawer
-        isLoading={isChecking}
-        isDisabled={isLoading}
+        loading={isChecking}
+        disabled={loading}
         onSubmit={findChallan}
         buttonTitle="Check"
         onClose={() => {
           onClose();
         }}
-        isOpen={isOpen}
+        open={open}
         heading="Payment History"
         size={"sm"}
       >
         <VStack w={"full"} h={"full"} justifyContent={"space-between"}>
-          <VStack spacing={0} w={"full"} h={"full"}>
+          <VStack gap={0} w={"full"} h={"full"}>
             {selectedFeeDetails[0]?.payment_history?.map((history) => {
               return <HistoryItem key={history.id} {...{ history }} />;
             })}
@@ -188,87 +193,83 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
             px={"5"}
             py={"3"}
             w={"full"}
-            className="border-t bg-secondary"
+            borderTopWidth={"thin"}
+            borderTopColor={"border.emphasized"}
             position={"sticky"}
             bottom={"0"}
           >
-            <HStack
-              borderBottom={"1px"}
-              borderColor={"gray.200"}
+            <VStack
+              borderBottomWidth={"thin"}
+              borderBottomColor={"border"}
               py={"2"}
+              gap={"3"}
               w={"full"}
-              justifyContent={"center"}
+              align={"start"}
             >
-              <span className="font-medium">
+              <Heading size={"md"}>
                 {selectedFeeDetails[0]?.name} - {selectedFeeDetails[0]?.regno}
-              </span>
-            </HStack>
-            {user?.can_update_total && (
-              <>
-                <HStack w={"full"} justifyContent={"space-between"}>
-                  <h1>Total Amount</h1>
-                  <Input
-                    fontSize={"lg"}
-                    fontWeight={"bold"}
-                    value={state.total}
-                    type={"number"}
-                    w={"50%"}
-                    onChange={(e) => {
-                      const value = Math.max(
-                        0,
-                        Math.min(1500000, Number(e.target.value))
-                      );
-                      setState((prev) => ({
-                        ...prev,
-                        total: value.toString(),
-                      }));
-                    }}
-                    variant={"flushed"}
-                  />
-                </HStack>
+              </Heading>
+              <Stat.Root>
+                <Stat.Label>Total Amount</Stat.Label>
+                <Stat.ValueText>
+                  {parseInt(state.total).toLocaleString("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                    maximumFractionDigits: 0,
+                  })}
+                </Stat.ValueText>
+                <Stat.HelpText>
+                  You can update total amount directly in students details
+                  drawer
+                </Stat.HelpText>
+              </Stat.Root>
+              {selectedFeeDetails[0]?.payment_history?.length > 0 && (
                 <HStack w={"full"}>
                   <Button
                     w={"full"}
-                    onClick={onUpdateTotal}
-                    colorScheme={"green"}
-                    isLoading={isUpdating}
-                    leftIcon={<AiOutlineCheckCircle className="text-xl" />}
+                    asChild
+                    variant={"surface"}
+                    colorPalette={"purple"}
                   >
-                    Update Total Fee
+                    <Link
+                      download
+                      target={"_blank"}
+                      href={
+                        process.env.NEXT_PUBLIC_ADMIN_URL +
+                        `feedownload.php?college=${user?.college}&id=${selectedFeeDetails[0]?.id}&acadyear=${acadYear}`
+                      }
+                    >
+                      <LuFileDown className="text-xl" />
+                      Download Payments History
+                    </Link>
                   </Button>
                 </HStack>
-              </>
-            )}
-            {selectedFeeDetails[0]?.payment_history?.length && (
-              <HStack w={"full"}>
-                <Button
-                  w={"full"}
-                  as={"a"}
-                  download
-                  target={"_blank"}
-                  href={
-                    process.env.NEXT_PUBLIC_ADMIN_URL +
-                    `feedownload.php?college=${user?.college}&id=${selectedFeeDetails[0]?.id}&acadyear=${acadYear}`
-                  }
-                  colorScheme={"purple"}
-                  leftIcon={<AiOutlineFileProtect className="text-xl" />}
-                >
-                  Download Invoice
-                </Button>
-              </HStack>
-            )}
+              )}
+            </VStack>
 
-            <HStack w={"full"} py={"2"} justifyContent={"space-between"}>
-              <h1>Challan Id:</h1>
-              <Input
-                onChange={(e) => setChallanId(e.target.value)}
-                variant={"flushed"}
-                fontSize={"xl"}
-                placeholder={"000000"}
-                type={"number"}
-                w={"50%"}
-              />
-            </HStack>
+            <VStack
+              w={"full"}
+              align={"start"}
+              py={"2"}
+              justifyContent={"space-between"}
+            >
+              <NumberInput.Root
+                onValueChange={({ value }) => setChallanId(value)}
+                value={challanId}
+                variant={"subtle"}
+                w={"full"}
+                size={"lg"}
+              >
+                <NumberInput.Input
+                  autoFocus
+                  fontWeight={"bold"}
+                  placeholder="Enter Challan Number"
+                />
+              </NumberInput.Root>
+              <Text fontSize={"sm"} color={"fg.muted"}>
+                Update payments by challan ID of this student
+              </Text>
+            </VStack>
           </VStack>
         </VStack>
       </IDrawer>

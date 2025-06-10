@@ -16,11 +16,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
-import toast from "react-hot-toast";
+import { useRef, useState } from "react";
 import { MdRemove } from "react-icons/md";
 import IModal from "./utils/IModal";
 import { useUser } from "@/utils/auth";
+import { toaster } from "./toaster";
 
 export default function HistoryItem({ history }: { history: PaymentHistory }) {
   const dispatch = useAppDispatch();
@@ -31,10 +31,12 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
   const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const {
-    isOpen: isConfirmDeleteOpen,
+    open: isConfirmDeleteOpen,
     onClose: onConfirmDeleteClose,
     onOpen: onConfirmDeleteOpen,
   } = useDisclosure();
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const onRemoveChallan = async (history_id: string, challan_id: string) => {
     setIsDeleting(true);
@@ -49,9 +51,7 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
         method: "POST",
         data: formData,
       });
-      toast.success("Fee updated Successfully", {
-        position: "top-right",
-      });
+      toaster.info({ title: "Fee updated Successfully" });
       dispatch(
         fetchFeeDetails({
           branch: selectedFeeDetails[0].branch,
@@ -61,29 +61,29 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
       );
       onConfirmDeleteClose();
     } catch (e: any) {
-      toast.error("unable to remove challan", {
-        position: "top-right",
-      });
+      toaster.error({ title: "unable to remove challan" });
     }
     setIsDeleting(false);
   };
 
   return (
     <HStack
+      ref={containerRef}
       key={history.id}
       w={"full"}
       className={"border-b border-b-lightgray"}
-      bg={"gray.50"}
       px={"5"}
       py={"2"}
       gap={"3"}
       justifyContent={"space-between"}
+      borderBottomWidth={"thin"}
+      borderBottomColor={"border.muted"}
     >
       <IModal
-        isLoading={isDeleting}
+        loading={isDeleting}
         onSubmit={() => onRemoveChallan(history.id, history.challan_id)}
         buttonTitle="Remove"
-        isOpen={isConfirmDeleteOpen}
+        open={isConfirmDeleteOpen}
         onClose={onConfirmDeleteClose}
         heading="Are you sure?"
         colorBtn="red"
@@ -97,15 +97,15 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
       <VStack flex={1} alignItems={"start"}>
         <HStack>
           <h1 className="text-md">{history.paymentno}</h1>
-          <Tag
+          <Tag.Root
             size={"sm"}
             whiteSpace={"nowrap"}
             variant={"outline"}
-            colorScheme={"teal"}
+            colorPalette={"teal"}
             fontWeight={"bold"}
           >
-            CH No. {history.challan_id}
-          </Tag>
+            <Tag.Label>CH No. {history.challan_id}</Tag.Label>
+          </Tag.Root>
         </HStack>
         <span className="text-sm">{history.date}</span>
       </VStack>
@@ -119,14 +119,15 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
       </VStack>
       <IconButton
         aria-label="remove"
-        icon={<MdRemove />}
-        colorScheme="red"
+        colorPalette="red"
         size={"sm"}
         variant={"outline"}
         onClick={() => {
           onConfirmDeleteOpen();
         }}
-      />
+      >
+        <MdRemove />
+      </IconButton>
     </HStack>
   );
 }

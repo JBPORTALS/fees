@@ -1,20 +1,8 @@
-import {
-  HStack,
-  Heading,
-  IconButton,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Tag,
-  Text,
-} from "@chakra-ui/react";
+import { HStack, Heading, Separator, Tabs } from "@chakra-ui/react";
 import React from "react";
-import "react-datepicker/dist/react-datepicker.css";
-import { Link } from "@chakra-ui/next-js";
+
 import { usePathname } from "next/navigation";
-import { AiOutlineArrowLeft } from "react-icons/ai";
+import Link from "next/link";
 
 interface GenerateRecieptLayoutProps {
   children: React.ReactNode;
@@ -26,8 +14,8 @@ export default function GenerateRecieptLayout({
   const pathname = usePathname();
 
   return (
-    <div className="bg-primary relative overflow-hidden w-full  h-full flex flex-col">
-      <HStack px={"5"} py={"3"} className="border-gray-300 border-b">
+    <React.Fragment>
+      <HStack>
         {/* <IconButton
           as={Link}
           href={"/dashboard"}
@@ -36,60 +24,44 @@ export default function GenerateRecieptLayout({
           aria-label="back"
           icon={<AiOutlineArrowLeft className="text-2xl" />}
         /> */}
-        <Heading size={"md"}>New Reciept</Heading>
+        <Heading size={"2xl"}>New Reciept</Heading>
       </HStack>
-      <Tabs
-        isLazy
-        lazyBehavior="unmount"
-        index={
-          pathname.startsWith("/generate-reciept/without-usn")
-            ? 0
-            : pathname.startsWith("/generate-reciept/with-usn")
-            ? 1
-            : -1
-        }
-        colorScheme={"facebook"}
-        size={"md"}
-        variant={"enclosed-colored"}
+      <Tabs.Root
+        lazyMount
+        value={pathname.split("/").at(2)}
+        variant={"subtle"}
         h={"full"}
-        mt={3}
         w={"full"}
       >
-        <TabList
-          zIndex={"sticky"}
-          position={"sticky"}
-          bg={"whiteAlpha.100"}
-          backdropBlur={"sm"}
-          className="px-5 border-b border-gray-300 bg-[rgba(255,255,255,0.5)] backdrop-blur-sm flex justify-between"
-        >
+        <Tabs.List zIndex={"sticky"} position={"sticky"} backdropBlur={"sm"}>
           <HStack justifyContent={"space-between"} w={"full"}>
             <HStack>
-              <Tab
-                as={Link}
-                href={"/generate-reciept/without-usn"}
+              <Tabs.Trigger
+                value="without-usn"
+                asChild
                 _hover={{ textDecoration: "none" }}
               >
-                Without USN
-              </Tab>
-              <Tab
-                as={Link}
-                href={"/generate-reciept/with-usn"}
+                <Link href={"/generate-reciept/without-usn/FEE"}>
+                  Without USN
+                </Link>
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                value="with-usn"
+                asChild
                 _hover={{ textDecoration: "none" }}
               >
-                With USN
-              </Tab>
+                <Link href={"/generate-reciept/with-usn/FEE"}>With USN</Link>
+              </Tabs.Trigger>
             </HStack>
           </HStack>
-        </TabList>
-        <TabPanels h={"fit"} bg={"white"}>
-          <TabPanel p={"0"} w={"full"} h={"fit-content"}>
-            {children}
-          </TabPanel>
-          <TabPanel p={"0"} w={"full"} h={"full"}>
-            {children}
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </div>
+        </Tabs.List>
+
+        <Separator mt={"4"} />
+
+        <Tabs.ContentGroup px={"10"} py={"4"}>
+          {children}
+        </Tabs.ContentGroup>
+      </Tabs.Root>
+    </React.Fragment>
   );
 }

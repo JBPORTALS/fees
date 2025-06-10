@@ -1,27 +1,27 @@
 "use client";
 
 import { useAppSelector } from "@/store";
-import { Center, Heading, VStack } from "@chakra-ui/react";
-import { StudentColumnDefs } from "../mock-data/students-meta";
-import { DataTable } from "../data-table";
+import { Center, Heading } from "@chakra-ui/react";
 
-function StudentDataGrid() {
+import { DataTable } from "@/components/data-table";
+import { columns } from "./columns";
+import React from "react";
+
+export function ClassDataTable() {
   const FeeDetails = useAppSelector((state) => state.fees.all_fee.data) as any;
   const Error = useAppSelector((state) => state.fees.all_fee.error) as
     | null
     | string;
 
   return (
-    <VStack h={"full"} w={"full"}>
+    <React.Fragment>
       {FeeDetails.length > 0 ? (
-        <DataTable data={FeeDetails} columns={StudentColumnDefs} />
+        <DataTable columns={columns} data={FeeDetails} />
       ) : FeeDetails.length == 0 && Error ? (
-        <Center h={"80%"}>
+        <Center>
           <Heading size={"lg"}>{Error}</Heading>
         </Center>
       ) : null}
-    </VStack>
+    </React.Fragment>
   );
 }
-
-export default StudentDataGrid;

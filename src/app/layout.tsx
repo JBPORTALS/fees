@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html suppressHydrationWarning>
       <body className={`${inter.className} overflow-hidden h-screen w-[100vw]`}>
         <NuqsAdapter>
           <Providers>{children}</Providers>

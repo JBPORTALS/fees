@@ -1,29 +1,18 @@
 "use client";
+
 import {
   Button,
-  FormControl,
-  FormLabel,
+  Field as ChakraField,
   HStack,
   IconButton,
   Input,
   InputGroup,
-  InputRightElement,
   Menu,
-  MenuButton,
-  MenuIcon,
-  MenuItem,
-  MenuList,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  Dialog,
   SimpleGrid,
   Switch,
   VStack,
   useDisclosure,
-  useToast,
 } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
@@ -47,11 +36,23 @@ import {
   PAYMENTMODES,
   SEMS,
 } from "@/components/mock-data/constants";
-import { toast } from "react-hot-toast";
 import { useAppSelector } from "@/store";
-import { FaInfoCircle } from "react-icons/fa";
 import { trpc } from "@/utils/trpc-cleint";
 import { useUser } from "@/utils/auth";
+import { toaster } from "@/components/ui/toaster";
+import {
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+} from "@/components/ui/dialog";
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from "@/components/ui/menu";
 
 const initialValues = {
   usn: "", //✅
@@ -83,7 +84,7 @@ const initialValues = {
 const FormikContextProvider = () => {
   const { values, setFieldValue } = useFormikContext<typeof initialValues>();
   const [usn, setUsn] = useState("");
-  const [isLoading, setIsloading] = useState(false);
+  const [loading, setIsloading] = useState(false);
   const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
   const searchParams = useSearchParams();
@@ -170,7 +171,7 @@ const FormikContextProvider = () => {
         setFieldValue("remaining_fee", res.data[0]?.remaining_fee);
       }
     } catch (e: any) {
-      toast.error(e.response.data?.msg, { position: "bottom-center" });
+      toaster.create({ title: e.response.data?.msg, type: "error" });
     }
     setIsloading(false);
   }
@@ -179,34 +180,31 @@ const FormikContextProvider = () => {
 
   return (
     <React.Fragment>
-      <InputGroup>
+      <InputGroup
+        endElement={
+          <IconButton
+            {...{ loading }}
+            onClick={findStudent}
+            aria-label="search"
+            colorPalette="blue"
+            variant={"ghost"}
+          >
+            <AiOutlineSearch />
+          </IconButton>
+        }
+      >
         <Input
-          colorScheme="whiteAlpha"
-          bg={"white"}
           onChange={(e) => setUsn(e.target.value)}
           value={usn}
           onKeyDown={(e) => e.key == "Enter" && findStudent()}
           placeholder="Enter USN here to find the student..."
         />
-        <InputRightElement>
-          <IconButton
-            {...{ isLoading }}
-            onClick={findStudent}
-            aria-label="search"
-            colorScheme="blue"
-            variant={"ghost"}
-            icon={<AiOutlineSearch />}
-          />
-        </InputRightElement>
       </InputGroup>
     </React.Fragment>
   );
 };
 
 export default function WithUSNDynamicPage() {
-  const toast = useToast({
-    position: "bottom-left",
-  });
   const branchList = useAppSelector((state) => state.fees.branch_list.data) as {
     branch: string;
   }[];
@@ -229,15 +227,15 @@ export default function WithUSNDynamicPage() {
     }
   );
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onToggle, onOpen } = useDisclosure();
   const {
-    isOpen: isDeleteConfirmOpen,
-    onClose: onDeleteConfirmClose,
+    open: isDeleteConfirmOpen,
+    onToggle: onDeleteConfirmClose,
     onOpen: onDeleteConfirmOpen,
   } = useDisclosure();
   const {
-    isOpen: isLinkedOpen,
-    onClose: onLinkedClose,
+    open: isLinkedOpen,
+    onToggle: onLinkedClose,
     onOpen: onLinkedOpen,
   } = useDisclosure();
   const router = useRouter();
@@ -251,11 +249,7 @@ export default function WithUSNDynamicPage() {
 
   useEffect(() => {
     if (isMutable)
-      toast({
-        colorScheme: "blue",
-        variant: "subtle",
-        position: "top",
-        icon: <FaInfoCircle />,
+      toaster.info({
         description:
           "Notice: Automatic Fee Updation is enabled; student fees will be updated upon challan generation.",
         title: "Automatic fee updation turned on",
@@ -858,6 +852,81 @@ export default function WithUSNDynamicPage() {
     },
   ];
 
+  const registrationFeeTemplate = [
+    {
+      name: "usn",
+      label:
+        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(
+          /^[Aa-zZ0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: SEMS(user?.college),
+    },
+    {
+      name: "chaAcadYear",
+      label: "Academic Year",
+      type: "select",
+      placeholder: "Select Academic Year",
+      validateField: Yup.string().required("Fill the field !"),
+      options: ACADYEARS(),
+    },
+    {
+      name: "total",
+      label: "Total Amount",
+      type: "number",
+      validateField: Yup.number()
+        .typeError("Invalid amount")
+        .moreThan(0, "Amount should be more than 0")
+        .required(),
+    },
+    {
+      name: "bank",
+      label: "Bank",
+      type: "select",
+      placeholder: "Select Bank",
+      options: BANKS(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+    {
+      name: "paymentMode",
+      label: "Payment Mode",
+      type: "select",
+      placeholder: "Select Payment Mode",
+      options: PAYMENTMODES(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+  ];
+
   const chequeTemplate: FieldProps[] = [
     {
       name: "chequeNo",
@@ -983,10 +1052,8 @@ export default function WithUSNDynamicPage() {
         "_blank"
       );
     } catch (e: any) {
-      toast({
+      toaster.error({
         title: e.response?.data?.msg ?? e,
-        status: "error",
-        position: "bottom",
       });
     }
   }
@@ -1026,16 +1093,12 @@ export default function WithUSNDynamicPage() {
       );
 
       if (response.status == 402) return new Error(response.data.msg);
-      toast({
+      toaster.info({
         title: "Your changes has been saved",
-        status: "info",
-        position: "bottom",
       });
     } catch (e: any) {
-      toast({
+      toaster.error({
         title: e.response?.data?.msg ?? e,
-        status: "error",
-        position: "bottom",
       });
     }
   }
@@ -1052,24 +1115,18 @@ export default function WithUSNDynamicPage() {
       );
 
       if (response.status == 402) return new Error(response.data.msg);
-      toast({
-        title: "Challan Deleted Successfully",
-        status: "success",
-        position: "bottom",
-      });
+      toaster.info({ title: "Challan Deleted Successfully" });
       router.back();
     } catch (e: any) {
-      toast({
+      toaster.error({
         title: e.response?.data?.msg ?? e,
-        status: "error",
-        position: "bottom",
       });
     }
     setIsDeleting(false);
   }
 
   return (
-    <VStack spacing={"0"} w={"full"} h={"fit-content"} position={"relative"}>
+    <VStack gap={"0"} w={"full"} h={"fit-content"} position={"relative"}>
       <Formik
         {...{ initialValues }}
         enableReinitialize
@@ -1117,6 +1174,8 @@ export default function WithUSNDynamicPage() {
               ? securityFeeTemplate
               : paymentType == "HOSTEL_FEE"
               ? hostelFeeTemplate
+              : paymentType == "REGISTRATION_FEE"
+              ? registrationFeeTemplate
               : undefined;
 
           return (
@@ -1128,6 +1187,7 @@ export default function WithUSNDynamicPage() {
                 w={"full"}
                 h={"fit-content"}
                 py={"7"}
+                px={"4"}
               >
                 {checkOnPaymentType?.map((field) => {
                   return (
@@ -1179,27 +1239,31 @@ export default function WithUSNDynamicPage() {
                 w={"full"}
                 p={"4"}
                 zIndex={"modal"}
-                className="border-t border-gray-300 backdrop-blur-sm"
+                borderTopWidth={"thin"}
+                backdropFilter={"blur(5px)"}
               >
                 {!challan_id ? (
                   <>
-                    <HStack>
-                      <FormControl display="flex" alignItems="center">
-                        <FormLabel htmlFor="fee-mutation" mb="0">
-                          Auto Fee Updation
-                        </FormLabel>
-                        <Switch
-                          isChecked={isMutable}
-                          onChange={(e) => {
-                            setIsMustable(!isMutable);
+                    <HStack px={"4"}>
+                      <ChakraField.Root display="flex" alignItems="center">
+                        <Switch.Root
+                          checked={isMutable}
+                          onCheckedChange={({ checked }) => {
+                            setIsMustable(checked);
                           }}
                           id="fee-mutation"
-                        />
-                      </FormControl>
+                        >
+                          <Switch.Label>Auto Fee Updation</Switch.Label>
+                          <Switch.HiddenInput />
+                          <Switch.Control>
+                            <Switch.Thumb />
+                          </Switch.Control>
+                        </Switch.Root>
+                      </ChakraField.Root>
                     </HStack>
                     <Button
                       size={"lg"}
-                      isLoading={isSubmitting || isValidating}
+                      loading={isSubmitting || isValidating}
                       onClick={() => {
                         if (isMutable) {
                           onOpen();
@@ -1207,54 +1271,54 @@ export default function WithUSNDynamicPage() {
                           handleSubmit();
                         }
                       }}
-                      isDisabled={
+                      disabled={
                         Object.keys(errors).length > 0 ||
                         isSubmitting ||
                         isValidating
                       }
-                      colorScheme="purple"
-                      leftIcon={<AiOutlineFileDone className="text-xl" />}
+                      colorPalette="purple"
                     >
+                      <AiOutlineFileDone className="text-xl" />
                       Generate Reciept
                     </Button>
                   </>
                 ) : (
                   <HStack width={"100%"} justifyContent={"space-between"}>
-                    <Menu>
-                      <MenuButton
-                        as={IconButton}
-                        size={"lg"}
-                        variant={"outline"}
-                        icon={<AiOutlineMore className="text-2xl" />}
-                        aria-label="More-icon"
-                      />
-                      <MenuList className="hover:no-underline ">
+                    <MenuRoot>
+                      <MenuTrigger asChild>
+                        <IconButton
+                          size={"lg"}
+                          variant={"outline"}
+                          aria-label="More-icon"
+                        >
+                          <AiOutlineMore className="text-2xl" />
+                        </IconButton>
+                      </MenuTrigger>
+                      <MenuContent className="hover:no-underline ">
                         <MenuItem
+                          value="download-reciept"
                           onClick={() => {
                             window.open(
                               `${process.env.NEXT_PUBLIC_ADMIN_URL}feedownloadreciept.php?challan_id=${challan_id}&acadyear=${acadYear}&college=${user?.college}`
                             );
                           }}
                         >
-                          <MenuIcon className="mr-2">
-                            <AiOutlineFileText className="text-lg" />
-                          </MenuIcon>
+                          <AiOutlineFileText className="text-lg" />
                           Download Reciept
                         </MenuItem>
                         <MenuItem
+                          value="delete-challen"
                           color={"darkred"}
                           onClick={onDeleteConfirmOpen}
                         >
-                          <MenuIcon className="mr-2">
-                            <AiOutlineDelete className="text-lg" />
-                          </MenuIcon>
+                          <AiOutlineDelete className="text-lg" />
                           Delete Challan
                         </MenuItem>
-                      </MenuList>
-                    </Menu>
+                      </MenuContent>
+                    </MenuRoot>
                     <Button
                       size={"lg"}
-                      isLoading={isSubmitting || isValidating}
+                      loading={isSubmitting || isValidating}
                       onClick={() => {
                         const isLinked = data[0].linked;
                         if (isLinked) {
@@ -1263,58 +1327,55 @@ export default function WithUSNDynamicPage() {
                           handleSubmit();
                         }
                       }}
-                      isDisabled={
+                      disabled={
                         Object.keys(errors).length > 0 ||
                         isSubmitting ||
                         isValidating
                       }
-                      colorScheme="purple"
-                      rightIcon={<AiOutlineCheck className="text-xl" />}
+                      colorPalette="purple"
                     >
-                      Save
+                      Save <AiOutlineCheck className="text-xl" />
                     </Button>
                   </HStack>
                 )}
               </HStack>
-              <Modal onClose={onClose} isOpen={isOpen}>
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>📢 Are you sure?</ModalHeader>
-                  <ModalBody>
+              <DialogRoot onOpenChange={onToggle} open={open}>
+                <DialogContent>
+                  <DialogHeader>📢 Are you sure?</DialogHeader>
+                  <DialogBody>
                     {`Generating the receipt will permanently alter the student's
                     total fee. Confirm only after reviewing the details
                     carefully.`}
-                  </ModalBody>
-                  <ModalFooter gap={3}>
-                    <Button onClick={onClose} variant={"ghost"}>
+                  </DialogBody>
+                  <DialogFooter gap={3}>
+                    <Button onClick={onToggle} variant={"ghost"}>
                       Cancel
                     </Button>
                     <Button
-                      colorScheme="facebook"
+                      colorPalette="facebook"
                       onClick={() => {
                         handleSubmit();
-                        onClose();
+                        onToggle();
                       }}
                     >
                       Yes, Generate
                     </Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
+                  </DialogFooter>
+                </DialogContent>
+              </DialogRoot>
 
-              <Modal onClose={onLinkedClose} isOpen={isLinkedOpen}>
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>📢 Are you sure?</ModalHeader>
-                  <ModalBody>
+              <DialogRoot onOpenChange={onLinkedClose} open={isLinkedOpen}>
+                <DialogContent>
+                  <DialogHeader>📢 Are you sure?</DialogHeader>
+                  <DialogBody>
                     {`Updating the receipt will unlink the challan from student transactions, it may lead you to again link the challan to respective student.`}
-                  </ModalBody>
-                  <ModalFooter gap={3}>
+                  </DialogBody>
+                  <DialogFooter gap={3}>
                     <Button onClick={onLinkedClose} variant={"ghost"}>
                       Cancel
                     </Button>
                     <Button
-                      colorScheme="facebook"
+                      colorPalette="facebook"
                       onClick={() => {
                         handleSubmit();
                         onLinkedClose();
@@ -1322,27 +1383,26 @@ export default function WithUSNDynamicPage() {
                     >
                       Save Changes
                     </Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
+                  </DialogFooter>
+                </DialogContent>
+              </DialogRoot>
 
-              <Modal
-                onClose={onDeleteConfirmClose}
-                isOpen={isDeleteConfirmOpen}
+              <DialogRoot
+                onOpenChange={onDeleteConfirmClose}
+                open={isDeleteConfirmOpen}
               >
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader fontSize={"medium"}>
+                <DialogContent>
+                  <DialogHeader fontSize={"medium"}>
                     📢 Are you sure, you want to delete this challan?
-                  </ModalHeader>
-                  <ModalBody>{`This is irreversable action, you can't undo this action at anytime.`}</ModalBody>
-                  <ModalFooter gap={3}>
+                  </DialogHeader>
+                  <DialogBody>{`This is irreversable action, you can't undo this action at anytime.`}</DialogBody>
+                  <DialogFooter gap={3}>
                     <Button onClick={onDeleteConfirmClose} variant={"ghost"}>
                       Cancel
                     </Button>
                     <Button
-                      isLoading={isDeleting}
-                      colorScheme="red"
+                      loading={isDeleting}
+                      colorPalette="red"
                       onClick={() => {
                         deleteReciept();
                         onLinkedClose();
@@ -1350,9 +1410,9 @@ export default function WithUSNDynamicPage() {
                     >
                       Delete
                     </Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
+                  </DialogFooter>
+                </DialogContent>
+              </DialogRoot>
             </React.Fragment>
           );
         }}

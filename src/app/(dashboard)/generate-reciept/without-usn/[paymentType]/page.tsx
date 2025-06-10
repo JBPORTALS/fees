@@ -1,28 +1,16 @@
 "use client";
 import {
   Button,
-  FormControl,
-  FormLabel,
   HStack,
   IconButton,
   InputGroup,
-  InputRightElement,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   SimpleGrid,
   Switch,
   Input,
   VStack,
   useDisclosure,
-  useToast,
-  InputLeftElement,
   Tag,
-  TagLabel,
-  TagCloseButton,
+  Field as ChakraField,
 } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
@@ -41,8 +29,15 @@ import {
   SEMS,
 } from "@/components/mock-data/constants";
 import { useState } from "react";
-import { FaInfoCircle } from "react-icons/fa";
 import { useUser } from "@/utils/auth";
+import { toaster } from "@/components/ui/toaster";
+import {
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+} from "@/components/ui/dialog";
 
 const initialValues = {
   name: "", //✅
@@ -72,9 +67,8 @@ const FormikContextProvider = () => {
   const { values, setFieldValue, handleReset } =
     useFormikContext<typeof initialValues>();
   const [appId, setAppId] = useState("");
-  const [isLoading, setIsloading] = useState(false);
+  const [loading, setIsloading] = useState(false);
   const user = useUser();
-  const toast = useToast();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
 
   useEffect(() => {
@@ -130,8 +124,7 @@ const FormikContextProvider = () => {
         setFieldValue("appid", appId);
       }
     } catch (e: any) {
-      toast({
-        status: "error",
+      toaster.error({
         title: "Invalid Application ID",
         description: "Unable to find the Applicantion ID",
       });
@@ -141,40 +134,40 @@ const FormikContextProvider = () => {
 
   return (
     <React.Fragment>
-      <InputGroup>
-        {values.byApplicationId && (
-          <InputLeftElement px={"2"} w={"fit-content"}>
-            <Tag colorScheme="gray">
-              <TagLabel>By App. ID</TagLabel>
-              <TagCloseButton
+      <InputGroup
+        endElement={
+          <IconButton
+            {...{ loading }}
+            onClick={findStudent}
+            aria-label="search"
+            colorPalette="blue"
+            variant={"ghost"}
+          >
+            {<AiOutlineSearch />}
+          </IconButton>
+        }
+        startElement={
+          values.byApplicationId && (
+            <Tag.Root colorPalette="gray">
+              <Tag.Label>By App. ID</Tag.Label>
+              <Tag.CloseTrigger
                 onClick={() => {
                   setFieldValue("byApplicationId", false);
                   handleReset();
                 }}
               />
-            </Tag>
-          </InputLeftElement>
-        )}
+            </Tag.Root>
+          )
+        }
+      >
         <Input
           w={"full"}
           pl={values.byApplicationId ? "32" : undefined}
-          colorScheme="whiteAlpha"
-          bg={"white"}
           onChange={(e) => setAppId(e.target.value)}
           value={appId}
           onKeyDown={(e) => e.key == "Enter" && findStudent()}
           placeholder="Enter Application ID here to find the applicant..."
         />
-        <InputRightElement>
-          <IconButton
-            {...{ isLoading }}
-            onClick={findStudent}
-            aria-label="search"
-            colorScheme="blue"
-            variant={"ghost"}
-            icon={<AiOutlineSearch />}
-          />
-        </InputRightElement>
       </InputGroup>
     </React.Fragment>
   );
@@ -185,12 +178,8 @@ export default function WithoutUSNDynamicPage() {
     branch: string;
   }[];
 
-  const toast = useToast({
-    position: "bottom-left",
-  });
-
   const user = useUser();
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onToggle, onOpen } = useDisclosure();
   const [isAutoAddEnabled, setIsAutoAddEnabled] = useState(false);
   const params = useParams();
   const paymentType = params.paymentType;
@@ -198,11 +187,7 @@ export default function WithoutUSNDynamicPage() {
 
   useEffect(() => {
     if (isAutoAddEnabled)
-      toast({
-        colorScheme: "blue",
-        variant: "subtle",
-        position: "top",
-        icon: <FaInfoCircle />,
+      toaster.info({
         description:
           "Notice: Automatic Add Student is enabled; student data will be updated in database upon challan generation.",
         title: "Automatic add student turned on",
@@ -910,7 +895,7 @@ export default function WithoutUSNDynamicPage() {
   ];
 
   return (
-    <VStack spacing={"0"} w={"full"} h={"fit-content"} position={"relative"}>
+    <VStack gap={"0"} w={"full"} h={"fit-content"} position={"relative"}>
       <Formik
         {...{ initialValues }}
         onSubmit={async (state) => {
@@ -966,9 +951,8 @@ export default function WithoutUSNDynamicPage() {
             document.body.appendChild(link);
             link.click();
           } catch (e: any) {
-            toast({
+            toaster.error({
               title: e.response?.data?.msg,
-              status: "error",
             });
           }
         }}
@@ -1019,6 +1003,7 @@ export default function WithoutUSNDynamicPage() {
                 w={"full"}
                 h={"fit-content"}
                 py={"7"}
+                px={"4"}
               >
                 {checkOnPaymentType?.map((field) => {
                   return (
@@ -1067,25 +1052,29 @@ export default function WithoutUSNDynamicPage() {
                 justifyContent={"end"}
                 w={"full"}
                 p={"4"}
-                className="border-t border-gray-300 backdrop-blur-sm"
+                borderTopWidth={"thin"}
+                backdropFilter={"blur(5px)"}
               >
-                <HStack>
-                  <FormControl display="flex" alignItems="center">
-                    <FormLabel htmlFor="fee-mutation" mb="0">
-                      Auto Add Student
-                    </FormLabel>
-                    <Switch
+                <HStack px={"5"}>
+                  <ChakraField.Root display="flex" alignItems="center">
+                    <Switch.Root
                       id="fee-mutation"
-                      isChecked={isAutoAddEnabled}
-                      onChange={(e) => {
-                        setIsAutoAddEnabled(!isAutoAddEnabled);
-                      }}
-                    />
-                  </FormControl>
+                      onCheckedChange={({ checked }) =>
+                        setIsAutoAddEnabled(checked)
+                      }
+                      checked={isAutoAddEnabled}
+                    >
+                      <Switch.Label>Auto Add Student</Switch.Label>
+                      <Switch.HiddenInput />
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                    </Switch.Root>
+                  </ChakraField.Root>
                 </HStack>
                 <Button
                   size={"lg"}
-                  isLoading={isSubmitting || isValidating}
+                  loading={isSubmitting || isValidating}
                   onClick={() => {
                     if (isAutoAddEnabled) {
                       onOpen();
@@ -1093,28 +1082,26 @@ export default function WithoutUSNDynamicPage() {
                       handleSubmit();
                     }
                   }}
-                  isDisabled={
+                  disabled={
                     Object.keys(errors).length > 0 ||
                     isSubmitting ||
                     isValidating
                   }
-                  colorScheme="purple"
-                  leftIcon={<AiOutlineFileDone className="text-xl" />}
                 >
+                  <AiOutlineFileDone className="text-xl" />
                   Generate Reciept
                 </Button>
               </HStack>
-              <Modal onClose={onClose} isOpen={isOpen}>
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>📢 Are you sure?</ModalHeader>
-                  <ModalBody>
+              <DialogRoot onOpenChange={onToggle} open={open}>
+                <DialogContent>
+                  <DialogHeader>📢 Are you sure?</DialogHeader>
+                  <DialogBody>
                     {`Generating the receipt will create new student record.`}
-                  </ModalBody>
-                  <ModalFooter gap={3}>
+                  </DialogBody>
+                  <DialogFooter gap={3}>
                     <Button variant={"ghost"}>Cancel</Button>
                     <Button
-                      colorScheme="facebook"
+                      colorPalette="facebook"
                       onClick={() => {
                         handleSubmit();
                         onClose();
@@ -1122,9 +1109,9 @@ export default function WithoutUSNDynamicPage() {
                     >
                       Yes, Generate
                     </Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
+                  </DialogFooter>
+                </DialogContent>
+              </DialogRoot>
             </React.Fragment>
           );
         }}
