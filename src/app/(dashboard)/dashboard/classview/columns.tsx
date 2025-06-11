@@ -1,7 +1,7 @@
 import ViewFeeDetailsModal from "@/components/drawers/ViewFeeDetailsModal";
 import { Student } from "@/components/mock-data/students-meta";
 import { Status } from "@/components/status";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, Link } from "@chakra-ui/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { LuArrowRight } from "react-icons/lu";
 
@@ -13,10 +13,30 @@ export const columns: ColumnDef<Student>[] = [
   {
     accessorKey: "regno",
     header: "Reg No.",
+    cell(props) {
+      const original = props.row.original;
+      return (
+        <ViewFeeDetailsModal id={original.id} regno={original.regno}>
+          {({ onOpen }) => (
+            <Link onClick={onOpen}>{props.row.getValue("regno")}</Link>
+          )}
+        </ViewFeeDetailsModal>
+      );
+    },
   },
   {
     accessorKey: "name",
     header: "Name",
+    cell(props) {
+      const original = props.row.original;
+      return (
+        <ViewFeeDetailsModal id={original.id} regno={original.regno}>
+          {({ onOpen }) => (
+            <Link onClick={onOpen}>{props.row.getValue("name")}</Link>
+          )}
+        </ViewFeeDetailsModal>
+      );
+    },
   },
   {
     accessorKey: "total1",

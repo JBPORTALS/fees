@@ -1,16 +1,7 @@
-import { AiOutlineEye } from "react-icons/ai";
 import ViewStudentsDetails from "../drawers/ViewStudentDetails";
-import { Tooltip } from "../ui/tooltip";
 import { ColumnDef } from "@tanstack/react-table";
-import { Icon, IconButton } from "@chakra-ui/react";
-import {
-  LuArrowRight,
-  LuArrowUpWideNarrow,
-  LuCheckCircle2,
-  LuCircle,
-  LuCircleDashed,
-  LuView,
-} from "react-icons/lu";
+import { IconButton, Link } from "@chakra-ui/react";
+import { LuArrowRight } from "react-icons/lu";
 import { Status } from "../status";
 
 export type Student = {
@@ -34,10 +25,38 @@ export const StudentColumnDefs: ColumnDef<Student>[] = [
   {
     accessorKey: "regno",
     header: "USN",
+    cell(props) {
+      const original = props.row.original;
+      return (
+        <ViewStudentsDetails
+          key={original.id}
+          regno={original.regno}
+          id={original.id}
+        >
+          {({ onOpen }) => (
+            <Link onClick={onOpen}>{props.row.getValue("regno")}</Link>
+          )}
+        </ViewStudentsDetails>
+      );
+    },
   },
   {
     accessorKey: "name",
     header: "Name",
+    cell(props) {
+      const original = props.row.original;
+      return (
+        <ViewStudentsDetails
+          key={original.id}
+          regno={original.regno}
+          id={original.id}
+        >
+          {({ onOpen }) => (
+            <Link onClick={onOpen}>{props.row.getValue("name")}</Link>
+          )}
+        </ViewStudentsDetails>
+      );
+    },
   },
   {
     accessorKey: "category",
