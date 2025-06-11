@@ -2,7 +2,7 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails } from "@/store/fees.slice";
-import { HStack, NativeSelect, VStack } from "@chakra-ui/react";
+import { HStack, NativeSelect, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 
@@ -46,7 +46,7 @@ export default function BranchViewPage() {
         borderWidth={"thin"}
         borderColor={"border.muted"}
       >
-        <NativeSelect.Root w={"250px"}>
+        <NativeSelect.Root variant={"subtle"} w={"250px"}>
           <NativeSelect.Field
             value={state.branch}
             onChange={(e) =>
@@ -68,7 +68,7 @@ export default function BranchViewPage() {
         </NativeSelect.Root>
 
         {state.branch ? (
-          <NativeSelect.Root w={"250px"}>
+          <NativeSelect.Root variant={"subtle"} w={"250px"}>
             <NativeSelect.Field
               value={state.year}
               onChange={(e) =>
