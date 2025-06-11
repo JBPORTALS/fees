@@ -18,7 +18,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import IDrawer from "../ui/utils/IDrawer";
 import IModal from "../ui/utils/IModal";
 import HistoryItem from "../ui/HistoryItem";
@@ -74,28 +74,31 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
     dispatch(fetchSelectedFeeDeatails({ regno, id, college: user?.college! }));
   };
 
-  const findChallan = async () => {
-    setIsChecking(true);
-    try {
-      const formData = new FormData();
-      formData.append("challan_id", challanId);
-      formData.append("reg_no", regno);
-      formData.append("college", user?.college!);
-      formData.append("acadYear", acadYear);
-      const response = await axios(
-        process.env.NEXT_PUBLIC_ADMIN_URL + "feesearchchallan.php",
-        {
-          method: "POST",
-          data: formData,
-        }
-      );
-      setChallanState(response.data[0]);
-      onConfirmOpen();
-    } catch (e: any) {
-      toaster.error({ title: e.response?.data?.msg });
-    }
-    setIsChecking(false);
-  };
+  const findChallan = useCallback(
+    async (challanId: string) => {
+      setIsChecking(true);
+      try {
+        const formData = new FormData();
+        formData.append("challan_id", challanId);
+        formData.append("reg_no", regno);
+        formData.append("college", user?.college!);
+        formData.append("acadYear", acadYear);
+        const response = await axios(
+          process.env.NEXT_PUBLIC_ADMIN_URL + "feesearchchallan.php",
+          {
+            method: "POST",
+            data: formData,
+          }
+        );
+        setChallanState(response.data[0]);
+        onConfirmOpen();
+      } catch (e: any) {
+        toaster.error({ title: e.response?.data?.msg });
+      }
+      setIsChecking(false);
+    },
+    [regno, user?.college, acadYear]
+  );
 
   useEffect(() => {
     setState((prev) => ({
@@ -174,7 +177,7 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
       <IDrawer
         loading={isChecking}
         disabled={loading}
-        onSubmit={findChallan}
+        onSubmit={() => findChallan(challanId)}
         buttonTitle="Check"
         onClose={() => {
           onClose();
