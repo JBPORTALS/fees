@@ -1,7 +1,9 @@
 import {
   Field,
   Input,
+  InputGroup,
   NativeSelect,
+  NumberInput,
   Text,
   useDisclosure,
   VStack,
@@ -25,6 +27,7 @@ interface props {
 const initialState = {
   usn: "",
   name: "",
+  phone: "",
   sem: "",
   branch: "",
   total: "",
@@ -36,6 +39,10 @@ const initialState = {
 const Schema = Yup.object().shape({
   usn: Yup.string().required(),
   name: Yup.string().required().min(2),
+  phone: Yup.string()
+    .required()
+    .min(10, "Phone number should be 10 digits")
+    .max(10, "Phone number can't be exceed more than 10 digits"),
   sem: Yup.string().required("Sem is required"),
   category: Yup.string().required("Year is required"),
   college: Yup.string(),
@@ -115,6 +122,7 @@ export default function AddStudentsDetails({ children }: props) {
         const formData = new FormData();
         formData.append("usn", values.usn);
         formData.append("name", values.name);
+        formData.append("phone", values.phone);
         formData.append("category", values.category);
         formData.append("sem", values.sem);
         formData.append("branch", values.branch);
@@ -157,6 +165,7 @@ export default function AddStudentsDetails({ children }: props) {
           handleSubmit();
         }}
         buttonTitle="Save"
+        size={"sm"}
         onClose={() => {
           onClose();
         }}
@@ -200,6 +209,26 @@ export default function AddStudentsDetails({ children }: props) {
                 onBlur={handleBlur}
               />
               <Field.ErrorText>{errors.name}</Field.ErrorText>
+            </Field.Root>
+
+            <Field.Root
+              invalid={!!errors.phone?.length && touched.phone}
+              px={"5"}
+            >
+              <Field.Label flex={1}>
+                <Text>Phone Number</Text>
+              </Field.Label>
+              <InputGroup startAddon={"+91"}>
+                <NumberInput.Root
+                  name="phone"
+                  w={"full"}
+                  value={values.phone}
+                  onChange={handleChange}
+                >
+                  <NumberInput.Input onBlur={handleBlur} />
+                </NumberInput.Root>
+              </InputGroup>
+              <Field.ErrorText>{errors.phone}</Field.ErrorText>
             </Field.Root>
 
             <Field.Root invalid={!!errors.sem?.length && touched.sem} px={"5"}>

@@ -2,7 +2,7 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails } from "@/store/fees.slice";
-import { HStack, NativeSelect, Text, VStack } from "@chakra-ui/react";
+import { Button, HStack, NativeSelect, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 
@@ -88,6 +88,10 @@ export default function BranchViewPage() {
             <NativeSelect.Indicator />
           </NativeSelect.Root>
         ) : null}
+
+        <Button variant={"subtle"} ml={"auto"}>
+          Send Fee Reminder
+        </Button>
       </HStack>
       <VStack className="w-full h-full" gap={0}>
         {!state.branch ? (

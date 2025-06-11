@@ -556,6 +556,7 @@ export interface Fee {
   id: string;
   regno: string;
   name: string;
+  phone: string;
   branch: string;
   year: string;
   total: number;
