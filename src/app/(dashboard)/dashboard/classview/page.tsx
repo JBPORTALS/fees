@@ -8,6 +8,13 @@ import { InfoCard } from "@/components/ui/utils/InfoCard";
 
 import { useUser } from "@/utils/auth";
 import { ClassDataTable } from "./data-table";
+import {
+  LuMessageCircle,
+  LuRocket,
+  LuSendHorizonal,
+  LuSendToBack,
+} from "react-icons/lu";
+import { SendReminderDialog } from "./send-reminder-dialog";
 
 export default function BranchViewPage() {
   const [state, setState] = useState({
@@ -89,9 +96,7 @@ export default function BranchViewPage() {
           </NativeSelect.Root>
         ) : null}
 
-        <Button variant={"subtle"} ml={"auto"}>
-          Send Fee Reminder
-        </Button>
+        {/* {state.branch && state.year && <SendReminderDialog />} */}
       </HStack>
       <VStack className="w-full h-full" gap={0}>
         {!state.branch ? (
