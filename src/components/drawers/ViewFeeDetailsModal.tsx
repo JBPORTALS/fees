@@ -262,9 +262,9 @@ export default function ViewFeeDetailsModal({ children, regno, id }: props) {
                 variant={"subtle"}
                 w={"full"}
                 size={"lg"}
+                autoFocus
               >
                 <NumberInput.Input
-                  autoFocus
                   fontWeight={"bold"}
                   placeholder="Enter Challan Number"
                 />
