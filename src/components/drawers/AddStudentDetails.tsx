@@ -42,7 +42,8 @@ const Schema = Yup.object().shape({
   phone: Yup.string()
     .required()
     .min(10, "Phone number should be 10 digits")
-    .max(10, "Phone number can't be exceed more than 10 digits"),
+    .max(10, "Phone number can't be exceed more than 10 digits")
+    .optional(),
   sem: Yup.string().required("Sem is required"),
   category: Yup.string().required("Year is required"),
   college: Yup.string(),
