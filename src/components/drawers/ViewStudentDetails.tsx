@@ -13,6 +13,8 @@ import {
   useDisclosure,
   VStack,
   NativeSelect,
+  NumberInput,
+  InputGroup,
 } from "@chakra-ui/react";
 import IDrawer from "../ui/utils/IDrawer";
 import { useFormik } from "formik";
@@ -35,6 +37,10 @@ import { toaster } from "../ui/toaster";
 
 const Schema = Yup.object().shape({
   name: Yup.string().required().min(2),
+  phone: Yup.string()
+    .required()
+    .min(10, "Phone number should be 10 digits")
+    .max(10, "Phone number can't be exceed more than 10 digits"),
   sem: Yup.string().required("Sem is required"),
   category: Yup.string().required("Year is required"),
   branch: Yup.string().required("Branch is required"),
@@ -45,6 +51,7 @@ const Schema = Yup.object().shape({
 type FormikState = {
   id: string;
   name: string;
+  phone: string;
   usn: string;
   sem: string;
   branch: string;
@@ -59,6 +66,7 @@ let initialState: FormikState = {
   id: "",
   usn: "",
   name: "",
+  phone: "",
   sem: "",
   branch: "",
   total: 0,
@@ -132,6 +140,7 @@ export default function ViewStudentsDetails({
         values: {
           id: data[0]?.id ?? "",
           usn: data[0]?.regno ?? "",
+          phone: data[0]?.phone ?? "",
           name: data[0]?.name ?? "",
           sem: data[0]?.sem ?? "",
           branch: data[0]?.branch ?? "",
@@ -171,6 +180,7 @@ export default function ViewStudentsDetails({
       formData.append("id", values.id);
       formData.append("usn", values.usn);
       formData.append("name", values.name);
+      formData.append("phone", values.phone);
       formData.append("category", values.category);
       formData.append("sem", values.sem);
       formData.append("branch", values.branch);
@@ -260,6 +270,7 @@ export default function ViewStudentsDetails({
       const formData = new FormData();
       formData.append("id", values.id);
       formData.append("regno", values.usn);
+      formData.append("phone", values.phone);
       formData.append("paid", amount);
       formData.append("method", method);
       formData.append("college", user?.college!);
@@ -452,6 +463,26 @@ export default function ViewStudentsDetails({
                   onBlur={handleBlur}
                 />
                 <Field.ErrorText>{errors.name}</Field.ErrorText>
+              </Field.Root>
+
+              <Field.Root
+                invalid={!!errors.phone?.length && touched.phone}
+                px={"5"}
+              >
+                <Field.Label flex={1}>
+                  <Text>Phone Number</Text>
+                </Field.Label>
+                <InputGroup startAddon={"+91"}>
+                  <NumberInput.Root
+                    name="phone"
+                    w={"full"}
+                    value={values.phone}
+                    onChange={handleChange}
+                  >
+                    <NumberInput.Input onBlur={handleBlur} />
+                  </NumberInput.Root>
+                </InputGroup>
+                <Field.ErrorText>{errors.phone}</Field.ErrorText>
               </Field.Root>
 
               <Field.Root

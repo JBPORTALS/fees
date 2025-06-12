@@ -556,6 +556,7 @@ export interface Fee {
   id: string;
   regno: string;
   name: string;
+  phone: string;
   branch: string;
   year: string;
   total: number;
@@ -638,7 +639,7 @@ interface FeesIntialState {
 }
 
 const initialState: FeesIntialState = {
-  acadYear: "2024",
+  acadYear: "2025",
   year_list: [],
   all_fee: {
     data: [],

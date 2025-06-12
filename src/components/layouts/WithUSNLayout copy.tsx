@@ -34,6 +34,11 @@ const items = [
     href: "/generate-reciept/with-usn/SECURITY_DEPOSIT",
   },
   {
+    title: "Bus",
+    value: "BUS_FEE",
+    href: "/generate-reciept/with-usn/BUS_FEE",
+  },
+  {
     title: "Hostel",
     value: "HOSTEL_FEE",
     href: "/generate-reciept/with-usn/HOSTEL_FEE",

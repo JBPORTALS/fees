@@ -2,12 +2,19 @@
 import { useAppDispatch } from "@/hooks";
 import { useAppSelector } from "@/store";
 import { fetchFeeDetails } from "@/store/fees.slice";
-import { HStack, NativeSelect, VStack } from "@chakra-ui/react";
+import { Button, HStack, NativeSelect, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { InfoCard } from "@/components/ui/utils/InfoCard";
 
 import { useUser } from "@/utils/auth";
 import { ClassDataTable } from "./data-table";
+import {
+  LuMessageCircle,
+  LuRocket,
+  LuSendHorizonal,
+  LuSendToBack,
+} from "react-icons/lu";
+import { SendReminderDialog } from "./send-reminder-dialog";
 
 export default function BranchViewPage() {
   const [state, setState] = useState({
@@ -46,7 +53,7 @@ export default function BranchViewPage() {
         borderWidth={"thin"}
         borderColor={"border.muted"}
       >
-        <NativeSelect.Root w={"250px"}>
+        <NativeSelect.Root variant={"subtle"} w={"250px"}>
           <NativeSelect.Field
             value={state.branch}
             onChange={(e) =>
@@ -68,7 +75,7 @@ export default function BranchViewPage() {
         </NativeSelect.Root>
 
         {state.branch ? (
-          <NativeSelect.Root w={"250px"}>
+          <NativeSelect.Root variant={"subtle"} w={"250px"}>
             <NativeSelect.Field
               value={state.year}
               onChange={(e) =>
@@ -88,6 +95,8 @@ export default function BranchViewPage() {
             <NativeSelect.Indicator />
           </NativeSelect.Root>
         ) : null}
+
+        {/* {state.branch && state.year && <SendReminderDialog />} */}
       </HStack>
       <VStack className="w-full h-full" gap={0}>
         {!state.branch ? (
