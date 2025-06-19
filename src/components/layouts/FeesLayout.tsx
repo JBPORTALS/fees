@@ -151,7 +151,7 @@ export const SearchResultItem = ({
           </Box>
         </VStack>
       </HStack>
-
+      {/* 
       <Collapsible.Root>
         {!paymentData.usn && (
           <>
@@ -184,7 +184,7 @@ export const SearchResultItem = ({
             </Button>
           </HStack>
         </Collapsible.Content>
-      </Collapsible.Root>
+      </Collapsible.Root> */}
     </VStack>
   );
 };

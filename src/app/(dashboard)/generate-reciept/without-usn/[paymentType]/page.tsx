@@ -18,7 +18,7 @@ import React, { useEffect } from "react";
 import { useAppSelector } from "@/store";
 import { Field } from "@/components/ui/Field";
 import moment from "moment";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { AiOutlineFileDone, AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
 import {
@@ -38,6 +38,7 @@ import {
   DialogHeader,
   DialogRoot,
 } from "@/components/ui/dialog";
+import { trpc } from "@/utils/trpc-cleint";
 
 const initialValues = {
   name: "", //✅
@@ -70,6 +71,43 @@ const FormikContextProvider = () => {
   const [loading, setIsloading] = useState(false);
   const user = useUser();
   const acadYear = useAppSelector((state) => state.fees.acadYear);
+  const searchParams = useSearchParams();
+  const challan_id = searchParams.get("challan_id");
+  const { data } = trpc.getChallanDetails.useQuery(
+    {
+      acadYear,
+      challan_id: challan_id!,
+      college: user?.college!,
+    },
+    {
+      enabled: !!challan_id,
+    }
+  );
+
+  useEffect(() => {
+    if (data) {
+      setFieldValue("usn", data[0]?.usn);
+      setFieldValue("name", data[0]?.name);
+      setFieldValue("sem", data[0]?.sem);
+      setFieldValue("year", data[0]?.year);
+      setFieldValue("chaAcadYear", data[0]?.acad_year);
+      setFieldValue("branch", data[0]?.branch);
+      setFieldValue("category", data[0]?.stu_category);
+      setFieldValue("total_fee", data[0]?.total_fee);
+      setFieldValue("remaining_fee", data[0]?.remaining_fee);
+      setFieldValue("excessFee", data[0]?.excess);
+      setFieldValue("total", data[0]?.amount_paid);
+      setFieldValue("tuitionFee", data[0]?.tuition);
+      setFieldValue("vtuFee", data[0]?.vtu);
+      setFieldValue("collegeFee", data[0]?.college_fee);
+      setFieldValue("labFee", data[0]?.lab);
+      setFieldValue("busFee", data[0]?.bus);
+      setFieldValue("bank", data[0]?.bank);
+      setFieldValue("paymentMode", data[0]?.method);
+      setFieldValue("chequeNo", data[0]?.trans_id);
+      setFieldValue("date", data[0]?.trans_date);
+    }
+  }, [data, challan_id]);
 
   useEffect(() => {
     setFieldValue(
@@ -184,6 +222,18 @@ export default function WithoutUSNDynamicPage() {
   const params = useParams();
   const paymentType = params.paymentType;
   const acadYear = useAppSelector((state) => state.fees.acadYear);
+  const searchParams = useSearchParams();
+  const challan_id = searchParams.get("challan_id");
+  const { data } = trpc.getChallanDetails.useQuery(
+    {
+      acadYear,
+      challan_id: challan_id!,
+      college: user?.college!,
+    },
+    {
+      enabled: !!challan_id,
+    }
+  );
 
   useEffect(() => {
     if (isAutoAddEnabled)
