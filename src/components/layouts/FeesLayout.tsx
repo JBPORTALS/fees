@@ -256,9 +256,6 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                 open={open}
                 onClose={onClose}
                 heading={"Search Result"}
-                modalBodyProps={{
-                  p: "0",
-                }}
               >
                 <VStack w={"full"}>
                   {isloading
@@ -273,12 +270,15 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                               href: `/generate-reciept/with-usn/${paymentData.type}?challan_id=${paymentData.challan_id}`,
                               _hover: { bg: "rgba(0,0,0,0.03)" },
                             }
-                          : {};
+                          : {
+                              href: `/generate-reciept/without-usn/${paymentData.type}?challan_id=${paymentData.challan_id}`,
+                              _hover: { bg: "rgba(0,0,0,0.03)" },
+                            };
                         return (
                           <>
                             <HStack
                               role="group"
-                              as={paymentData.usn ? Link : "div"}
+                              as={Link}
                               key={paymentData.challan_id + index}
                               w={"full"}
                               className={"border-b group border-b-lightgray"}
@@ -304,16 +304,40 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                       {paymentData.usn ? (
                                         `(${paymentData.usn})`
                                       ) : (
-                                        <Input
-                                          size={"sm"}
-                                          px={"3"}
-                                          value={usn}
-                                          onChange={(e) =>
-                                            setUSN(e.target.value)
-                                          }
-                                          variant={"flushed"}
-                                          placeholder="Enter USN here ..."
-                                        />
+                                        <React.Fragment>
+                                          <Input
+                                            size={"sm"}
+                                            px={"3"}
+                                            minW={"30px"}
+                                            value={usn}
+                                            onChange={(e) =>
+                                              setUSN(e.target.value)
+                                            }
+                                            variant={"flushed"}
+                                            placeholder="Enter USN here ..."
+                                          />
+                                          {!paymentData.usn && (
+                                            <Button
+                                              colorPalette="blue"
+                                              size={"sm"}
+                                              onClick={() => {
+                                                dispatch(
+                                                  updateUSN({
+                                                    challan_no:
+                                                      paymentData.challan_id,
+                                                    usn,
+                                                    college: user?.college!,
+                                                  })
+                                                ).then(() => {
+                                                  onChallanFilter();
+                                                });
+                                              }}
+                                              loading={isUpdatingUSN}
+                                            >
+                                              Save USN No.
+                                            </Button>
+                                          )}
+                                        </React.Fragment>
                                       )}
                                     </Heading>
                                     <Tag.Root
@@ -354,26 +378,6 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                                 </Box>
                               )}
                             </HStack>
-                            {!paymentData.usn && (
-                              <Button
-                                w={"full"}
-                                colorPalette="blue"
-                                onClick={() => {
-                                  dispatch(
-                                    updateUSN({
-                                      challan_no: paymentData.challan_id,
-                                      usn,
-                                      college: user?.college!,
-                                    })
-                                  ).then(() => {
-                                    onChallanFilter();
-                                  });
-                                }}
-                                loading={isUpdatingUSN}
-                              >
-                                Save USN No.
-                              </Button>
-                            )}
                           </>
                         );
                       })}
