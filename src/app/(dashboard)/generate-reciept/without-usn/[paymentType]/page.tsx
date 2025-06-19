@@ -297,7 +297,7 @@ export default function WithoutUSNDynamicPage() {
       name: "total",
       label: "Total Fee",
       type: "text",
-      isReadonly: true,
+      readOnly: true,
       validateField: Yup.number()
         .typeError("invalid number")
         .required("Field required !")
@@ -424,7 +424,7 @@ export default function WithoutUSNDynamicPage() {
       name: "total",
       label: "Total Fee",
       type: "text",
-      isReadonly: true,
+      readOnly: true,
       validateField: Yup.number()
         .typeError("invalid number")
         .required("Field required !")

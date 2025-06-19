@@ -11,7 +11,7 @@ export type FieldProps = {
   type: FieldInputTypeAttribute;
   label: string;
   description?: string;
-  isReadonly?: boolean;
+  readOnly?: boolean;
   disabled?: boolean;
   validateField?: Yup.AnySchema;
   options?: Array<any>;
@@ -19,7 +19,7 @@ export type FieldProps = {
   HTMLAttributes<HTMLInputElement>;
 
 export const Field = (props: FieldProps) => {
-  const [fieldProps, metaProps, helperProps] = useField(props);
+  const [fieldProps, metaProps] = useField(props);
   const type = props.type as FieldInputTypeAttribute;
 
   function renderConditionalInputField() {
@@ -38,7 +38,7 @@ export const Field = (props: FieldProps) => {
         );
       case "select":
         return (
-          <NativeSelect.Root disabled={props?.disabled || props.isReadonly}>
+          <NativeSelect.Root disabled={props?.disabled || props?.readOnly}>
             <NativeSelect.Field
               {...fieldProps}
               _invalid={{
@@ -70,7 +70,7 @@ export const Field = (props: FieldProps) => {
             placeholder={props.placeholder}
             type={props.type}
             disabled={props?.disabled}
-            readOnly={props?.isReadonly}
+            readOnly={props?.readOnly}
           />
         );
     }
@@ -79,7 +79,7 @@ export const Field = (props: FieldProps) => {
   return (
     <ChakraField.Root
       invalid={!!metaProps.touched && !!metaProps.error}
-      readOnly={props.isReadonly}
+      readOnly={props.readOnly}
       disabled={props.disabled}
       hidden={props.hidden}
     >
