@@ -311,7 +311,8 @@ export default function WithUSNDynamicPage() {
       placeholder: "Select Academic Year",
       validateField: Yup.string().required("Fill the field !"),
       options: ACADYEARS(),
-      isReadonly: challan_id ? true : false,
+      disabled: !challan_id,
+      readOnly: true,
       description: challan_id ? "You can't modify in edit mode" : undefined,
     },
     {
@@ -319,7 +320,7 @@ export default function WithUSNDynamicPage() {
       label: "Total Fee Fixed",
       type: "text",
       hidden: challan_id ? true : false,
-      isReadonly: true,
+      readOnly: true,
       validateField: Yup.number()
         .typeError("invalid number")
         .min(0, "minimum amount should be 0")
@@ -331,7 +332,7 @@ export default function WithUSNDynamicPage() {
       name: "remaining_fee",
       label: "Balance",
       type: "text",
-      isReadonly: true,
+      readOnly: true,
       hidden: challan_id ? true : false,
       validateField: Yup.number()
         .typeError("invalid number")
@@ -399,7 +400,7 @@ export default function WithUSNDynamicPage() {
       name: "total",
       label: "Total Fee",
       type: "text",
-      isReadonly: true,
+      readOnly: true,
       validateField: Yup.number()
         .typeError("invalid number")
         .required("Field required !")
@@ -1283,12 +1284,12 @@ export default function WithUSNDynamicPage() {
                     </Button>
                   </>
                 ) : (
-                  <HStack width={"100%"} justifyContent={"space-between"}>
+                  <HStack width={"100%"} justifyContent={"end"}>
                     <MenuRoot>
                       <MenuTrigger asChild>
                         <IconButton
                           size={"lg"}
-                          variant={"outline"}
+                          variant={"surface"}
                           aria-label="More-icon"
                         >
                           <AiOutlineMore className="text-2xl" />
@@ -1332,13 +1333,13 @@ export default function WithUSNDynamicPage() {
                         isSubmitting ||
                         isValidating
                       }
-                      colorPalette="purple"
                     >
                       Save <AiOutlineCheck className="text-xl" />
                     </Button>
                   </HStack>
                 )}
               </HStack>
+              {/*  Challan link confirmation */}
               <DialogRoot onOpenChange={onToggle} open={open}>
                 <DialogContent>
                   <DialogHeader>📢 Are you sure?</DialogHeader>
@@ -1352,7 +1353,6 @@ export default function WithUSNDynamicPage() {
                       Cancel
                     </Button>
                     <Button
-                      colorPalette="facebook"
                       onClick={() => {
                         handleSubmit();
                         onToggle();
@@ -1364,6 +1364,7 @@ export default function WithUSNDynamicPage() {
                 </DialogContent>
               </DialogRoot>
 
+              {/*  Update Challan link confirmation */}
               <DialogRoot onOpenChange={onLinkedClose} open={isLinkedOpen}>
                 <DialogContent>
                   <DialogHeader>📢 Are you sure?</DialogHeader>
@@ -1387,6 +1388,7 @@ export default function WithUSNDynamicPage() {
                 </DialogContent>
               </DialogRoot>
 
+              {/* Delete confirmation */}
               <DialogRoot
                 onOpenChange={onDeleteConfirmClose}
                 open={isDeleteConfirmOpen}
@@ -1405,7 +1407,7 @@ export default function WithUSNDynamicPage() {
                       colorPalette="red"
                       onClick={() => {
                         deleteReciept();
-                        onLinkedClose();
+                        onDeleteConfirmClose();
                       }}
                     >
                       Delete

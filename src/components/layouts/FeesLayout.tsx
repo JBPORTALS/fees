@@ -14,6 +14,7 @@ import {
 import {
   Box,
   Button,
+  Collapsible,
   Field,
   Heading,
   HStack,
@@ -21,6 +22,7 @@ import {
   Menu,
   NativeSelect,
   NumberInput,
+  Separator,
   Skeleton,
   Tabs,
   Tag,
@@ -62,6 +64,130 @@ ChartJS.register(
   Legend,
   ArcElement
 );
+
+interface SearchResultItemProps {
+  paymentData: {
+    challan_id: string;
+    usn: string;
+    name: string;
+    date: string;
+    method: string;
+    amount_paid1: string;
+    type: string;
+  };
+  onRefresh: () => void;
+  isUpdating: boolean;
+}
+
+export const SearchResultItem = ({
+  paymentData,
+  isUpdating,
+  onRefresh,
+}: SearchResultItemProps) => {
+  const [usnInput, setUsnInput] = useState(paymentData.usn ?? "");
+  const [edit, setEdit] = useState(false);
+  const dispatch = useAppDispatch();
+  const user = useUser();
+
+  const targetHref = paymentData.usn
+    ? `/generate-reciept/with-usn/${paymentData.type}?challan_id=${paymentData.challan_id}`
+    : `/generate-reciept/without-usn/${paymentData.type}?challan_id=${paymentData.challan_id}`;
+
+  const handleUpdate = () => {
+    dispatch(
+      updateUSN({
+        challan_no: paymentData.challan_id,
+        usn: usnInput,
+        college: user?.college!,
+      })
+    ).then(() => {
+      onRefresh();
+    });
+  };
+
+  return (
+    <VStack
+      w="full"
+      px={5}
+      py={3}
+      gap={5}
+      rounded="md"
+      align="stretch"
+      _hover={{ bg: "gray.50" }}
+    >
+      <HStack w={"full"}>
+        {/* Left Section (Clickable for redirection) */}
+        <Link href={targetHref} style={{ flex: 1 }}>
+          <VStack align="start" gap={2}>
+            <Heading size="sm" textTransform="capitalize">
+              {paymentData.name.toLowerCase()}
+              {paymentData.usn && ` (${paymentData.usn})`}
+            </Heading>
+            <HStack gap={2}>
+              <Tag.Root
+                size="md"
+                variant="outline"
+                colorScheme="teal"
+                fontWeight="bold"
+              >
+                <Tag.Label>CH No. {paymentData.challan_id}</Tag.Label>
+              </Tag.Root>
+              <Text fontSize="sm" color="gray.500">
+                {paymentData.date}
+              </Text>
+            </HStack>
+          </VStack>
+        </Link>
+
+        {/* Right Section (Input only if no USN) */}
+        <VStack align="end" gap={2}>
+          <Box textAlign="right">
+            <Text fontWeight="bold" fontSize="xl" color="green.600">
+              ₹{paymentData.amount_paid1}
+            </Text>
+            <Text fontSize="md" fontWeight="medium">
+              <i>{paymentData.method}</i>
+            </Text>
+          </Box>
+        </VStack>
+      </HStack>
+      {/* 
+      <Collapsible.Root>
+        {!paymentData.usn && (
+          <>
+            <Separator mb={"4"} />
+            <Collapsible.Trigger asChild>
+              <Button h={"6"} px={"0.5"} size={"xs"} variant={"ghost"}>
+                Edit USN
+              </Button>
+            </Collapsible.Trigger>
+          </>
+        )}
+        <Collapsible.Content>
+          <HStack py={"2.5"} px={"0.5"}>
+            <Input
+              maxW={"64"}
+              placeholder="Enter USN here ..."
+              value={usnInput}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => setUsnInput(e.target.value)}
+            />
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUpdate();
+              }}
+              loading={isUpdating}
+              disabled={!usnInput}
+            >
+              Update
+            </Button>
+          </HStack>
+        </Collapsible.Content>
+      </Collapsible.Root> */}
+    </VStack>
+  );
+};
 
 export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const dispatch = useAppDispatch();
@@ -120,7 +246,6 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
   const isUpdatingUSN = useAppSelector(
     (state) => state.fees.update_usn.pending
   ) as boolean;
-  const [usn, setUSN] = useState("");
   const pathname = usePathname();
   const router = useRouter();
   const user = useUser();
@@ -256,125 +381,22 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                 open={open}
                 onClose={onClose}
                 heading={"Search Result"}
-                modalBodyProps={{
-                  p: "0",
-                }}
               >
-                <VStack w={"full"}>
+                <VStack w="full" gap={4}>
                   {isloading
-                    ? new Array(6).fill(0).map((_value, key) => {
-                        return (
-                          <Skeleton key={key} w={"full"} h={"16"}></Skeleton>
-                        );
-                      })
+                    ? new Array(6)
+                        .fill(0)
+                        .map((_value, key) => (
+                          <Skeleton key={key} w="full" h="16" />
+                        ))
                     : filteredData?.map((paymentData, index) => {
-                        const conditionalAsProp = paymentData.usn
-                          ? {
-                              href: `/generate-reciept/with-usn/${paymentData.type}?challan_id=${paymentData.challan_id}`,
-                              _hover: { bg: "rgba(0,0,0,0.03)" },
-                            }
-                          : {};
                         return (
-                          <>
-                            <HStack
-                              role="group"
-                              as={paymentData.usn ? Link : "div"}
-                              key={paymentData.challan_id + index}
-                              w={"full"}
-                              className={"border-b group border-b-lightgray"}
-                              px={"5"}
-                              py={"2"}
-                              gap={"5"}
-                              {...conditionalAsProp}
-                            >
-                              <VStack flex={1} alignItems={"start"}>
-                                <HStack justifyContent={"start"}>
-                                  <VStack
-                                    justifyContent={"start"}
-                                    alignItems={"start"}
-                                  >
-                                    <Heading
-                                      size={"sm"}
-                                      textTransform={"capitalize"}
-                                      whiteSpace={"nowrap"}
-                                    >
-                                      {paymentData?.name
-                                        .toString()
-                                        .toLowerCase()}{" "}
-                                      {paymentData.usn ? (
-                                        `(${paymentData.usn})`
-                                      ) : (
-                                        <Input
-                                          size={"sm"}
-                                          px={"3"}
-                                          value={usn}
-                                          onChange={(e) =>
-                                            setUSN(e.target.value)
-                                          }
-                                          variant={"flushed"}
-                                          placeholder="Enter USN here ..."
-                                        />
-                                      )}
-                                    </Heading>
-                                    <Tag.Root
-                                      size={"md"}
-                                      variant={"outline"}
-                                      colorPalette={"teal"}
-                                      fontWeight={"bold"}
-                                    >
-                                      <Tag.Label>
-                                        CH No. {paymentData.challan_id}
-                                      </Tag.Label>
-                                    </Tag.Root>
-                                  </VStack>
-                                </HStack>
-                                <span className="text-sm">
-                                  {paymentData.date}
-                                </span>
-                              </VStack>
-                              <VStack flex={1} alignItems={"end"}>
-                                <Box>
-                                  <h1 className="text-xl font-bold text-green-600">
-                                    ₹{paymentData.amount_paid1}
-                                  </h1>
-                                  <span className="text-md font-medium">
-                                    <i>{paymentData.method}</i>
-                                  </span>
-                                </Box>
-                              </VStack>
-                              {paymentData.usn && (
-                                <Box
-                                  _groupHover={{
-                                    transform: "translateX(10px)",
-                                    color: "blue",
-                                  }}
-                                  transition={"transform 0.3s ease"}
-                                >
-                                  <AiOutlineArrowRight className="text-2xl" />
-                                </Box>
-                              )}
-                            </HStack>
-                            {!paymentData.usn && (
-                              <Button
-                                w={"full"}
-                                colorPalette="blue"
-                                onClick={() => {
-                                  dispatch(
-                                    updateUSN({
-                                      challan_no: paymentData.challan_id,
-                                      usn,
-                                      college: user?.college!,
-                                    })
-                                  ).then(() => {
-                                    onChallanFilter();
-                                  });
-                                }}
-                                loading={isUpdatingUSN}
-                              >
-                                Save USN No.
-                              </Button>
-                            )}
-                          </>
+                          <SearchResultItem
+                            key={index}
+                            isUpdating={isUpdatingUSN}
+                            onRefresh={() => {}}
+                            paymentData={paymentData}
+                          />
                         );
                       })}
                 </VStack>
@@ -722,6 +744,10 @@ export default function FeesLayout({ children }: AttendanceLayoutProps) {
                   </VStack>
                 </MenuContent>
               </MenuRoot>
+
+              {/* <Button variant={"ghost"} size={"sm"}>
+                Advance Filters
+              </Button> */}
             </HStack>
           </HStack>
         </Tabs.List>

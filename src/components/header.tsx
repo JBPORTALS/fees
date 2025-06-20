@@ -3,6 +3,7 @@
 import {
   Avatar,
   Button,
+  Group,
   Heading,
   HStack,
   IconButton,
@@ -30,6 +31,7 @@ import {
   DialogRoot,
   DialogTitle,
 } from "./ui/dialog";
+import { LuSearch } from "react-icons/lu";
 
 export function Header() {
   const {
@@ -66,32 +68,30 @@ export function Header() {
       </Link>
       <HStack>
         <InputGroup
-          rounded={"2xl"}
-          endElement={
-            <IconButton
-              onClick={async () => {
+          roundedEnd={"none"}
+          startElement={<LuSearch />}
+          endAddonProps={{ asChild: true }}
+          endAddon={
+            <Button
+              onClick={() => {
                 router.push(
                   `/dashboard/search?mode=QUERY&query=${query}&hash=${new Date(
                     Date.now()
                   ).getTime()}`
                 );
               }}
-              colorPalette="blue"
-              h={"full"}
-              w={"full"}
-              variant={"ghost"}
-              aria-label="search"
+              colorPalette="gray"
+              variant="outline"
             >
-              <AiOutlineSearch className="text-lg" />
-            </IconButton>
+              Search
+            </Button>
           }
         >
           <Input
+            roundedEnd={"none"}
             onChange={(e) => setQuery(e.target.value)}
             value={query}
-            size={"md"}
-            rounded={"lg"}
-            w={"96"}
+            w={"lg"}
             onKeyDown={(e) => {
               if (e.key === "Enter")
                 router.push(
@@ -100,7 +100,7 @@ export function Header() {
                   ).getTime()}`
                 );
             }}
-            placeholder="Search Student Name or Student USN"
+            placeholder="Search by Student Name or Student USN"
           />
         </InputGroup>
       </HStack>

@@ -84,7 +84,7 @@ export default function Home() {
           <Card.Root size={"lg"} minH={"130px"} minW={"2xs"}>
             <Card.Body asChild>
               <Stat.Root>
-                <Stat.Label>Amount To Be Paid</Stat.Label>
+                <Stat.Label>Amount Balance</Stat.Label>
                 <Stat.ValueText>
                   {" "}
                   ₹ {overallFeeDetails[0]?.remaining}
@@ -123,7 +123,6 @@ export default function Home() {
                       <Card.Root
                         key={branchFee.branch}
                         w={"full"}
-                        shadow={"lg"}
                         px={"10"}
                         py={"5"}
                       >
@@ -254,7 +253,6 @@ export default function Home() {
                       <Card.Root
                         key={yearFee.branch}
                         w={"full"}
-                        shadow={"lg"}
                         px={"10"}
                         py={"5"}
                         display={"flex"}

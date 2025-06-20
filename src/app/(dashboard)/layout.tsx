@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/sidebar";
 import { auth } from "@/utils/auth-server";
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
+import { SearchRightBar } from "./search-rightbar";
 
 export default async function DashboardRootLayout(props: {
   children: React.ReactNode;
@@ -22,6 +23,7 @@ export default async function DashboardRootLayout(props: {
         w={"full"}
         flex={"1"}
         gap={"0"}
+        id="main-content-area"
       >
         <Sidebar />
         <Box
@@ -35,6 +37,8 @@ export default async function DashboardRootLayout(props: {
         >
           <main>{props?.children}</main>
         </Box>
+
+        <SearchRightBar />
       </HStack>
     </VStack>
   );
