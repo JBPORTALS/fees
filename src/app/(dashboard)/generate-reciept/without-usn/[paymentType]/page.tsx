@@ -18,8 +18,15 @@ import React, { useEffect } from "react";
 import { useAppSelector } from "@/store";
 import { Field } from "@/components/ui/Field";
 import moment from "moment";
-import { useParams, useSearchParams } from "next/navigation";
-import { AiOutlineFileDone, AiOutlineSearch } from "react-icons/ai";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import {
+  AiOutlineCheck,
+  AiOutlineDelete,
+  AiOutlineFileDone,
+  AiOutlineFileText,
+  AiOutlineMore,
+  AiOutlineSearch,
+} from "react-icons/ai";
 import axios from "axios";
 import {
   ACADYEARS,
@@ -39,11 +46,18 @@ import {
   DialogRoot,
 } from "@/components/ui/dialog";
 import { trpc } from "@/utils/trpc-cleint";
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from "@/components/ui/menu";
 
 const initialValues = {
   name: "", //✅
   branch: "", //✅
   sem: "", //✅
+  year: "",
   category: "", //✅
   chaAcadYear: "", //✅
   tuitionFee: 0, //✅
@@ -219,6 +233,7 @@ export default function WithoutUSNDynamicPage() {
   const user = useUser();
   const { open, onClose, onToggle, onOpen } = useDisclosure();
   const [isAutoAddEnabled, setIsAutoAddEnabled] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const params = useParams();
   const paymentType = params.paymentType;
   const acadYear = useAppSelector((state) => state.fees.acadYear);
@@ -234,6 +249,17 @@ export default function WithoutUSNDynamicPage() {
       enabled: !!challan_id,
     }
   );
+  const {
+    open: isDeleteConfirmOpen,
+    onToggle: onDeleteConfirmClose,
+    onOpen: onDeleteConfirmOpen,
+  } = useDisclosure();
+  const {
+    open: isLinkedOpen,
+    onToggle: onLinkedClose,
+    onOpen: onLinkedOpen,
+  } = useDisclosure();
+  const router = useRouter();
 
   useEffect(() => {
     if (isAutoAddEnabled)
@@ -944,66 +970,140 @@ export default function WithoutUSNDynamicPage() {
     },
   ];
 
+  async function generateReciept(state: typeof initialValues) {
+    try {
+      const filename =
+        state.paymentMode == "ONLINE" && paymentType === "REGISTRATION_FEE"
+          ? "feegenerateonlineregistarionfee.php"
+          : paymentType === "REGISTRATION_FEE"
+          ? "feegenerateregistarionfee.php"
+          : state.paymentMode == "ONLINE" &&
+            paymentType !== "MISCELLANEOUS" &&
+            user?.college !== "KSPT"
+          ? "feegenerateonlinewithoutusn.php"
+          : paymentType == "MISCELLANEOUS"
+          ? "feegeneratemiscellaneouswithoutusn.php"
+          : user?.college == "KSPT" || user?.college == "KSSA"
+          ? "feekspreceipt.php"
+          : "feegeneraterecieptwithoutusn.php";
+
+      await axios.get(
+        process.env.NEXT_PUBLIC_ADMIN_URL +
+          `${filename}?${Object.keys(state)
+            .map(
+              (key, index) =>
+                `${key}=${
+                  key == "date"
+                    ? moment(state[key]).format("yyyy-MM-DD")
+                    : Object.values(state)[index]
+                }`
+            )
+            .join("&")}&paymentType=${paymentType}&college=${
+            user?.college
+          }&auto_add=${isAutoAddEnabled}&acadYear=${acadYear}`
+      );
+      const link = document.createElement("a");
+      link.href =
+        process.env.NEXT_PUBLIC_ADMIN_URL +
+        `${filename}?${Object.keys(state)
+          .map(
+            (key, index) =>
+              `${key}=${
+                key == "date"
+                  ? moment(state[key]).format("yyyy-MM-DD")
+                  : Object.values(state)[index]
+              }`
+          )
+          .join("&")}&paymentType=${paymentType}&college=${
+          user?.college
+        }&auto_add=${isAutoAddEnabled}&acadYear=${acadYear}`;
+      link.setAttribute("download", "Fee Reciept Offline.pdf");
+      link.setAttribute("target", "_blank");
+      document.body.appendChild(link);
+      link.click();
+    } catch (e: any) {
+      toaster.error({
+        title: e.response?.data?.msg,
+      });
+    }
+  }
+
+  async function updateReciept(state: typeof initialValues) {
+    try {
+      const formData = new FormData();
+      formData.append("challan_no", challan_id!);
+      formData.append("college", user?.college!);
+      formData.append("name", state.name);
+      formData.append("stu_category", state.category);
+      formData.append("sem", state.sem);
+      formData.append("year", state.year);
+      formData.append("branch", state.branch);
+      formData.append("bank", state.bank);
+      formData.append("method", state.paymentMode);
+      formData.append("type", paymentType as string);
+      formData.append("trans_id", state.chequeNo);
+      formData.append("trans_date", state.date);
+      formData.append("tuition", state.tuitionFee.toString());
+      formData.append("vtu", state.vtuFee.toString());
+      formData.append("college_fee", state.collegeFee.toString());
+      formData.append("tuition", state.tuitionFee.toString());
+      formData.append("lab", state.labFee.toString());
+      formData.append("bus", state.busFee.toString());
+      formData.append("excess", state.excessFee.toString());
+      formData.append("security_deposit", state.securityDeposit.toString());
+      formData.append("hostel", state.hostelFee.toString());
+      formData.append("amount_paid", state.total.toString());
+      formData.append("acad_year", state.chaAcadYear);
+      formData.append("linked", data[0].linked);
+
+      const response = await axios.post(
+        process.env.NEXT_PUBLIC_ADMIN_URL + `feechallanupdate.php`,
+        formData
+      );
+
+      if (response.status == 402) return new Error(response.data.msg);
+      toaster.info({
+        title: "Your changes has been saved",
+      });
+    } catch (e: any) {
+      toaster.error({
+        title: e.response?.data?.msg ?? e,
+      });
+    }
+  }
+
+  async function deleteReciept() {
+    setIsDeleting(true);
+    try {
+      const formData = new FormData();
+      formData.append("challan_id", challan_id!);
+      formData.append("college", user?.college!);
+
+      const response = await axios.post(
+        process.env.NEXT_PUBLIC_ADMIN_URL + `feedeletechallan.php`,
+        formData
+      );
+
+      if (response.status == 402) return new Error(response.data.msg);
+      toaster.info({ title: "Challan Deleted Successfully" });
+      router.back();
+    } catch (e: any) {
+      toaster.error({
+        title: e.response?.data?.msg ?? e,
+      });
+    }
+    setIsDeleting(false);
+  }
+
   return (
     <VStack gap={"0"} w={"full"} h={"fit-content"} position={"relative"}>
       <Formik
         {...{ initialValues }}
         onSubmit={async (state) => {
-          try {
-            const filename =
-              state.paymentMode == "ONLINE" &&
-              paymentType === "REGISTRATION_FEE"
-                ? "feegenerateonlineregistarionfee.php"
-                : paymentType === "REGISTRATION_FEE"
-                ? "feegenerateregistarionfee.php"
-                : state.paymentMode == "ONLINE" &&
-                  paymentType !== "MISCELLANEOUS" &&
-                  user?.college !== "KSPT"
-                ? "feegenerateonlinewithoutusn.php"
-                : paymentType == "MISCELLANEOUS"
-                ? "feegeneratemiscellaneouswithoutusn.php"
-                : user?.college == "KSPT" || user?.college == "KSSA"
-                ? "feekspreceipt.php"
-                : "feegeneraterecieptwithoutusn.php";
-
-            await axios.get(
-              process.env.NEXT_PUBLIC_ADMIN_URL +
-                `${filename}?${Object.keys(state)
-                  .map(
-                    (key, index) =>
-                      `${key}=${
-                        key == "date"
-                          ? moment(state[key]).format("yyyy-MM-DD")
-                          : Object.values(state)[index]
-                      }`
-                  )
-                  .join("&")}&paymentType=${paymentType}&college=${
-                  user?.college
-                }&auto_add=${isAutoAddEnabled}&acadYear=${acadYear}`
-            );
-            const link = document.createElement("a");
-            link.href =
-              process.env.NEXT_PUBLIC_ADMIN_URL +
-              `${filename}?${Object.keys(state)
-                .map(
-                  (key, index) =>
-                    `${key}=${
-                      key == "date"
-                        ? moment(state[key]).format("yyyy-MM-DD")
-                        : Object.values(state)[index]
-                    }`
-                )
-                .join("&")}&paymentType=${paymentType}&college=${
-                user?.college
-              }&auto_add=${isAutoAddEnabled}&acadYear=${acadYear}`;
-            link.setAttribute("download", "Fee Reciept Offline.pdf");
-            link.setAttribute("target", "_blank");
-            document.body.appendChild(link);
-            link.click();
-          } catch (e: any) {
-            toaster.error({
-              title: e.response?.data?.msg,
-            });
+          if (challan_id) {
+            await updateReciept(state);
+          } else {
+            await generateReciept(state);
           }
         }}
       >
@@ -1096,52 +1196,133 @@ export default function WithoutUSNDynamicPage() {
                   ))}
               </SimpleGrid>
               {/* <pre>{JSON.stringify(errors, undefined, 3)}</pre> */}
-              <HStack
-                position={"sticky"}
-                bottom={"0"}
-                justifyContent={"end"}
-                w={"full"}
-                p={"4"}
-                borderTopWidth={"thin"}
-                backdropFilter={"blur(5px)"}
-              >
-                <HStack px={"5"}>
-                  <ChakraField.Root display="flex" alignItems="center">
-                    <Switch.Root
-                      id="fee-mutation"
-                      onCheckedChange={({ checked }) =>
-                        setIsAutoAddEnabled(checked)
-                      }
-                      checked={isAutoAddEnabled}
-                    >
-                      <Switch.Label>Auto Add Student</Switch.Label>
-                      <Switch.HiddenInput />
-                      <Switch.Control>
-                        <Switch.Thumb />
-                      </Switch.Control>
-                    </Switch.Root>
-                  </ChakraField.Root>
-                </HStack>
-                <Button
-                  size={"lg"}
-                  loading={isSubmitting || isValidating}
-                  onClick={() => {
-                    if (isAutoAddEnabled) {
-                      onOpen();
-                    } else {
-                      handleSubmit();
-                    }
-                  }}
-                  disabled={
-                    Object.keys(errors).length > 0 ||
-                    isSubmitting ||
-                    isValidating
-                  }
+
+              {!challan_id ? (
+                <HStack
+                  position={"sticky"}
+                  bottom={"0"}
+                  justifyContent={"end"}
+                  w={"full"}
+                  p={"4"}
+                  borderTopWidth={"thin"}
+                  backdropFilter={"blur(5px)"}
                 >
-                  <AiOutlineFileDone className="text-xl" />
-                  Generate Reciept
-                </Button>
-              </HStack>
+                  <HStack px={"5"}>
+                    <ChakraField.Root display="flex" alignItems="center">
+                      <Switch.Root
+                        id="fee-mutation"
+                        onCheckedChange={({ checked }) =>
+                          setIsAutoAddEnabled(checked)
+                        }
+                        checked={isAutoAddEnabled}
+                      >
+                        <Switch.Label>Auto Add Student</Switch.Label>
+                        <Switch.HiddenInput />
+                        <Switch.Control>
+                          <Switch.Thumb />
+                        </Switch.Control>
+                      </Switch.Root>
+                    </ChakraField.Root>
+                  </HStack>
+                  <Button
+                    size={"lg"}
+                    loading={isSubmitting || isValidating}
+                    onClick={() => {
+                      if (isAutoAddEnabled) {
+                        onOpen();
+                      } else {
+                        handleSubmit();
+                      }
+                    }}
+                    disabled={
+                      Object.keys(errors).length > 0 ||
+                      isSubmitting ||
+                      isValidating
+                    }
+                  >
+                    <AiOutlineFileDone className="text-xl" />
+                    Generate Reciept
+                  </Button>
+                </HStack>
+              ) : (
+                <HStack width={"100%"} justifyContent={"end"}>
+                  <MenuRoot>
+                    <MenuTrigger asChild>
+                      <IconButton
+                        size={"lg"}
+                        variant={"surface"}
+                        aria-label="More-icon"
+                      >
+                        <AiOutlineMore className="text-2xl" />
+                      </IconButton>
+                    </MenuTrigger>
+                    <MenuContent className="hover:no-underline ">
+                      <MenuItem
+                        value="download-reciept"
+                        onClick={() => {
+                          window.open(
+                            `${process.env.NEXT_PUBLIC_ADMIN_URL}feedownloadreciept.php?challan_id=${challan_id}&acadyear=${acadYear}&college=${user?.college}`
+                          );
+                        }}
+                      >
+                        <AiOutlineFileText className="text-lg" />
+                        Download Reciept
+                      </MenuItem>
+                      <MenuItem
+                        value="delete-challen"
+                        color={"darkred"}
+                        onClick={onDeleteConfirmOpen}
+                      >
+                        <AiOutlineDelete className="text-lg" />
+                        Delete Challan
+                      </MenuItem>
+                    </MenuContent>
+                  </MenuRoot>
+                  <Button
+                    size={"lg"}
+                    loading={isSubmitting || isValidating}
+                    onClick={() => {
+                      handleSubmit();
+                    }}
+                    disabled={
+                      Object.keys(errors).length > 0 ||
+                      isSubmitting ||
+                      isValidating
+                    }
+                  >
+                    Save <AiOutlineCheck className="text-xl" />
+                  </Button>
+                </HStack>
+              )}
+
+              {/* Delete confirmation */}
+              <DialogRoot
+                onOpenChange={onDeleteConfirmClose}
+                open={isDeleteConfirmOpen}
+              >
+                <DialogContent>
+                  <DialogHeader fontSize={"medium"}>
+                    📢 Are you sure, you want to delete this challan?
+                  </DialogHeader>
+                  <DialogBody>{`This is irreversable action, you can't undo this action at anytime.`}</DialogBody>
+                  <DialogFooter gap={3}>
+                    <Button onClick={onDeleteConfirmClose} variant={"ghost"}>
+                      Cancel
+                    </Button>
+                    <Button
+                      loading={isDeleting}
+                      colorPalette="red"
+                      onClick={() => {
+                        deleteReciept();
+                        onDeleteConfirmClose();
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </DialogRoot>
+
               <DialogRoot onOpenChange={onToggle} open={open}>
                 <DialogContent>
                   <DialogHeader>📢 Are you sure?</DialogHeader>

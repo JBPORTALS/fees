@@ -1,8 +1,16 @@
 "use client";
-import { HStack, Tabs } from "@chakra-ui/react";
+import {
+  AbsoluteCenter,
+  Box,
+  HStack,
+  Separator,
+  Tabs,
+  Tag,
+  VStack,
+} from "@chakra-ui/react";
 import React from "react";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { AiOutlineCheck } from "react-icons/ai";
 import Link from "next/link";
 
@@ -47,6 +55,8 @@ export default function WithoutUSNLayout({
   children,
 }: GenerateRecieptLayoutProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isInEditMode = searchParams.get("challan_id");
 
   return (
     <Tabs.Root
@@ -55,7 +65,7 @@ export default function WithoutUSNLayout({
       value={pathname.split("/").at(3)}
       size={"md"}
     >
-      <HStack>
+      <VStack gap={"0"}>
         <Tabs.List
           position={"sticky"}
           zIndex={"popover"}
@@ -80,7 +90,25 @@ export default function WithoutUSNLayout({
             </Tabs.Trigger>
           ))}
         </Tabs.List>
-      </HStack>
+        <Box
+          position="relative"
+          width={"100%"}
+          py={isInEditMode ? "3" : "unset"}
+        >
+          {isInEditMode && (
+            <React.Fragment>
+              <Separator />
+              <AbsoluteCenter px="4">
+                <Tag.Root colorPalette={"green"}>
+                  <Tag.Label>
+                    Edit Mode: Challan ID-{searchParams.get("challan_id")}
+                  </Tag.Label>
+                </Tag.Root>
+              </AbsoluteCenter>
+            </React.Fragment>
+          )}
+        </Box>
+      </VStack>
       <Tabs.ContentGroup py={"4"}>{children}</Tabs.ContentGroup>
     </Tabs.Root>
   );
