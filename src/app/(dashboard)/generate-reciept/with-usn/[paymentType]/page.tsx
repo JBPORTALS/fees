@@ -311,8 +311,7 @@ export default function WithUSNDynamicPage() {
       placeholder: "Select Academic Year",
       validateField: Yup.string().required("Fill the field !"),
       options: ACADYEARS(),
-      disabled: !challan_id,
-      readOnly: true,
+      disabled: !!challan_id,
       description: challan_id ? "You can't modify in edit mode" : undefined,
     },
     {
