@@ -99,12 +99,13 @@ export default function HistoryItem({ history }: { history: PaymentHistory }) {
           <h1 className="text-md">{history.paymentno}</h1>
           <Tag.Root
             size={"sm"}
-            whiteSpace={"nowrap"}
-            variant={"outline"}
+            variant={"surface"}
             colorPalette={"teal"}
             fontWeight={"bold"}
           >
-            <Tag.Label>CH No. {history.challan_id}</Tag.Label>
+            <Tag.Label textWrap={"nowrap"}>
+              CH No. {history.challan_id}
+            </Tag.Label>
           </Tag.Root>
         </HStack>
         <span className="text-sm">{history.date}</span>

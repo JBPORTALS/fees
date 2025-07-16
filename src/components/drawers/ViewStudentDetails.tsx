@@ -157,7 +157,7 @@ export default function ViewStudentsDetails({
         status: "",
         isValidating: true,
       });
-  }, [pending, regno, open, id]);
+  }, [pending, regno, open, id, data, setFormikState]);
 
   function changeStateValue() {
     setFieldValue(
