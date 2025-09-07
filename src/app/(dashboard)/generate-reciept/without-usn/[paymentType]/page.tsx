@@ -254,11 +254,6 @@ export default function WithoutUSNDynamicPage() {
     onToggle: onDeleteConfirmClose,
     onOpen: onDeleteConfirmOpen,
   } = useDisclosure();
-  const {
-    open: isLinkedOpen,
-    onToggle: onLinkedClose,
-    onOpen: onLinkedOpen,
-  } = useDisclosure();
   const router = useRouter();
 
   useEffect(() => {
@@ -378,6 +373,69 @@ export default function WithoutUSNDynamicPage() {
         .typeError("invalid number")
         .required("Field required !")
         .moreThan(0, "Total amount should be more than 0"),
+    },
+    {
+      name: "bank",
+      label: "Bank",
+      type: "select",
+      placeholder: "Select Bank",
+      options: BANKS(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+    {
+      name: "paymentMode",
+      label: "Payment Mode",
+      type: "select",
+      placeholder: "Select Payment Mode",
+      options: PAYMENTMODES(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+  ];
+
+  const fineTemplate = [
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: SEMS(user?.college),
+    },
+    {
+      name: "chaAcadYear",
+      label: "Academic Year",
+      type: "select",
+      placeholder: "Select Academic Year",
+      validateField: Yup.string().required("Fill the field !"),
+      options: ACADYEARS(),
+    },
+    {
+      name: "total",
+      label: "Total Amount",
+      type: "number",
+      validateField: Yup.number()
+        .typeError("Invalid amount")
+        .moreThan(0, "Amount should be more than 0")
+        .required(),
     },
     {
       name: "bank",
@@ -977,6 +1035,8 @@ export default function WithoutUSNDynamicPage() {
           ? "feegenerateonlineregistarionfee.php"
           : paymentType === "REGISTRATION_FEE"
           ? "feegenerateregistarionfee.php"
+          : paymentType === "FINE"
+          ? "feegeneratefine.php"
           : state.paymentMode == "ONLINE" &&
             paymentType !== "MISCELLANEOUS" &&
             user?.college !== "KSPT"
@@ -1134,6 +1194,8 @@ export default function WithoutUSNDynamicPage() {
               ? feeByApplicationIdTemplate
               : paymentType == "MISCELLANEOUS"
               ? miscellaneousTemplate
+              : paymentType == "FINE"
+              ? fineTemplate
               : paymentType == "BUS_FEE"
               ? busFeeTemplate
               : paymentType == "SECURITY_DEPOSIT"
