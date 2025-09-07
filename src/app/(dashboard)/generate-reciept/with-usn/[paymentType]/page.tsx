@@ -241,6 +241,7 @@ export default function WithUSNDynamicPage() {
   const router = useRouter();
   const paymentType = params.paymentType as
     | "FEE"
+    | "FINE"
     | "MISCELLANEOUS"
     | "BUS_FEE"
     | "EXCESS_FEE"
@@ -404,6 +405,81 @@ export default function WithUSNDynamicPage() {
         .typeError("invalid number")
         .required("Field required !")
         .moreThan(0, "Total amount should be more than 0"),
+    },
+    {
+      name: "bank",
+      label: "Bank",
+      type: "select",
+      placeholder: "Select Bank",
+      options: BANKS(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+    {
+      name: "paymentMode",
+      label: "Payment Mode",
+      type: "select",
+      placeholder: "Select Payment Mode",
+      options: PAYMENTMODES(user?.college),
+      validateField: Yup.string().required("Fill the field !"),
+    },
+  ];
+
+  const fineTemplate = [
+    {
+      name: "appid",
+      label:
+        user?.college == "KSPT" || user?.college == "KSPU" ? "REG NO." : "USN",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(
+          /^[Aa-zZ0-9]+$/i,
+          "Only alphanumaric values are allowed for this field"
+        ),
+    },
+    {
+      name: "name",
+      label: "Name",
+      type: "text",
+      validateField: Yup.string()
+        .required("Field required !")
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field"),
+    },
+    {
+      name: "branch",
+      label: "Branch",
+      type: "select",
+      placeholder: "Select Branch",
+      validateField: Yup.string().required("Fill the field !"),
+      options: branchList.map((value) => ({
+        value: value.branch,
+        option: value.branch,
+      })),
+    },
+    {
+      name: "sem",
+      label: user?.college == "KSPU" ? "Year" : "Sem",
+      type: "select",
+      placeholder: "Select Sem",
+      validateField: Yup.string().required("Fill the field !"),
+      options: SEMS(user?.college),
+    },
+    {
+      name: "chaAcadYear",
+      label: "Academic Year",
+      type: "select",
+      placeholder: "Select Academic Year",
+      validateField: Yup.string().required("Fill the field !"),
+      options: ACADYEARS(),
+    },
+    {
+      name: "total",
+      label: "Total Amount",
+      type: "number",
+      validateField: Yup.number()
+        .typeError("Invalid amount")
+        .moreThan(0, "Amount should be more than 0")
+        .required(),
     },
     {
       name: "bank",
@@ -1013,6 +1089,8 @@ export default function WithUSNDynamicPage() {
           ? "feegenerateonlinewithusn.php"
           : paymentType == "MISCELLANEOUS"
           ? "feegeneratemiscellaneouswithusn.php"
+          : paymentType == "FINE"
+          ? "feegeneratefine.php"
           : user?.college == "KSPT" || user?.college == "KSSA"
           ? "feekspreceipt.php"
           : "feegeneraterecieptwithusn.php";
@@ -1166,6 +1244,8 @@ export default function WithUSNDynamicPage() {
               ? feeTemplate
               : paymentType == "MISCELLANEOUS"
               ? miscellaneousTemplate
+              : paymentType == "FINE"
+              ? fineTemplate
               : paymentType == "BUS_FEE"
               ? busFeeTemplate
               : paymentType == "EXCESS_FEE"

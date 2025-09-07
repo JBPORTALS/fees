@@ -24,6 +24,11 @@ const items = [
     href: "/generate-reciept/with-usn/FEE",
   },
   {
+    title: "Fine",
+    value: "FINE",
+    href: "/generate-reciept/with-usn/FINE",
+  },
+  {
     title: "Miscellaneous",
     value: "MISCELLANEOUS",
     href: "/generate-reciept/with-usn/MISCELLANEOUS",
@@ -68,6 +73,7 @@ export default function WithUSNLayout({
         <Tabs.List w={"full"}>
           {items.map((item) => (
             <Tabs.Trigger
+              key={item.value}
               value={item.value}
               _hover={{ textDecoration: "none" }}
               gap={"2"}

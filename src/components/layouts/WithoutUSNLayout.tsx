@@ -25,6 +25,11 @@ const items = [
     href: "/generate-reciept/without-usn/FEE",
   },
   {
+    title: "Fine",
+    value: "FINE",
+    href: "/generate-reciept/without-usn/FINE",
+  },
+  {
     title: "Miscellaneous",
     value: "MISCELLANEOUS",
     href: "/generate-reciept/without-usn/MISCELLANEOUS",
@@ -76,6 +81,7 @@ export default function WithoutUSNLayout({
         >
           {items.map((item) => (
             <Tabs.Trigger
+              key={item.value}
               asChild
               value={item.value}
               _hover={{ textDecoration: "none" }}
