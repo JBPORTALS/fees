@@ -25,9 +25,9 @@ const items = [
     href: "/generate-reciept/without-usn/FEE",
   },
   {
-    title: "Fine",
-    value: "FINE",
-    href: "/generate-reciept/without-usn/FINE",
+    title: "Others",
+    value: "OTHERS",
+    href: "/generate-reciept/without-usn/OTHERS",
   },
   {
     title: "Miscellaneous",

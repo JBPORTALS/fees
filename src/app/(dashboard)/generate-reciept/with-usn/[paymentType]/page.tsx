@@ -241,7 +241,7 @@ export default function WithUSNDynamicPage() {
   const router = useRouter();
   const paymentType = params.paymentType as
     | "FEE"
-    | "FINE"
+    | "OTHERS"
     | "MISCELLANEOUS"
     | "BUS_FEE"
     | "EXCESS_FEE"
@@ -551,8 +551,8 @@ export default function WithUSNDynamicPage() {
           option: "Registration Fee",
         },
         {
-          value: "Library Fine",
-          option: "Library Fine",
+          value: "Library Others",
+          option: "Library Others",
         },
         {
           value: "Certificates",
@@ -1089,7 +1089,7 @@ export default function WithUSNDynamicPage() {
           ? "feegenerateonlinewithusn.php"
           : paymentType == "MISCELLANEOUS"
           ? "feegeneratemiscellaneouswithusn.php"
-          : paymentType == "FINE"
+          : paymentType == "OTHERS"
           ? "feegeneratefine.php"
           : user?.college == "KSPT" || user?.college == "KSSA"
           ? "feekspreceipt.php"
@@ -1244,7 +1244,7 @@ export default function WithUSNDynamicPage() {
               ? feeTemplate
               : paymentType == "MISCELLANEOUS"
               ? miscellaneousTemplate
-              : paymentType == "FINE"
+              : paymentType == "OTHERS"
               ? fineTemplate
               : paymentType == "BUS_FEE"
               ? busFeeTemplate
