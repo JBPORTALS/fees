@@ -622,8 +622,8 @@ export default function WithoutUSNDynamicPage() {
           option: "Registration Fee",
         },
         {
-          value: "Library Fine",
-          option: "Library Fine",
+          value: "Library Others",
+          option: "Library Others",
         },
         {
           value: "Certificates",
@@ -1035,7 +1035,7 @@ export default function WithoutUSNDynamicPage() {
           ? "feegenerateonlineregistarionfee.php"
           : paymentType === "REGISTRATION_FEE"
           ? "feegenerateregistarionfee.php"
-          : paymentType === "FINE"
+          : paymentType === "OTHERS"
           ? "feegeneratefine.php"
           : state.paymentMode == "ONLINE" &&
             paymentType !== "MISCELLANEOUS" &&
@@ -1194,7 +1194,7 @@ export default function WithoutUSNDynamicPage() {
               ? feeByApplicationIdTemplate
               : paymentType == "MISCELLANEOUS"
               ? miscellaneousTemplate
-              : paymentType == "FINE"
+              : paymentType == "OTHERS"
               ? fineTemplate
               : paymentType == "BUS_FEE"
               ? busFeeTemplate
